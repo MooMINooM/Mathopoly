@@ -1,0 +1,8 @@
+/* css/main.css */
+
+/* Import ไฟล์สไตล์ส่วนย่อยๆ เข้ามา */
+@import url('base.css');
+@import url('layout.css');
+@import url('board.css');
+@import url('components.css');
+@import url('modals.css');

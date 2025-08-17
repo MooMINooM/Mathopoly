@@ -1,0 +1,157 @@
+/* css/_board.css */
+.space {
+    background-color: var(--space-bg);
+    border: 1px solid var(--border-color);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    overflow: hidden;
+    font-size: 10px;
+}
+.space:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.space.property .space-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.space .space-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 3px 4px;
+    text-align: center;
+    z-index: 2;
+    transition: background-color 0.4s;
+}
+
+.space .space-name {
+    font-size: 0.9em;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 0 2px;
+}
+
+.space .space-price {
+    font-size: 0.9em;
+    min-height: 1.2em;
+}
+
+.vertical-property .space-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 5px;
+}
+.vertical-property .space-name {
+    text-align: left;
+}
+.vertical-property .space-price {
+    font-size: 0.8em;
+    white-space: nowrap;
+    margin-left: 4px;
+}
+
+.corner {
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: relative;
+}
+
+.corner .corner-text-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 0.9em;
+    padding: 2px 0;
+}
+
+#space-0 { background-image: url('https://static.thenounproject.com/png/4617835-200.png'); }
+#space-12 { background-image: url('https://img.lovepik.com/png/20231011/Travel-Vacation-Island-Chalet-landscape-paradise-building_161592_wh1200.png'); }
+#space-20 { background-image: url('https://img.pikbest.com/png-images/20240731/shiny-golden-trophy-with-star-illustration-cartoon-icon_10691920.png!sw800'); }
+#space-32 { background-image: url('https://img.freepik.com/premium-photo/cartoon-illustration-subway-platform-with-empty-train_14117-812220.jpg'); }
+
+.chance-space {
+    background-color: var(--secondary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+.chance-space span {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center;
+}
+
+/* Grid Area Assignments */
+#space-0 { grid-area: 9 / 13 / 10 / 14; }
+#space-1 { grid-area: 9 / 12 / 10 / 13; }
+#space-2 { grid-area: 9 / 11 / 10 / 12; }
+#space-3 { grid-area: 9 / 10 / 10 / 11; }
+#space-4 { grid-area: 9 / 9 / 10 / 10; }
+#space-5 { grid-area: 9 / 8 / 10 / 9; }
+#space-6 { grid-area: 9 / 7 / 10 / 8; }
+#space-7 { grid-area: 9 / 6 / 10 / 7; }
+#space-8 { grid-area: 9 / 5 / 10 / 6; }
+#space-9 { grid-area: 9 / 4 / 10 / 5; }
+#space-10 { grid-area: 9 / 3 / 10 / 4; }
+#space-11 { grid-area: 9 / 2 / 10 / 3; }
+#space-12 { grid-area: 9 / 1 / 10 / 2; }
+#space-13 { grid-area: 8 / 1 / 9 / 2; }
+#space-14 { grid-area: 7 / 1 / 8 / 2; }
+#space-15 { grid-area: 6 / 1 / 7 / 2; }
+#space-16 { grid-area: 5 / 1 / 6 / 2; }
+#space-17 { grid-area: 4 / 1 / 5 / 2; }
+#space-18 { grid-area: 3 / 1 / 4 / 2; }
+#space-19 { grid-area: 2 / 1 / 3 / 2; }
+#space-20 { grid-area: 1 / 1 / 2 / 2; }
+#space-21 { grid-area: 1 / 2 / 2 / 3; }
+#space-22 { grid-area: 1 / 3 / 2 / 4; }
+#space-23 { grid-area: 1 / 4 / 2 / 5; }
+#space-24 { grid-area: 1 / 5 / 2 / 6; }
+#space-25 { grid-area: 1 / 6 / 2 / 7; }
+#space-26 { grid-area: 1 / 7 / 2 / 8; }
+#space-27 { grid-area: 1 / 8 / 2 / 9; }
+#space-28 { grid-area: 1 / 9 / 2 / 10; }
+#space-29 { grid-area: 1 / 10 / 2 / 11; }
+#space-30 { grid-area: 1 / 11 / 2 / 12; }
+#space-31 { grid-area: 1 / 12 / 2 / 13; }
+#space-32 { grid-area: 1 / 13 / 2 / 14; }
+#space-33 { grid-area: 2 / 13 / 3 / 14; }
+#space-34 { grid-area: 3 / 13 / 4 / 14; }
+#space-35 { grid-area: 4 / 13 / 5 / 14; }
+#space-36 { grid-area: 5 / 13 / 6 / 14; }
+#space-37 { grid-area: 6 / 13 / 7 / 14; }
+#space-38 { grid-area: 7 / 13 / 8 / 14; }
+#space-39 { grid-area: 8 / 13 / 9 / 14; }

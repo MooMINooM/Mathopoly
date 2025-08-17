@@ -1,0 +1,39 @@
+/* css/_base.css */
+:root {
+    --board-bg: #cde6d0;
+    --space-bg: #f7f7f7;
+    --control-bg: #ffffff;
+    --side-panel-bg: #f0f7f1;
+    --primary-color: #4CAF50;
+    --secondary-color: #FFC107;
+    --accent-color: #2196F3;
+    --danger-color: #f44336;
+    --text-color: #333;
+    --border-color: #a3c1a8;
+    --player1-color: #ff595e;
+    --player2-color: #ffca3a;
+    --player3-color: #8ac926;
+    --player4-color: #1982c4;
+    --player5-color: #6a4c93;
+    --player6-color: #ff924c;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans Thai', sans-serif;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
+    background-size: cover;
+    background-position: center;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 10px;
+}
