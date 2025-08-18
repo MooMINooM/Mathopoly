@@ -3,7 +3,6 @@ import * as state from './state.js';
 import * as ui from './ui.js';
 import * as actions from './actions.js';
 import { movePlayer } from './gameLogic.js';
-import { generateQuestion } from './questions.js';
 
 function handlePropertyLanding(player, space) {
     if (space.owner === null) { // Unowned
@@ -76,7 +75,7 @@ function handlePropertyLanding(player, space) {
 }
 
 function handleTrainStation(player) {
-    const cost = 500 * (state.gameSettings.startingMoney / 15000);
+    const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000)); // ปัดเศษ
     ui.showActionModal(
         'สถานีรถไฟ',
         `จ่าย ฿${cost.toLocaleString()} เพื่อเดินทางไปยังเมืองใดก็ได้?`,
@@ -92,7 +91,7 @@ function handleTrainStation(player) {
 
 async function travelByTrain(player) {
     ui.hideActionModal();
-    const cost = 500 * (state.gameSettings.startingMoney / 15000);
+    const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000)); // ปัดเศษ
     actions.changePlayerMoney(player, -cost, "ค่าเดินทางรถไฟ");
     if(player.bankrupt) return;
 
@@ -184,13 +183,18 @@ function selectPropertyForBonus(player) {
 
 
 function drawChanceCard(player) {
+    const moneyScale = state.gameSettings.startingMoney / 15000;
+    
+    // ย้ายการคำนวณเงินรางวัลทั้งหมดมาไว้ข้างนอก และปัดเศษให้เรียบร้อย
+    const lotteryWin = Math.round(1000 * moneyScale);
+    const roadRepairCost = Math.round(player.properties.length * 250 * moneyScale);
+    const dividend = Math.round(500 * moneyScale);
+    const tuitionFee = Math.round(1500 * moneyScale);
+
     const cards = [
-        { text: `ถูกลอตเตอรี่! รับเงิน ฿${(1000 * (state.gameSettings.startingMoney / 15000)).toLocaleString()}`, action: (p) => actions.changePlayerMoney(p, Math.round(1000 * (state.gameSettings.startingMoney / 15000)), "ถูกลอตเตอรี่") },
-        { text: "จ่ายค่าซ่อมถนนทุกสายของคุณ เมืองละ ฿250", action: (p) => {
-            const cost = Math.round(p.properties.length * 250 * (state.gameSettings.startingMoney / 15000));
-            actions.changePlayerMoney(p, -cost, "ค่าซ่อมถนน");
-        }},
-        { text: `ธนาคารจ่ายเงินปันผลให้คุณ ฿${(500 * (state.gameSettings.startingMoney / 15000)).toLocaleString()}`, action: (p) => actions.changePlayerMoney(p, Math.round(500 * (state.gameSettings.startingMoney / 15000)), "เงินปันผล") },
+        { text: `ถูกลอตเตอรี่! รับเงิน ฿${lotteryWin.toLocaleString()}`, action: (p) => actions.changePlayerMoney(p, lotteryWin, "ถูกลอตเตอรี่") },
+        { text: "จ่ายค่าซ่อมถนนทุกสายของคุณ เมืองละ ฿250", action: (p) => actions.changePlayerMoney(p, -roadRepairCost, "ค่าซ่อมถนน")},
+        { text: `ธนาคารจ่ายเงินปันผลให้คุณ ฿${dividend.toLocaleString()}`, action: (p) => actions.changePlayerMoney(p, dividend, "เงินปันผล") },
         { text: "ไปที่เกาะร้างทันที!", action: (p) => {
             console.log(`${p.name} ถูกส่งไปที่เกาะร้าง!`);
             p.position = 12;
@@ -199,7 +203,7 @@ function drawChanceCard(player) {
         }},
         { text: "เดินหน้าไป 3 ช่อง", action: async (p) => { await movePlayer(3); return true; }},
         { text: "รับการ์ด 'ออกจากเกาะร้างฟรี'", action: (p) => { p.getOutOfJailFree++; console.log(`${p.name} ได้รับการ์ดออกจากเกาะร้างฟรี`); }},
-        { text: `จ่ายค่าเทอม ฿${(1500 * (state.gameSettings.startingMoney / 15000)).toLocaleString()}`, action: (p) => actions.changePlayerMoney(p, Math.round(-1500 * (state.gameSettings.startingMoney / 15000)), "ค่าเทอม") },
+        { text: `จ่ายค่าเทอม ฿${tuitionFee.toLocaleString()}`, action: (p) => actions.changePlayerMoney(p, -tuitionFee, "ค่าเทอม") },
         { text: "เดินไปที่จุดเริ่มต้นและรับเงินโบนัส", action: async (p) => {
             const steps = (state.gameSettings.totalSpaces - p.position) % state.gameSettings.totalSpaces;
             await movePlayer(steps);
