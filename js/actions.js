@@ -1,7 +1,6 @@
 // js/actions.js
 import * as state from './state.js';
 import * as ui from './ui.js';
-import { endTurn } from './gameLogic.js';
 
 // --- Helper & Financial Functions ---
 export function changePlayerMoney(player, amount, reason) {
@@ -88,7 +87,7 @@ export function expandProperty(player, space) {
     if(player.bankrupt) { ui.hideActionModal(); return; }
     space.investment += cost;
     space.level++;
-    console.log(`${player.name} ขยาย ${space.name} ระดับ ${space.level - 1} ในราคา ฿${cost.toLocaleString()}`);
+    console.log(`${player.name} ขยาย ${space.name} ระดับ ${space.level} ในราคา ฿${cost.toLocaleString()}`);
     ui.hideActionModal();
     ui.updateAllUI();
     ui.enableEndTurnButton();
@@ -141,6 +140,7 @@ export function sellProperty(player, pId) {
         ui.hideManagePropertyModal();
         ui.enableEndTurnButton();
     } else {
+        // อัปเดตหน้าต่างจัดการทรัพย์สินใหม่หลังจากขายไปแล้ว
         ui.showManagePropertyModal(state.isForcedToSell);
     }
 }
@@ -153,5 +153,6 @@ export function takeLoan(player) {
     };
     changePlayerMoney(player, amount, "กู้เงิน");
     console.log(`${player.name} กู้เงิน ฿${amount.toLocaleString()}. ต้องคืนใน 10 ตา`);
+    // อัปเดตหน้าต่างจัดการทรัพย์สินใหม่หลังจากกู้เงินแล้ว
     ui.showManagePropertyModal();
 }
