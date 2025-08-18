@@ -5,6 +5,10 @@ import * as ui from './ui.js';
 // --- Helper & Financial Functions ---
 export function changePlayerMoney(player, amount, reason) {
     player.money += amount;
+
+    // --- บรรทัดที่เพิ่มเข้ามาเพื่อแก้ไขปัญหาทศนิยม ---
+    player.money = Math.round(player.money);
+
     console.log(`${player.name} ${amount > 0 ? 'ได้รับ' : 'เสีย'}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})`);
 
     if (player.money < 0) {
@@ -47,7 +51,7 @@ function handleBankruptcy(player) {
     if (activePlayers.length <= 1) {
         ui.showSummary();
     } else {
-         ui.enableEndTurnButton();
+        ui.enableEndTurnButton();
     }
 }
 
@@ -155,4 +159,3 @@ export function takeLoan(player) {
     // อัปเดตหน้าต่างจัดการทรัพย์สินใหม่หลังจากกู้เงินแล้ว
     ui.showManagePropertyModal();
 }
-
