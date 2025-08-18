@@ -244,7 +244,7 @@ export function showManagePropertyModal(isForced = false) {
             item.className = 'property-list-item';
             item.innerHTML = `
                 <span>${space.name} (ลงทุน ฿${space.investment.toLocaleString()})</span>
-                <button class="danger" data-pid="${pId}">ขาย ฿${sellPrice.toLocaleString()}</button>
+                <button class="danger" data-action="sell" data-pid="${pId}">ขาย ฿${sellPrice.toLocaleString()}</button>
             `;
             sellList.appendChild(item);
         });
@@ -258,7 +258,10 @@ export function showManagePropertyModal(isForced = false) {
         const loanAmount = Math.round(state.gameSettings.startingMoney / 3);
         const loanButton = document.createElement('button');
         loanButton.textContent = `กู้เงิน ฿${loanAmount.toLocaleString()}`;
-        loanButton.onclick = () => takeLoan(player);
+        // --- ส่วนที่แก้ไข ---
+        // เพิ่ม id หรือ data-action เพื่อให้ main.js รู้จัก
+        loanButton.dataset.action = "loan";
+        // --- จบส่วนที่แก้ไข ---
         if(state.isForcedToSell) loanButton.disabled = true;
         financialActions.appendChild(loanButton);
     }
@@ -268,7 +271,6 @@ export function showManagePropertyModal(isForced = false) {
 export function hideManagePropertyModal() {
     managePropertyModal.style.display = 'none';
 }
-
 
 export function showInsufficientFundsModal(onCloseCallback) {
     showActionModal(
@@ -285,4 +287,5 @@ export function showInsufficientFundsModal(onCloseCallback) {
             }}
         ]
     );
+
 }
