@@ -52,7 +52,7 @@ function createBoard() {
             spaceData.type = 'property';
             spaceData.name = mathematician.shortName;
             spaceData.mathematician = mathematician;
-            spaceData.basePrice = Math.round((600 + (mathIndex * 150)) * moneyScale / 50) * 50;
+            spaceData.basePrice = Math.round((500 + (mathIndex * 100)) * moneyScale / 50) * 50;
             spaceData.price = spaceData.basePrice;
             spaceData.owner = null;
             spaceData.level = 0;
@@ -168,4 +168,5 @@ export function initializeGameSetup() {
     document.getElementById('close-about-btn').addEventListener('click', () => {
         document.getElementById('about-modal').style.display = 'none';
     });
+
 }
