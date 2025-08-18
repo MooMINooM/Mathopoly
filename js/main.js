@@ -3,6 +3,7 @@ import { initializeGameSetup } from './setup.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
 import { endTurn, rollDice } from './gameLogic.js';
+import * as actions from './actions.js';
 
 // --- Main Initializer ---
 async function main() {
@@ -79,4 +80,5 @@ function addEventListeners() {
 }
 
 // Start the entire process
+
 main();
