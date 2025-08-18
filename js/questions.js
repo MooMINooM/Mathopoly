@@ -55,18 +55,30 @@ export function generateQuestion(difficulty) {
               }
          } else { const type = randInt(1, 3); if (type === 1) { let d = randInt(5, 10); let n1 = randInt(1, d-1); let n2 = randInt(1, d-1); q = { text: `${n1}/${d} + ${n2}/${d} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat(((n1 + n2) / d).toFixed(2)) }; } else if (type === 2) { let n1 = (randInt(1, 99) / 10); let n2 = randInt(2, 9); q = { text: `${n1} × ${n2} = ?`, answer: parseFloat((n1 * n2).toFixed(2)) }; } else { let b = randInt(10, 20) * 2; let h = randInt(5, 15); q = { text: `สามเหลี่ยมมีฐาน ${b} ซม. สูง ${h} ซม. มีพื้นที่เท่าไร (ตร.ซม.)?`, answer: 0.5 * b * h }; } }
     }
-    // p6: Grade 6
-    else if (difficulty === 'p6') {
-         if (Math.random() > 0.6) {
-              const type = randChoice(['discount', 'speed']);
-              if (type === 'discount') {
-                  let price = randInt(100, 500) * 10; let discount = randInt(10, 30); q = { text: `สินค้าราคา ${price} บาท ลดราคา ${discount}% จะเหลือราคากี่บาท?`, answer: Math.round(price * (1 - discount/100)) };
-              } else {
-                  let speed = randChoice([60, 80, 100]); let time = randInt(2, 5);
-                  q = { text: `รถยนต์วิ่งด้วยความเร็ว ${speed} กิโลเมตรต่อชั่วโมง เป็นเวลา ${time} ชั่วโมง จะได้ระยะทางเท่าไร (กิโลเมตร)?`, answer: speed * time };
-              }
-         } else { const type = randInt(1, 3); if (type === 1) { let n1 = randInt(2, 10); let d1 = randInt(2, 10); let n2 = randInt(2, 10); let d2 = randInt(2, 10); q = { text: `(${n1}/${d1}) ÷ (${n2}/${d2}) = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat(((n1/d1) / (n2/d2)).toFixed(2)) }; } else if (type === 2) { let n1 = randInt(20, 100); let n2 = randInt(2, 10); q = { text: `${n1} ÷ ${n2} = ?`, answer: n1 / n2 }; } else { let r = randInt(5, 10); q = { text: `วงกลมมีรัศมี ${r} หน่วย มีพื้นที่เท่าไร? (ใช้ π ≈ 3.14)`, answer: parseFloat((3.14 * r * r).toFixed(2)) }; } }
+    // p6: Grade 6 (เวอร์ชันแก้ไขแล้ว)
+else if (difficulty === 'p6') {
+    if (Math.random() > 0.6) {
+        const type = randChoice(['discount', 'speed']);
+        if (type === 'discount') {
+            let price = randInt(100, 500) * 10; let discount = randInt(10, 30); q = { text: `สินค้าราคา ${price} บาท ลดราคา ${discount}% จะเหลือราคากี่บาท?`, answer: Math.round(price * (1 - discount/100)) };
+        } else {
+            let speed = randChoice([60, 80, 100]); let time = randInt(2, 5);
+            q = { text: `รถยนต์วิ่งด้วยความเร็ว ${speed} กิโลเมตรต่อชั่วโมง เป็นเวลา ${time} ชั่วโมง จะได้ระยะทางเท่าไร (กิโลเมตร)?`, answer: speed * time };
+        }
+    } else {
+        const type = randInt(1, 3);
+        if (type === 1) {
+            let n1 = randInt(2, 10); let d1 = randInt(2, 10); let n2 = randInt(2, 10); let d2 = randInt(2, 10);
+            q = { text: `(${n1}/${d1}) ÷ (${n2}/${d2}) = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat(((n1/d1) / (n2/d2)).toFixed(2)) };
+        } else if (type === 2) { // <-- บรรทัดนี้ที่ถูกแก้ไข
+            let n1 = randInt(20, 100); let n2 = randInt(2, 10);
+            q = { text: `${n1} ÷ ${n2} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat((n1 / n2).toFixed(2)) };
+        } else {
+            let r = randInt(5, 10);
+            q = { text: `วงกลมมีรัศมี ${r} หน่วย มีพื้นที่เท่าไร? (ใช้ π ≈ 3.14)`, answer: parseFloat((3.14 * r * r).toFixed(2)) };
+        }
     }
+}
     // m1: Grade 7
     else if (difficulty === 'm1') {
         const type = randInt(1, 5);
@@ -95,4 +107,5 @@ export function generateQuestion(difficulty) {
 
     if (!q.text) { q = { text: `1 + 1 = ?`, answer: 2 }; }
     return q;
+
 }
