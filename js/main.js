@@ -3,7 +3,7 @@ import { initializeGameSetup } from './setup.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
 import { endTurn, rollDice } from './gameLogic.js';
-import * as actions from './actions.js';
+import * as actions from './actions.js'; // <-- นี่คือบรรทัดที่เพิ่มเข้ามาเพื่อแก้ Error
 
 // --- Main Initializer ---
 async function main() {
@@ -15,7 +15,6 @@ async function main() {
         const mathematiciansData = await response.json();
         state.setMathematicians(mathematiciansData);
         
-        // When data is loaded, initialize the setup and add event listeners
         initializeGameSetup();
         addEventListeners();
 
@@ -31,6 +30,7 @@ function addEventListeners() {
     document.getElementById('roll-dice-btn').addEventListener('click', rollDice);
     document.getElementById('end-turn-btn').addEventListener('click', endTurn);
     document.getElementById('end-game-btn').addEventListener('click', ui.showSummary);
+    document.getElementById('manage-property-btn').addEventListener('click', () => ui.showManagePropertyModal(false));
 
     // Question modal
     document.getElementById('submit-answer-btn').addEventListener('click', () => {
@@ -66,19 +66,27 @@ function addEventListeners() {
         window.location.reload();
     });
     
-    // Manage property modal
-    document.getElementById('manage-property-btn').addEventListener('click', () => ui.showManagePropertyModal(false));
-    document.getElementById('close-manage-modal-btn').addEventListener('click', ui.hideManagePropertyModal);
-    
-    document.getElementById('sell-property-list').addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            const pId = parseInt(e.target.dataset.pid);
-            const currentPlayer = state.players[state.currentPlayerIndex];
-            actions.sellProperty(currentPlayer, pId);
+    // Listener ตัวเดียวสำหรับจัดการทุกอย่างใน Manage Property Modal
+    const manageModal = document.getElementById('manage-property-modal');
+    manageModal.addEventListener('click', (e) => {
+        const targetElement = e.target;
+        const action = targetElement.dataset.action;
+        const currentPlayer = state.players[state.currentPlayerIndex];
+
+        if (targetElement.id === 'close-manage-modal-btn') {
+            ui.hideManagePropertyModal();
+        }
+        else if (action === 'sell') {
+            const pId = parseInt(targetElement.dataset.pid);
+            if (!isNaN(pId)) {
+                actions.sellProperty(currentPlayer, pId);
+            }
+        }
+        else if (action === 'loan') {
+            actions.takeLoan(currentPlayer);
         }
     });
 }
 
 // Start the entire process
-
 main();
