@@ -20,116 +20,7 @@
     </div>
 
     <div id="setup-screen" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>Mathopoly - ตั้งค่าเกม</h2>
-            <div class="setup-section">
-                <div class="top-setup-row">
-                    <div class="setting-row">
-                        <label for="starting-money">เงินเริ่มต้น:</label>
-                        <input type="number" id="starting-money" value="15000" step="1000">
-                    </div>
-                    <div class="setup-actions">
-                        <button id="close-setup-btn" class="danger">ย้อนกลับ</button>
-                        <button id="start-game-btn">เริ่มเล่น</button>
-                    </div>
-                </div>
-                <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
-                <h3>ตั้งค่าผู้เล่น (กรอกอย่างน้อย 2 คน)</h3>
-                <div id="player-details-container" class="player-setup-container">
-                    <div class="player-setup">
-                        <h4>ผู้เล่น 1</h4>
-                        <input type="text" class="player-name-input" placeholder="ชื่อผู้เล่น 1" value="ผู้เล่น 1" style="margin-bottom: 8px;">
-                        <select class="player-difficulty-select">
-                            <option value="p1">ประถม 1</option>
-                            <option value="p2">ประถม 2</option>
-                            <option value="p3">ประถม 3</option>
-                            <option value="p4">ประถม 4</option>
-                            <option value="p5">ประถม 5</option>
-                            <option value="p6">ประถม 6</option>
-                            <option value="m1">มัธยม 1</option>
-                            <option value="m2">มัธยม 2</option>
-                            <option value="m3">มัธยม 3</option>
-                        </select>
-                    </div>
-                    <div class="player-setup">
-                        <h4>ผู้เล่น 2</h4>
-                        <input type="text" class="player-name-input" placeholder="ชื่อผู้เล่น 2" value="ผู้เล่น 2" style="margin-bottom: 8px;">
-                        <select class="player-difficulty-select">
-                            <option value="p1">ประถม 1</option>
-                            <option value="p2">ประถม 2</option>
-                            <option value="p3">ประถม 3</option>
-                            <option value="p4">ประถม 4</option>
-                            <option value="p5">ประถม 5</option>
-                            <option value="p6">ประถม 6</option>
-                            <option value="m1">มัธยม 1</option>
-                            <option value="m2">มัธยม 2</option>
-                            <option value="m3">มัธยม 3</option>
-                        </select>
-                    </div>
-                    <div class="player-setup">
-                        <h4>ผู้เล่น 3</h4>
-                        <input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;">
-                        <select class="player-difficulty-select">
-                            <option value="p1">ประถม 1</option>
-                            <option value="p2">ประถม 2</option>
-                            <option value="p3">ประถม 3</option>
-                            <option value="p4">ประถม 4</option>
-                            <option value="p5">ประถม 5</option>
-                            <option value="p6">ประถม 6</option>
-                            <option value="m1">มัธยม 1</option>
-                            <option value="m2">มัธยม 2</option>
-                            <option value="m3">มัธยม 3</option>
-                        </select>
-                    </div>
-                    <div class="player-setup">
-                        <h4>ผู้เล่น 4</h4>
-                        <input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;">
-                        <select class="player-difficulty-select">
-                            <option value="p1">ประถม 1</option>
-                            <option value="p2">ประถม 2</option>
-                            <option value="p3">ประถม 3</option>
-                            <option value="p4">ประถม 4</option>
-                            <option value="p5">ประถม 5</option>
-                            <option value="p6">ประถม 6</option>
-                            <option value="m1">มัธยม 1</option>
-                            <option value="m2">มัธยม 2</option>
-                            <option value="m3">มัธยม 3</option>
-                        </select>
-                    </div>
-                    <div class="player-setup">
-                        <h4>ผู้เล่น 5</h4>
-                        <input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;">
-                        <select class="player-difficulty-select">
-                            <option value="p1">ประถม 1</option>
-                            <option value="p2">ประถม 2</option>
-                            <option value="p3">ประถม 3</option>
-                            <option value="p4">ประถม 4</option>
-                            <option value="p5">ประถม 5</option>
-                            <option value="p6">ประถม 6</option>
-                            <option value="m1">มัธยม 1</option>
-                            <option value="m2">มัธยม 2</option>
-                            <option value="m3">มัธยม 3</option>
-                        </select>
-                    </div>
-                    <div class="player-setup">
-                        <h4>ผู้เล่น 6</h4>
-                        <input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;">
-                        <select class="player-difficulty-select">
-                            <option value="p1">ประถม 1</option>
-                            <option value="p2">ประถม 2</option>
-                            <option value="p3">ประถม 3</option>
-                            <option value="p4">ประถม 4</option>
-                            <option value="p5">ประถม 5</option>
-                            <option value="p6">ประถม 6</option>
-                            <option value="m1">มัธยม 1</option>
-                            <option value="m2">มัธยม 2</option>
-                            <option value="m3">มัธยม 3</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
 
     <div class="game-container" style="display: none;">
         <div id="game-board">
@@ -149,65 +40,6 @@
         </div>
     </div>
 
-    <div id="question-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="question-title">ตอบคำถามเพื่อซื้อเมือง</h2>
-            <p id="question-text">2 + 2 = ?</p>
-            <input type="text" id="question-answer" placeholder="ใส่คำตอบ">
-            <button id="submit-answer-btn">ส่งคำตอบ</button>
-        </div>
-    </div>
-
-    <div id="action-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="action-title">Title</h2>
-            <p id="action-text">Text</p>
-            <div id="action-modal-buttons"></div>
-        </div>
-    </div>
-    
-    <div id="info-sheet-modal" class="modal">
-        <div class="modal-content">
-            <img id="info-sheet-img" src="" alt="Mathematician">
-            <div id="info-sheet-text">
-                <h3 id="info-sheet-name"></h3>
-                <p><strong>ปี:</strong> <span id="info-sheet-years"></span></p>
-                <p><strong>สัญชาติ:</strong> <span id="info-sheet-nationality"></span></p>
-                <p><strong>ผลงานเด่น:</strong></p>
-                <p id="info-sheet-contribution"></p>
-            </div>
-            <button id="close-info-sheet-btn" class="danger">ปิด</button>
-        </div>
-    </div>
-
-    <div id="summary-modal" class="modal">
-        <div class="modal-content">
-            <h2>สรุปผลการเล่น</h2>
-            <table id="summary-table">
-                <thead>
-                    <tr>
-                        <th>ผู้เล่น</th>
-                        <th>สถานะ</th>
-                        <th>เงินคงเหลือ</th>
-                        <th>คะแนน (ถูก/ทั้งหมด)</th>
-                        <th>เมืองที่ครอบครอง</th>
-                    </tr>
-                </thead>
-                <tbody id="summary-body">
-                </tbody>
-            </table>
-            <button id="restart-game-btn">กลับหน้าหลัก</button>
-        </div>
-    </div>
-    
-    <div id="chance-card-modal" class="modal">
-        <div class="modal-content">
-            <h2>การ์ดดวง</h2>
-            <p id="chance-card-text"></p>
-            <button id="chance-card-ok-btn">ตกลง</button>
-        </div>
-    </div>
-
     <div id="manage-property-modal" class="modal">
         <div class="modal-content">
             <h2 id="manage-title">จัดการทรัพย์สิน</h2>
@@ -224,47 +56,8 @@
     </div>
     
     <div id="about-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>เกี่ยวกับเกม</h2>
-            <div class="about-section">
-                <h3>ที่มาของเกม</h3>
-                <p>เกมนี้จัดทำขึ้นเพื่อเป็นส่วนหนึ่งของโครงงานคอมพิวเตอร์ โดยมีวัตถุประสงค์เพื่อสร้างสื่อการเรียนรู้ที่สนุกสนานในวิชาคณิตศาสตร์ ผสมผสานการเล่นเกมเศรษฐีเข้ากับการแก้โจทย์ปัญหาตามระดับชั้น เพื่อให้ผู้เล่นได้ทั้งความสนุกและทบทวนความรู้ไปพร้อมกัน</p>
-            </div>
-            <div class="about-section">
-                <h3>ผู้จัดทำ</h3>
-                <div class="creators-container">
-                    <div class="creator-profile">
-                        <img src="https://lh3.googleusercontent.com/pw/AP1GczM8aWMXmvXSO44duWQ5MZrA65rWOc-fV2YlOMU5-JbJv6zoO90yf0sJJS6yZQfGuLAe58k2W_LtG_cuvv8fZbhdRs2Wjq55v-eLt1ASl9Yxw_emUeVnMPGsQS83tzxLo8SEwp5XyA3FXMwm53XjG0Gu=w160-h160-s-no-gm?authuser=0" alt="ผู้จัดทำ 1">
-                        <p style="font-size: 0.7em;">นายญาณวุฒิ บุตรสมบัติ</p>
-                        <p style="font-size: 0.6em; color: #666;">ครูที่ปรึกษาโครงงาน</p>
-                    </div>
-                    <div class="creator-profile">
-                        <img src="https://placehold.co/100x100/EFEFEF/333?text=รูป" alt="ผู้จัดทำ 2">
-                        <p style="font-size: 0.5em;">นายดอกคูณ พูดเพราะ</p>
-                        <p style="font-size: 0.4em; color: #666;">ครูที่ปรึกษาโครงงาน</p>
-                    </div>
-                    <div class="creator-profile">
-                        <img src="https://placehold.co/100x100/EFEFEF/333?text=รูป" alt="ผู้จัดทำ 3">
-                        <p style="font-size: 0.5em;">เด็กชายอัครเดช สมพร</p>
-                        <p style="font-size: 0.4em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p>
-                    </div>
-                    <div class="creator-profile">
-                        <img src="https://placehold.co/100x100/EFEFEF/333?text=รูป" alt="ผู้จัดทำ 4">
-                        <p style="font-size: 0.5em;">เด็กหญิงสุณิสา สุวรรณท้าว</p>
-                        <p style="font-size: 0.4em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p>
-                    </div>
-                    <div class="creator-profile">
-                        <img src="https://placehold.co/100x100/EFEFEF/333?text=รูป" alt="ผู้จัดทำ 5">
-                        <p style="font-size: 0.5em;">เด็กหญิงณารินทร์ เวฬุสะณารักษ์</p>
-                        <p style="font-size: 0.4em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 3</p>
-                    </div>
-                </div>
-            </div>
-            <button id="close-about-btn" class="danger">ปิด</button>
         </div>
-    </div>
 
     <script type="module" src="js/main.js"></script>
 </body>
-
 </html>
