@@ -66,7 +66,6 @@ export function calculateExpansionCost(space) {
     return 0;
 }
 
-
 // --- Player Actions ---
 export function buyProperty(player, space) {
     changePlayerMoney(player, -space.price, `ซื้อ ${space.name}`);
@@ -156,3 +155,4 @@ export function takeLoan(player) {
     // อัปเดตหน้าต่างจัดการทรัพย์สินใหม่หลังจากกู้เงินแล้ว
     ui.showManagePropertyModal();
 }
+
