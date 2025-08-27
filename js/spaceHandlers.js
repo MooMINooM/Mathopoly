@@ -185,7 +185,6 @@ function selectPropertyForBonus(player) {
 function drawChanceCard(player) {
     const moneyScale = state.gameSettings.startingMoney / 15000;
     
-    // ย้ายการคำนวณเงินรางวัลทั้งหมดมาไว้ข้างนอก และปัดเศษให้เรียบร้อย
     const lotteryWin = Math.round(1000 * moneyScale);
     const roadRepairCost = Math.round(player.properties.length * 250 * moneyScale);
     const dividend = Math.round(500 * moneyScale);
