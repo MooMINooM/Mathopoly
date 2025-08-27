@@ -5,27 +5,50 @@ import * as actions from './actions.js';
 import { handleSpaceLanding } from './spaceHandlers.js';
 
 export function startTurn() {
-    const currentPlayer = state.players[state.currentPlayerIndex];
-    if (currentPlayer.bankrupt) {
+    const player = state.players[state.currentPlayerIndex];
+    if (player.bankrupt) {
         endTurn();
         return;
     }
 
     ui.updatePlayerInfo();
-    console.log(`--- ตาของ ${currentPlayer.name} ---`);
+    console.log(`--- ตาของ ${player.name} ---`);
 
-    if (currentPlayer.inJailTurns > 0) {
-        console.log(`${currentPlayer.name} ติดอยู่บนเกาะร้าง! ต้องข้ามตานี้`);
-        currentPlayer.inJailTurns--;
-        
-        ui.disableGameActions();
-
-        setTimeout(() => {
-            console.log(`${currentPlayer.name} ถูกข้ามตา`);
-            endTurn();
-        }, 1500);
-
+    if (player.inJailTurns > 0) {
+        // --- ส่วนที่แก้ไขใหม่ ---
+        if (player.getOutOfJailFree > 0) {
+            // ถ้าผู้เล่นมีการ์ดนางฟ้า ให้แสดงตัวเลือก
+            ui.showActionModal(
+                'ติดเกาะร้าง!',
+                `คุณมีการ์ดนางฟ้า ${player.getOutOfJailFree} ใบ ต้องการใช้เพื่อออกจากเกาะหรือไม่?`,
+                [
+                    { text: 'ใช้การ์ด', callback: () => {
+                        player.getOutOfJailFree--;
+                        player.inJailTurns = 0;
+                        console.log(`${player.name} ใช้การ์ดนางฟ้าเพื่อออกจากเกาะ`);
+                        ui.hideActionModal();
+                        ui.enableTurnActions(); // เปิดให้เล่นตาปกติ
+                    }},
+                    { text: 'ไม่ใช้ (ข้ามตา)', className: 'danger', callback: () => {
+                        player.inJailTurns--;
+                        console.log(`${player.name} เลือกที่จะติดเกาะต่อ`);
+                        ui.hideActionModal();
+                        setTimeout(() => endTurn(), 500);
+                    }}
+                ]
+            );
+        } else {
+            // ถ้าไม่มีการ์ด ให้ข้ามตาตามปกติ
+            console.log(`${player.name} ติดอยู่บนเกาะร้าง! ต้องข้ามตานี้`);
+            player.inJailTurns--;
+            ui.disableGameActions();
+            setTimeout(() => {
+                console.log(`${player.name} ถูกข้ามตา`);
+                endTurn();
+            }, 1500);
+        }
         return;
+        // --- จบส่วนที่แก้ไข ---
     }
     
     ui.enableTurnActions();
