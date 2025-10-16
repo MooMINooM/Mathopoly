@@ -3,6 +3,26 @@ import * as state from './state.js';
 import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
 
+// ... (โค้ด logger เหมือนเดิม) ...
+const MAX_LOG_MESSAGES = 40;
+
+export function addLogMessage(message) {
+    const gameLogList = document.getElementById('game-log-list');
+    if (!gameLogList) {
+        console.log("Log UI not ready:", message.replace(/<[^>]*>/g, ''));
+        return;
+    }
+
+    const logItem = document.createElement('li');
+    logItem.innerHTML = message;
+
+    gameLogList.prepend(logItem);
+
+    while (gameLogList.children.length > MAX_LOG_MESSAGES) {
+        gameLogList.removeChild(gameLogList.lastChild);
+    }
+}
+
 // --- UI Update Functions ---
 export function updateAllUI() {
     updatePlayerInfo();
@@ -10,19 +30,18 @@ export function updateAllUI() {
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
 
+// --- START: แก้ไขฟังก์ชัน updatePlayerInfo ---
 export function updatePlayerInfo() {
-    const playerInfoContainer = document.getElementById('player-info-container');
-    playerInfoContainer.innerHTML = '';
+    const topLeftContainer = document.getElementById('player-info-top-left');
+    const topRightContainer = document.getElementById('player-info-top-right');
+    
+    topLeftContainer.innerHTML = '';
+    topRightContainer.innerHTML = '';
 
-    if (state.players.filter(p => !p.bankrupt).length > 3) {
-        playerInfoContainer.classList.add('compact');
-    } else {
-        playerInfoContainer.classList.remove('compact');
-    }
+    const activePlayers = state.players.filter(p => !p.bankrupt);
+    const midPoint = Math.ceil(activePlayers.length / 2);
 
-    state.players.forEach(player => {
-        if (player.bankrupt) return;
-
+    activePlayers.forEach((player, index) => {
         const playerDiv = document.createElement('div');
         playerDiv.className = 'player-info';
         if (player.id === state.currentPlayerIndex) {
@@ -35,7 +54,7 @@ export function updatePlayerInfo() {
             statusHTML += `<span>ติดเกาะร้าง</span>`;
         }
         if (player.loan) {
-            statusHTML += `<span>หนี้ (เหลือ ${player.loan.roundsLeft} ตา)</span>`;
+            statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
         }
         if (player.getOutOfJailFree > 0) {
             statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
@@ -51,9 +70,17 @@ export function updatePlayerInfo() {
                 <span>เมือง: ${player.properties.length} แห่ง</span>
             </div>
         `;
-        playerInfoContainer.appendChild(playerDiv);
+
+        // แบ่งผู้เล่นลง 2 ฝั่ง
+        if (index < midPoint) {
+            topLeftContainer.appendChild(playerDiv);
+        } else {
+            topRightContainer.appendChild(playerDiv);
+        }
     });
 }
+// --- END: แก้ไขฟังก์ชัน updatePlayerInfo ---
+
 
 export function updateBoardUI() {
     state.boardSpaces.forEach(space => {
