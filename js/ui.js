@@ -3,7 +3,7 @@ import * as state from './state.js';
 import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
 
-// ... (โค้ด logger เหมือนเดิม) ...
+// ... (logger code remains the same) ...
 const MAX_LOG_MESSAGES = 40;
 
 export function addLogMessage(message) {
@@ -39,7 +39,6 @@ export function updatePlayerInfo() {
     topRightContainer.innerHTML = '';
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
-    const midPoint = Math.ceil(activePlayers.length / 2);
 
     activePlayers.forEach((player, index) => {
         const playerDiv = document.createElement('div');
@@ -71,8 +70,8 @@ export function updatePlayerInfo() {
             </div>
         `;
 
-        // แบ่งผู้เล่นลง 2 ฝั่ง
-        if (index < midPoint) {
+        // แบ่งผู้เล่น 1-3 ไปซ้าย, 4-6 ไปขวา
+        if (player.id < 3) {
             topLeftContainer.appendChild(playerDiv);
         } else {
             topRightContainer.appendChild(playerDiv);
