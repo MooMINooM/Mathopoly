@@ -15,11 +15,28 @@ export function startTurn() {
     ui.updatePlayerInfo();
     console.log(`--- ตาของ ${player.name} ---`);
 
+    // --- START: ตรรกะใหม่สำหรับบอทที่ติดเกาะ ---
     if (player.isBot) {
+        if (player.inJailTurns > 0) {
+            if (player.getOutOfJailFree > 0 && Math.random() < 0.8) { // 80% ที่จะใช้การ์ด
+                player.getOutOfJailFree--;
+                player.inJailTurns = 0;
+                console.log(`Bot ${player.name} ใช้การ์ดออกจากเกาะร้างฟรี!`);
+                ui.updatePlayerInfo();
+                bot.makeBotDecision(player); // เล่นตาปกติ
+            } else {
+                player.inJailTurns--;
+                console.log(`Bot ${player.name} ยังคงติดอยู่บนเกาะร้าง`);
+                finishTurn(); // จบตา
+            }
+            return;
+        }
+        // ถ้าไม่ติดเกาะ ก็เล่นตามปกติ
         ui.disableGameActions();
         bot.makeBotDecision(player);
         return;
     }
+    // --- END: ตรรกะใหม่สำหรับบอทที่ติดเกาะ ---
 
     if (player.inJailTurns > 0) {
         if (player.getOutOfJailFree > 0) {
@@ -84,16 +101,13 @@ export function endTurn() {
     startTurn();
 }
 
-// --- ฟังก์ชันใหม่ที่เพิ่มเข้ามา ---
 export function finishTurn() {
     const player = state.players[state.currentPlayerIndex];
     if (player.isBot) {
-        // บอทจะจบตาโดยอัตโนมัติหลังจากแอคชั่นเสร็จสิ้น
         setTimeout(() => {
             endTurn();
-        }, 1200); // หน่วงเวลาเล็กน้อยเพื่อให้เห็นผลลัพธ์
+        }, 1200);
     } else {
-        // สำหรับผู้เล่นปกติ จะเป็นการเปิดปุ่มให้กดจบตา
         ui.enableEndTurnButton();
     }
 }
