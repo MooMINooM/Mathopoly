@@ -6,7 +6,7 @@
     gap: 8px;
     margin-bottom: 15px;
 }
-
+/* ... (โค้ดส่วน player-info เหมือนเดิม) ... */
 .player-info {
     padding: 8px;
     border-radius: 8px;
@@ -92,6 +92,48 @@
     font-size: 0.7em;
 }
 
+/* --- START: Style ใหม่สำหรับ Game Log --- */
+#game-log-container {
+    width: 100%;
+    height: 120px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+#game-log-container h4 {
+    margin: 0 0 5px 0;
+    padding-bottom: 5px;
+    font-size: 0.9em;
+    text-align: center;
+    color: #333;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+#game-log-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: scroll;
+    flex-grow: 1;
+    font-size: 0.8em;
+    color: #444;
+}
+#game-log-list li {
+    padding: 3px 5px;
+    border-bottom: 1px solid #eee;
+}
+#game-log-list li:last-child {
+    border-bottom: none;
+}
+#game-log-list strong {
+    font-weight: 700;
+}
+/* --- END: Style ใหม่สำหรับ Game Log --- */
+
 .pawn {
     width: 20px;
     height: 20px;
@@ -102,13 +144,12 @@
     border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
-
+/* ... (โค้ดส่วนที่เหลือเหมือนเดิม) ... */
 #dice-container {
     display: flex;
     gap: 20px;
     margin: 15px 0;
 }
-
 .dice {
     width: 50px;
     height: 50px;
@@ -121,14 +162,12 @@
     font-size: 2em;
     font-weight: bold;
 }
-
 #action-buttons {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
     width: 100%;
 }
-
 #action-buttons button, .modal-content button {
     padding: 12px 20px;
     font-size: 1em;
@@ -141,13 +180,11 @@
     transition: background-color 0.2s, transform 0.2s;
     margin: 0;
 }
-
 #action-buttons button {
     padding: 12px 8px;
     font-size: 0.85em;
     white-space: nowrap;
 }
-
 #action-buttons button:hover, .modal-content button:hover {
     background-color: #45a049;
     transform: translateY(-2px);
@@ -181,7 +218,6 @@
 .level-1 { background-color: #4caf50; }
 .level-2 { background-color: #ffeb3b; color: #333; }
 .level-3 { background-color: #f44336; }
-
 #summary-table {
     width: 100%;
     margin-top: 20px;
