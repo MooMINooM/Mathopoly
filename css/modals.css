@@ -1,4 +1,5 @@
 /* css/_modals.css */
+/* ... (โค้ดส่วนบนเหมือนเดิม) ... */
 .modal {
     display: none;
     position: fixed;
@@ -28,7 +29,6 @@
     from { transform: translateY(-50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
-
 .modal-content h2 {
     margin-bottom: 20px;
     color: var(--primary-color);
@@ -36,7 +36,6 @@
 .modal-content h2.danger {
     color: var(--danger-color);
 }
-
 .modal-content p {
     margin-bottom: 20px;
 }
@@ -48,13 +47,11 @@
     border: 1px solid #ccc;
     font-family: 'Noto Sans Thai', sans-serif;
 }
-
 #action-modal-buttons {
     display: flex;
     justify-content: center;
     gap: 15px;
 }
-
 #splash-screen {
     background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
     background-size: cover;
@@ -81,8 +78,6 @@
     text-shadow: 1px 1px 3px black;
     transition: all 0.3s;
 }
-
-/* --- START: แก้ไขสไตล์ปุ่ม --- */
 #classic-mode-btn {
     background-color: var(--primary-color);
 }
@@ -98,15 +93,13 @@
     transform: translateY(-3px);
 }
 #show-about-btn {
-    background-color: #6c757d; /* สีเทา */
+    background-color: #6c757d;
     border-color: #6c757d;
 }
 #show-about-btn:hover {
     background-color: #5a6268;
     transform: translateY(-3px);
 }
-/* --- END: แก้ไขสไตล์ปุ่ม --- */
-
 
 #setup-screen .modal-content {
     max-width: 800px;
@@ -120,7 +113,34 @@
     padding: 15px;
     border: 1px solid #eee;
     border-radius: 8px;
+    text-align: left; /* จัดข้อความชิดซ้าย */
 }
+
+/* --- START: Style ใหม่สำหรับกฎพิเศษ --- */
+#special-rules-section h4 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.special-rules-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+}
+.checkbox-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+.checkbox-wrapper label {
+    font-size: 1em;
+    font-weight: 600;
+}
+/* --- END: Style ใหม่สำหรับกฎพิเศษ --- */
+
 #setup-screen .player-setup-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -136,7 +156,7 @@
     margin-bottom: 8px;
     font-size: 0.9em;
 }
-#setup-screen label {
+#setup-screen .player-setup label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
@@ -163,7 +183,7 @@
     max-width: 250px;
     margin-bottom: 0;
 }
-
+/* ... (โค้ดที่เหลือเหมือนเดิม) ... */
 #setup-screen .top-setup-row {
     display: flex;
     justify-content: space-between;
@@ -171,12 +191,10 @@
     width: 100%;
     margin-bottom: 15px;
 }
-
 #setup-screen .setup-actions {
     display: flex;
     gap: 10px;
 }
-
 #setup-screen .player-setup:nth-child(1) { border-color: var(--player1-color); }
 #setup-screen .player-setup:nth-child(1) h4 { color: var(--player1-color); }
 #setup-screen .player-setup:nth-child(2) { border-color: var(--player2-color); }
@@ -189,7 +207,6 @@
 #setup-screen .player-setup:nth-child(5) h4 { color: var(--player5-color); }
 #setup-screen .player-setup:nth-child(6) { border-color: var(--player6-color); }
 #setup-screen .player-setup:nth-child(6) h4 { color: var(--player6-color); }
-
 #info-sheet-modal .modal-content {
     max-width: 800px;
     display: flex;
@@ -223,7 +240,6 @@
     bottom: 20px;
     right: 30px;
 }
-
 #manage-property-modal .modal-content {
     max-width: 700px;
 }
@@ -246,7 +262,6 @@
 .property-list-item:last-child {
     border-bottom: none;
 }
-
 #about-modal .modal-content {
     max-width: 850px;
     text-align: left;
