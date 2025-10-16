@@ -3,6 +3,7 @@ import * as state from './state.js';
 import * as ui from './ui.js';
 import * as actions from './actions.js';
 import { movePlayer } from './gameLogic.js';
+import * as bot from './bot.js';
 
 function handlePropertyLanding(player, space) {
     if (space.owner === null) { // Unowned
@@ -184,7 +185,7 @@ function selectPropertyForBonus(player) {
 
 function drawChanceCard(player) {
     const moneyScale = state.gameSettings.startingMoney / 15000;
-    
+
     const lotteryWin = Math.round(1000 * moneyScale);
     const roadRepairCost = Math.round(player.properties.length * 250 * moneyScale);
     const dividend = Math.round(500 * moneyScale);
@@ -230,6 +231,13 @@ export function handleSpaceLanding() {
     const player = state.players[state.currentPlayerIndex];
     const space = state.boardSpaces[player.position];
     console.log(`${player.name} เดินมาตกที่ช่อง "${space.name}"`);
+
+    // --- ตรวจสอบว่าเป็นบอทหรือไม่ ---
+    if(player.isBot) {
+        bot.handleBotLanding(player, space);
+        return;
+    }
+    // --- จบส่วนของบอท ---
 
     switch (space.type) {
         case 'property':
