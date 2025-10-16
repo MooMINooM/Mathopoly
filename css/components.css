@@ -9,14 +9,14 @@
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    min-height: 120px; /* กำหนดความสูงขั้นต่ำ */
+    min-height: 120px;
 }
 .player-info.active {
     box-shadow: 0 0 20px var(--player-color);
     transform: translateY(-4px);
     border-color: var(--player-color);
 }
-.player-info.empty { /* Style สำหรับการ์ดผู้เล่นที่ว่าง */
+.player-info.empty {
     background-color: rgba(255, 255, 255, 0.5);
     border: 2px dashed rgba(0,0,0,0.1);
     box-shadow: none;
@@ -50,6 +50,17 @@
 .player-money {
     font-size: 1em;
     font-weight: 700;
+}
+.player-career {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--primary-color);
+    background-color: #e8f5e9;
+    padding: 2px 6px;
+    border-radius: 5px;
+    margin: 4px 0;
+    text-align: center;
+    cursor: help;
 }
 .player-status {
     font-size: 0.75em;
@@ -182,7 +193,6 @@
 #action-buttons button.danger, .modal-content button.danger { background-color: var(--danger-color); }
 #action-buttons button.danger:hover, .modal-content button.danger:hover { background-color: #e53935; }
 
-/* ... (โค้ดที่เหลือเหมือนเดิม) ... */
 .level-badge {
     position: absolute;
     top: 2px;
@@ -202,6 +212,7 @@
 .level-1 { background-color: #4caf50; }
 .level-2 { background-color: #ffeb3b; color: #333; }
 .level-3 { background-color: #f44336; }
+
 #summary-table {
     width: 100%;
     margin-top: 20px;
