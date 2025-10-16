@@ -1,9 +1,10 @@
 // js/gameLogic.js
 import * as state from './state.js';
-import * as ui from './ui.js';
 import * as actions from './actions.js';
 import { handleSpaceLanding } from './spaceHandlers.js';
 import * as bot from './bot.js';
+import { addLogMessage } from './logger.js';
+import { updatePlayerInfo, disableGameActions, showActionModal, hideActionModal, enableTurnActions, updateDice, enableEndTurnButton, showSummary } from './ui.js';
 
 export function startTurn() {
     const player = state.players[state.currentPlayerIndex];
@@ -12,66 +13,62 @@ export function startTurn() {
         return;
     }
 
-    ui.updatePlayerInfo();
-    console.log(`--- ตาของ ${player.name} ---`);
+    updatePlayerInfo();
+    addLogMessage(`--- ตาของ <strong>${player.name}</strong> ---`);
 
-    // --- START: ตรรกะใหม่สำหรับบอทที่ติดเกาะ ---
     if (player.isBot) {
         if (player.inJailTurns > 0) {
-            if (player.getOutOfJailFree > 0 && Math.random() < 0.8) { // 80% ที่จะใช้การ์ด
+            if (player.getOutOfJailFree > 0 && Math.random() < 0.8) {
                 player.getOutOfJailFree--;
                 player.inJailTurns = 0;
-                console.log(`Bot ${player.name} ใช้การ์ดออกจากเกาะร้างฟรี!`);
-                ui.updatePlayerInfo();
-                bot.makeBotDecision(player); // เล่นตาปกติ
+                addLogMessage(`<strong>${player.name}</strong> ใช้การ์ดออกจากเกาะร้างฟรี!`);
+                updatePlayerInfo();
+                bot.makeBotDecision(player);
             } else {
                 player.inJailTurns--;
-                console.log(`Bot ${player.name} ยังคงติดอยู่บนเกาะร้าง`);
-                finishTurn(); // จบตา
+                addLogMessage(`<strong>${player.name}</strong> ยังติดอยู่บนเกาะ (เหลือ ${player.inJailTurns} ตา)`);
+                finishTurn();
             }
             return;
         }
-        // ถ้าไม่ติดเกาะ ก็เล่นตามปกติ
-        ui.disableGameActions();
+        disableGameActions();
         bot.makeBotDecision(player);
         return;
     }
-    // --- END: ตรรกะใหม่สำหรับบอทที่ติดเกาะ ---
 
     if (player.inJailTurns > 0) {
         if (player.getOutOfJailFree > 0) {
-            ui.showActionModal(
+            showActionModal(
                 'ติดเกาะร้าง!',
                 `คุณมีการ์ดนางฟ้า ${player.getOutOfJailFree} ใบ ต้องการใช้เพื่อออกจากเกาะหรือไม่?`,
                 [
                     { text: 'ใช้การ์ด', callback: () => {
                         player.getOutOfJailFree--;
                         player.inJailTurns = 0;
-                        console.log(`${player.name} ใช้การ์ดนางฟ้าเพื่อออกจากเกาะ`);
-                        ui.hideActionModal();
-                        ui.enableTurnActions();
+                        addLogMessage(`<strong>${player.name}</strong> ใช้การ์ดออกจากเกาะร้างฟรี!`);
+                        hideActionModal();
+                        enableTurnActions();
                     }},
                     { text: 'ไม่ใช้ (ข้ามตา)', className: 'danger', callback: () => {
                         player.inJailTurns--;
-                        console.log(`${player.name} เลือกที่จะติดเกาะต่อ`);
-                        ui.hideActionModal();
+                        addLogMessage(`<strong>${player.name}</strong> ยังติดอยู่บนเกาะ (เหลือ ${player.inJailTurns} ตา)`);
+                        hideActionModal();
                         setTimeout(() => endTurn(), 500);
                     }}
                 ]
             );
         } else {
-            console.log(`${player.name} ติดอยู่บนเกาะร้าง! ต้องข้ามตานี้`);
             player.inJailTurns--;
-            ui.disableGameActions();
+            addLogMessage(`<strong>${player.name}</strong> ติดเกาะ! (เหลือ ${player.inJailTurns} ตา)`);
+            disableGameActions();
             setTimeout(() => {
-                console.log(`${player.name} ถูกข้ามตา`);
                 endTurn();
             }, 1500);
         }
         return;
     }
     
-    ui.enableTurnActions();
+    enableTurnActions();
 }
 
 export function endTurn() {
@@ -79,7 +76,6 @@ export function endTurn() {
     if (currentPlayer.loan && !currentPlayer.bankrupt) {
         currentPlayer.loan.roundsLeft--;
         if (currentPlayer.loan.roundsLeft <= 0) {
-            console.log(`${currentPlayer.name} ถึงกำหนดชำระหนี้ ฿${currentPlayer.loan.amount.toLocaleString()}`);
             actions.changePlayerMoney(currentPlayer, -currentPlayer.loan.amount, "ชำระหนี้");
             if(currentPlayer.bankrupt) return;
             currentPlayer.loan = null;
@@ -88,7 +84,7 @@ export function endTurn() {
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
     if (activePlayers.length <= 1) {
-        ui.showSummary();
+        showSummary();
         return;
     }
 
@@ -108,7 +104,7 @@ export function finishTurn() {
             endTurn();
         }, 1200);
     } else {
-        ui.enableEndTurnButton();
+        enableEndTurnButton();
     }
 }
 
@@ -118,7 +114,7 @@ export async function movePlayer(steps) {
 
     for (let i = 0; i < steps; i++) {
         player.position = (player.position + 1) % state.gameSettings.totalSpaces;
-        ui.updatePawnPosition(player);
+        actions.updatePawnPosition(player);
         if (player.position === 0) {
             passedGo = true;
         }
@@ -133,14 +129,13 @@ export async function movePlayer(steps) {
 }
 
 export function rollDice() {
-    ui.disableGameActions();
+    disableGameActions();
     
     const d1 = Math.floor(Math.random() * 6) + 1;
     const d2 = Math.floor(Math.random() * 6) + 1;
     state.setCurrentDiceRoll([d1, d2]);
 
-    ui.updateDice(d1, d2);
-
-    console.log(`${state.players[state.currentPlayerIndex].name} ทอยได้ ${d1} + ${d2} = ${d1 + d2}`);
+    updateDice(d1, d2);
+    addLogMessage(`<strong>${state.players[state.currentPlayerIndex].name}</strong> ทอยได้ ${d1} + ${d2} = ${d1 + d2}`);
     movePlayer(d1 + d2);
 }
