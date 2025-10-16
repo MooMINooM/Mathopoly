@@ -14,6 +14,24 @@ const managePropertyBtn = document.getElementById('manage-property-btn');
 const questionModal = document.getElementById('question-modal');
 const actionModal = document.getElementById('action-modal');
 const managePropertyModal = document.getElementById('manage-property-modal');
+const gameLogList = document.getElementById('game-log-list');
+const MAX_LOG_MESSAGES = 40;
+
+// --- START: ฟังก์ชันใหม่สำหรับ Game Log ---
+export function addLogMessage(message) {
+    if (!gameLogList) return;
+
+    const logItem = document.createElement('li');
+    logItem.innerHTML = message; // ใช้ innerHTML เพื่อให้ใส่ <strong> ได้
+
+    gameLogList.prepend(logItem); // เพิ่มข้อความใหม่ไว้บนสุด
+
+    // จำกัดจำนวนข้อความในประวัติ
+    while (gameLogList.children.length > MAX_LOG_MESSAGES) {
+        gameLogList.removeChild(gameLogList.lastChild);
+    }
+}
+// --- END: ฟังก์ชันใหม่สำหรับ Game Log ---
 
 // --- UI Update Functions ---
 export function updateAllUI() {
@@ -21,7 +39,7 @@ export function updateAllUI() {
     updateBoardUI();
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
-
+// ... (โค้ดส่วนที่เหลือของ ui.js เหมือนเดิม) ...
 export function updatePlayerInfo() {
     playerInfoContainer.innerHTML = '';
 
