@@ -32,15 +32,17 @@ export function updateAllUI() {
 
 // --- START: แก้ไขฟังก์ชัน updatePlayerInfo ---
 export function updatePlayerInfo() {
-    const topLeftContainer = document.getElementById('player-info-top-left');
-    const topRightContainer = document.getElementById('player-info-top-right');
+    const col1 = document.getElementById('player-info-col-1');
+    const col2 = document.getElementById('player-info-col-2');
+    const col3 = document.getElementById('player-info-col-3');
     
-    topLeftContainer.innerHTML = '';
-    topRightContainer.innerHTML = '';
+    col1.innerHTML = '';
+    col2.innerHTML = '';
+    col3.innerHTML = '';
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
 
-    activePlayers.forEach((player, index) => {
+    activePlayers.forEach(player => {
         const playerDiv = document.createElement('div');
         playerDiv.className = 'player-info';
         if (player.id === state.currentPlayerIndex) {
@@ -70,11 +72,13 @@ export function updatePlayerInfo() {
             </div>
         `;
 
-        // แบ่งผู้เล่น 1-3 ไปซ้าย, 4-6 ไปขวา
-        if (player.id < 3) {
-            topLeftContainer.appendChild(playerDiv);
+        // แบ่งผู้เล่นลง 3 คอลัมน์ คอลัมน์ละ 2 คน
+        if (player.id < 2) {
+            col1.appendChild(playerDiv);
+        } else if (player.id < 4) {
+            col2.appendChild(playerDiv);
         } else {
-            topRightContainer.appendChild(playerDiv);
+            col3.appendChild(playerDiv);
         }
     });
 }
