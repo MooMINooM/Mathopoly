@@ -100,6 +100,7 @@ function startGame() {
     playerInputs.forEach((inputEl, index) => {
         const nameInput = inputEl.querySelector('.player-name-input');
         const difficultySelect = inputEl.querySelector('.player-difficulty-select');
+        const typeSelect = inputEl.querySelector('.player-type-select');
         const playerName = nameInput.value.trim();
 
         if (playerName !== '' && (index < 2 || playerName !== nameInput.placeholder)) {
@@ -116,6 +117,7 @@ function startGame() {
                 loan: null,
                 getOutOfJailFree: 0,
                 bankrupt: false,
+                isBot: typeSelect.value === 'bot',
                 color: `var(--player${newPlayers.length + 1}-color)`
             });
         }
