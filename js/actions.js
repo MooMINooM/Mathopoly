@@ -1,20 +1,24 @@
 // js/actions.js
 import * as state from './state.js';
-import * as ui from './ui.js';
-import { finishTurn } from './gameLogic.js'; // <-- เพิ่ม import
+import { finishTurn } from './gameLogic.js';
+import * as bot from './bot.js';
+import { addLogMessage } from './logger.js';
+import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal } from './ui.js';
 
-// --- Helper & Financial Functions ---
 export function changePlayerMoney(player, amount, reason) {
     player.money += amount;
     player.money = Math.round(player.money);
-    console.log(`${player.name} ${amount > 0 ? 'ได้รับ' : 'เสีย'}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})`);
+    
+    const action = amount > 0 ? 'ได้รับ' : 'เสีย';
+    const color = amount > 0 ? 'green' : 'red';
+    addLogMessage(`<span style="color: ${color};"><strong>${player.name}</strong> ${action}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})</span>`);
 
     if (player.money < 0) {
         handleDebt(player);
     }
-    ui.updatePlayerInfo();
+    updatePlayerInfo();
 }
-
+//... (โค้ดที่เหลือใน actions.js เหมือนเดิมจากคำตอบที่แล้ว แต่ให้แน่ใจว่า import ถูกต้องตามนี้)
 function handleDebt(player) {
     const totalAssetValue = player.properties.reduce((sum, pId) => {
         return sum + (state.boardSpaces[pId].investment * 0.6);
@@ -27,13 +31,13 @@ function handleDebt(player) {
             bot.manageBotAssets(player);
         } else {
             state.setForcedToSell(true);
-            ui.showManagePropertyModal(true);
+            showManagePropertyModal(true);
         }
     }
 }
 
 function handleBankruptcy(player) {
-    console.log(`!!! ${player.name} ล้มละลาย! !!!`);
+    addLogMessage(`<span style="color: red; font-weight: bold;">!!! ${player.name} ล้มละลาย! !!!</span>`);
     player.bankrupt = true;
     player.money = 0;
     player.properties.forEach(pId => {
@@ -47,13 +51,13 @@ function handleBankruptcy(player) {
     const pawn = document.getElementById(`pawn-${player.id}`);
     if (pawn) pawn.style.display = 'none';
 
-    ui.updateAllUI();
+    updateAllUI();
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
     if (activePlayers.length <= 1) {
         ui.showSummary();
     } else {
-        finishTurn(); // <-- เปลี่ยน
+        finishTurn();
     }
 }
 
@@ -72,56 +76,54 @@ export function calculateExpansionCost(space) {
     return 0;
 }
 
-// --- Player Actions ---
 export function buyProperty(player, space) {
     changePlayerMoney(player, -space.price, `ซื้อ ${space.name}`);
-    if(player.bankrupt) { ui.hideActionModal(); return; }
+    if(player.bankrupt) { hideActionModal(); return; }
     space.owner = player.id;
     space.level = 1;
     space.investment = space.price;
     player.properties.push(space.id);
-    console.log(`${player.name} ซื้อ ${space.name} ในราคา ฿${space.price.toLocaleString()}`);
-    ui.hideActionModal();
-    ui.updateAllUI();
-    finishTurn(); // <-- เปลี่ยน
+    hideActionModal();
+    updateAllUI();
+    finishTurn();
 }
 
 export function expandProperty(player, space) {
     const cost = calculateExpansionCost(space);
     changePlayerMoney(player, -cost, `ขยาย ${space.name}`);
-    if(player.bankrupt) { ui.hideActionModal(); return; }
+    if(player.bankrupt) { hideActionModal(); return; }
     space.investment += cost;
     space.level++;
-    console.log(`${player.name} ขยาย ${space.name} ระดับ ${space.level} ในราคา ฿${cost.toLocaleString()}`);
-    ui.hideActionModal();
-    ui.updateAllUI();
-    finishTurn(); // <-- เปลี่ยน
+    hideActionModal();
+    updateAllUI();
+    finishTurn();
 }
 
 export function payRent(player, owner, rent) {
-    ui.hideActionModal();
+    hideActionModal();
     changePlayerMoney(player, -rent, `จ่ายค่าผ่านทางให้ ${owner.name}`);
     if(player.bankrupt) return;
     changePlayerMoney(owner, rent, `รับค่าผ่านทางจาก ${player.name}`);
-    finishTurn(); // <-- เปลี่ยน
+    finishTurn();
 }
 
 export function buyOutProperty(player, owner, space) {
-    ui.hideActionModal();
+    hideActionModal();
     const price = calculateBuyoutPrice(space);
+    
+    addLogMessage(`<strong>${player.name}</strong> ซื้อ <strong>${space.name}</strong> ต่อจาก <strong>${owner.name}</strong>`);
 
-    changePlayerMoney(player, -price, `ซื้อต่อ ${space.name} จาก ${owner.name}`);
+    changePlayerMoney(player, -price, `ซื้อต่อ ${space.name}`);
     if(player.bankrupt) return;
 
-    changePlayerMoney(owner, price, `ขาย ${space.name} ให้ ${player.name}`);
+    changePlayerMoney(owner, price, `ขาย ${space.name}`);
     owner.properties = owner.properties.filter(pId => pId !== space.id);
 
     space.owner = player.id;
     player.properties.push(space.id);
 
-    console.log(`${player.name} ซื้อ ${space.name} ต่อจาก ${owner.name} ในราคา ฿${price.toLocaleString()}`);
-    ui.updateAllUI();
-    finishTurn(); // <-- เปลี่ยน
+    updateAllUI();
+    finishTurn();
 }
 
 export function sellProperty(player, pId) {
@@ -135,17 +137,15 @@ export function sellProperty(player, pId) {
     space.investment = 0;
     player.properties = player.properties.filter(id => id !== pId);
 
-    console.log(`${player.name} ขาย ${space.name} ได้เงิน ฿${sellPrice.toLocaleString()}`);
-
-    ui.updateAllUI();
+    updateAllUI();
 
     if (state.isForcedToSell && player.money >= 0) {
         state.setForcedToSell(false);
-        console.log("ชำระหนี้สำเร็จแล้ว!");
-        ui.hideManagePropertyModal();
-        finishTurn(); // <-- เปลี่ยน
+        addLogMessage(`<strong>${player.name}</strong> ชำระหนี้สำเร็จแล้ว!`);
+        hideManagePropertyModal();
+        finishTurn();
     } else {
-        ui.showManagePropertyModal(state.isForcedToSell);
+        showManagePropertyModal(state.isForcedToSell);
     }
 }
 
@@ -156,6 +156,7 @@ export function takeLoan(player) {
         roundsLeft: 10
     };
     changePlayerMoney(player, amount, "กู้เงิน");
-    console.log(`${player.name} กู้เงิน ฿${amount.toLocaleString()}. ต้องคืนใน 10 ตา`);
-    ui.showManagePropertyModal();
+    showManagePropertyModal();
 }
+// เพิ่มฟังก์ชัน updatePawnPosition ที่ gameLogic เรียกใช้
+export { updatePawnPosition } from './ui.js';
