@@ -145,13 +145,10 @@
     max-width: 350px;
 }
 
-#action-buttons button {
-    padding: 14px 10px;
-    font-size: 1em;
-    font-weight: 600;
-}
-/* ... (ส่วนที่เหลือของ components.css เหมือนเดิม) ... */
+/* --- START: ส่วนที่แก้ไข --- */
 #action-buttons button, .modal-content button {
+    padding: 12px 20px; /* เพิ่ม padding กลับเข้ามา */
+    font-size: 1em;
     font-family: 'Noto Sans Thai', sans-serif;
     border-radius: 8px;
     border: none;
@@ -160,7 +157,15 @@
     color: white;
     transition: background-color 0.2s, transform 0.2s;
     margin: 0;
+    font-weight: 600;
 }
+
+#action-buttons button {
+    padding: 14px 10px; /* Override สำหรับปุ่มใน control panel */
+}
+/* --- END: ส่วนที่แก้ไข --- */
+
+
 #action-buttons button:hover, .modal-content button:hover {
     background-color: #45a049;
     transform: translateY(-2px);
@@ -174,6 +179,7 @@
 #action-buttons button.secondary:hover, .modal-content button.secondary:hover { background-color: #1e88e5; }
 #action-buttons button.danger, .modal-content button.danger { background-color: var(--danger-color); }
 #action-buttons button.danger:hover, .modal-content button.danger:hover { background-color: #e53935; }
+
 .level-badge {
     position: absolute;
     top: 2px;
