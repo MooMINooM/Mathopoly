@@ -8,6 +8,10 @@ export let gameSettings = {
     startingMoney: 15000,
     passGoBonus: 2000,
     totalSpaces: 40,
+    // --- START: เพิ่มกฎพิเศษ ---
+    winByBelt: false,
+    winByCorners: false,
+    // --- END: เพิ่มกฎพิเศษ ---
 };
 export let currentDiceRoll = [0, 0];
 export let currentQuestion = null;
