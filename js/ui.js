@@ -1,9 +1,10 @@
 // js/ui.js
 import * as state from './state.js';
 import { generateQuestion } from './questions.js';
-import { calculateRent } from './utils.js'; // <-- แก้ไข Import
+import { calculateRent } from './utils.js';
+import { CAREERS } from './careers.js';
 
-// ... (โค้ดที่เหลือเหมือนเดิมทั้งหมด)
+// --- Logger Code (Moved to its own file but kept here for simplicity if needed) ---
 const MAX_LOG_MESSAGES = 40;
 
 export function addLogMessage(message) {
@@ -12,39 +13,52 @@ export function addLogMessage(message) {
         console.log("Log UI not ready:", message.replace(/<[^>]*>/g, ''));
         return;
     }
+
     const logItem = document.createElement('li');
     logItem.innerHTML = message;
     gameLogList.prepend(logItem);
+
     while (gameLogList.children.length > MAX_LOG_MESSAGES) {
         gameLogList.removeChild(gameLogList.lastChild);
     }
 }
+
+// --- UI Update Functions ---
 export function updateAllUI() {
     updatePlayerInfo();
     updateBoardUI();
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
+
 export function updatePlayerInfo() {
     const playerContainer = document.getElementById('player-info-container');
-    playerContainer.innerHTML = '';
+    playerContainer.innerHTML = ''; 
+
     for (let i = 0; i < 6; i++) {
         const player = state.players.find(p => p.id === i && !p.bankrupt);
         const playerDiv = document.createElement('div');
         playerDiv.className = 'player-info';
+
         if (player) {
             if (player.id === state.currentPlayerIndex) {
                 playerDiv.classList.add('active');
             }
             playerDiv.style.setProperty('--player-color', player.color);
+
             let statusHTML = '';
             if (player.inJailTurns > 0) statusHTML += `<span>ติดเกาะร้าง</span>`;
             if (player.loan) statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
             if (player.getOutOfJailFree > 0) statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
+
+            const career = CAREERS[player.career];
+            const careerHTML = state.gameSettings.careerMode ? `<div class="player-career" title="${career.description}">${career.name}</div>` : '';
+
             playerDiv.innerHTML = `
                 <div class="player-header">
                     <h3>${player.name}</h3>
                     <span class="player-money">฿${player.money.toLocaleString()}</span>
                 </div>
+                ${careerHTML} 
                 <div class="player-properties">
                     <span>เมือง: ${player.properties.length} แห่ง</span>
                 </div>
@@ -56,6 +70,7 @@ export function updatePlayerInfo() {
         playerContainer.appendChild(playerDiv);
     }
 }
+
 export function updateBoardUI() {
     state.boardSpaces.forEach(space => {
         if (space.type === 'property') {
@@ -63,6 +78,7 @@ export function updateBoardUI() {
             const spaceInfo = spaceEl.querySelector('.space-info');
             const priceEl = spaceEl.querySelector('.space-price');
             const levelBadgeContainer = spaceEl.querySelector('.level-badge-container');
+
             if (space.owner !== null) {
                 const owner = state.players[space.owner];
                 spaceInfo.style.backgroundColor = owner.color;
@@ -72,6 +88,7 @@ export function updateBoardUI() {
                    spaceInfo.style.color = 'white';
                 }
                 priceEl.textContent = `฿${calculateRent(space).toLocaleString()}`;
+
                 levelBadgeContainer.innerHTML = '';
                 if(space.level > 1) {
                     const levelBadge = document.createElement('div');
@@ -88,38 +105,50 @@ export function updateBoardUI() {
         }
     });
 }
+
 export function updatePawnPosition(player) {
     const pawn = document.getElementById(`pawn-${player.id}`);
     const spaceEl = document.getElementById(`space-${player.position}`);
     if (!pawn || !spaceEl) return;
+
     const pawnOffset = player.id * 5;
     pawn.style.left = `${spaceEl.offsetLeft + pawnOffset}px`;
     pawn.style.top = `${spaceEl.offsetTop + pawnOffset}px`;
 }
+
 export function updateDice(d1, d2) {
     document.getElementById('dice1').textContent = d1;
     document.getElementById('dice2').textContent = d2;
 }
+
+
+// --- Action Button Controls ---
 export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = false;
 }
+
 export function disableGameActions() {
     document.getElementById('roll-dice-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = true;
     document.getElementById('end-turn-btn').disabled = true;
 }
+
 export function enableEndTurnButton() {
     document.getElementById('roll-dice-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = false;
 }
+
+
+// --- Modal Controls ---
 export function showActionModal(title, text, buttons, isError = false) {
     const actionModal = document.getElementById('action-modal');
     const titleEl = document.getElementById('action-title');
     titleEl.textContent = title;
     titleEl.className = isError ? 'danger' : '';
+
     document.getElementById('action-text').textContent = text;
     const buttonsContainer = document.getElementById('action-modal-buttons');
     buttonsContainer.innerHTML = '';
@@ -137,9 +166,11 @@ export function showActionModal(title, text, buttons, isError = false) {
     });
     actionModal.style.display = 'flex';
 }
+
 export function hideActionModal() {
     document.getElementById('action-modal').style.display = 'none';
 }
+
 export function showQuestionModalForPurchase(player, title) {
     const questionModal = document.getElementById('question-modal');
     const question = generateQuestion(player.difficulty);
@@ -152,6 +183,7 @@ export function showQuestionModalForPurchase(player, title) {
     questionModal.style.display = 'flex';
     document.getElementById('question-answer').focus();
 }
+
 export function showInfoSheet(spaceData) {
     if (!spaceData.mathematician) return;
     document.getElementById('info-sheet-name').textContent = spaceData.mathematician.fullName;
@@ -161,6 +193,7 @@ export function showInfoSheet(spaceData) {
     document.getElementById('info-sheet-img').src = spaceData.mathematician.img;
     document.getElementById('info-sheet-modal').style.display = 'flex';
 }
+
 export function showSummary() {
     const summaryBody = document.getElementById('summary-body');
     summaryBody.innerHTML = '';
@@ -191,6 +224,7 @@ export function showSummary() {
     });
     document.getElementById('summary-modal').style.display = 'flex';
 }
+
 export function showInsufficientFundsModal(onCloseCallback) {
     showActionModal(
         "เงินไม่พอ!",
@@ -207,9 +241,11 @@ export function showInsufficientFundsModal(onCloseCallback) {
         ]
     );
 }
+
 export function hideManagePropertyModal() {
     document.getElementById('manage-property-modal').style.display = 'none';
 }
+
 export function showManagePropertyModal(isForced = false) {
     const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
