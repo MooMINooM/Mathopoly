@@ -15,13 +15,11 @@ export function startTurn() {
     ui.updatePlayerInfo();
     console.log(`--- ตาของ ${player.name} ---`);
 
-    // --- ตรวจสอบว่าเป็นบอทหรือไม่ ---
     if (player.isBot) {
-        ui.disableGameActions(); // ปิดปุ่มทั้งหมดสำหรับบอท
+        ui.disableGameActions();
         bot.makeBotDecision(player);
         return;
     }
-    // --- จบส่วนของบอท ---
 
     if (player.inJailTurns > 0) {
         if (player.getOutOfJailFree > 0) {
@@ -55,7 +53,7 @@ export function startTurn() {
         }
         return;
     }
-
+    
     ui.enableTurnActions();
 }
 
@@ -81,9 +79,23 @@ export function endTurn() {
     do {
         nextPlayerIndex = (nextPlayerIndex + 1) % state.players.length;
     } while (state.players[nextPlayerIndex].bankrupt)
-
+    
     state.setCurrentPlayerIndex(nextPlayerIndex);
     startTurn();
+}
+
+// --- ฟังก์ชันใหม่ที่เพิ่มเข้ามา ---
+export function finishTurn() {
+    const player = state.players[state.currentPlayerIndex];
+    if (player.isBot) {
+        // บอทจะจบตาโดยอัตโนมัติหลังจากแอคชั่นเสร็จสิ้น
+        setTimeout(() => {
+            endTurn();
+        }, 1200); // หน่วงเวลาเล็กน้อยเพื่อให้เห็นผลลัพธ์
+    } else {
+        // สำหรับผู้เล่นปกติ จะเป็นการเปิดปุ่มให้กดจบตา
+        ui.enableEndTurnButton();
+    }
 }
 
 export async function movePlayer(steps) {
@@ -96,7 +108,7 @@ export async function movePlayer(steps) {
         if (player.position === 0) {
             passedGo = true;
         }
-        await new Promise(resolve => setTimeout(resolve, player.isBot ? 100 : 200)); // บอทเดินเร็วขึ้น
+        await new Promise(resolve => setTimeout(resolve, player.isBot ? 100 : 200));
     }
 
     if (passedGo) {
@@ -108,7 +120,7 @@ export async function movePlayer(steps) {
 
 export function rollDice() {
     ui.disableGameActions();
-
+    
     const d1 = Math.floor(Math.random() * 6) + 1;
     const d2 = Math.floor(Math.random() * 6) + 1;
     state.setCurrentDiceRoll([d1, d2]);
