@@ -93,23 +93,35 @@ function createPlayerPawns() {
     }
 }
 
+// ===== startGame function (MODIFIED) =====
 function startGame() {
     const playerInputs = document.querySelectorAll('.player-setup');
     const newPlayers = [];
+    let aiCount = 0;
 
-    playerInputs.forEach((inputEl, index) => {
+    playerInputs.forEach((inputEl) => {
         const nameInput = inputEl.querySelector('.player-name-input');
         const difficultySelect = inputEl.querySelector('.player-difficulty-select');
+        const typeSelect = inputEl.querySelector('.player-type-select');
         const playerName = nameInput.value.trim();
+        const playerType = typeSelect.value;
 
-        if (playerName !== '' && (index < 2 || playerName !== nameInput.placeholder)) {
-             newPlayers.push({
+        // เงื่อนไขใหม่: เพิ่มผู้เล่นถ้ามีชื่อ หรือเป็น AI
+        if (playerName !== '' || playerType === 'ai') {
+            let finalName = playerName;
+            if (playerType === 'ai' && playerName === '') {
+                aiCount++;
+                finalName = `คอมพิวเตอร์ ${aiCount}`;
+            }
+
+            newPlayers.push({
                 id: newPlayers.length,
-                name: playerName,
+                name: finalName,
                 money: parseInt(document.getElementById('starting-money').value),
                 position: 0,
                 properties: [],
                 difficulty: difficultySelect.value,
+                isAI: playerType === 'ai', // <-- เพิ่ม property นี้เพื่อระบุว่าเป็น AI
                 correctAnswers: 0,
                 totalQuestions: 0,
                 inJailTurns: 0,
@@ -120,9 +132,10 @@ function startGame() {
             });
         }
     });
-
-    if (newPlayers.length < 2) {
-        ui.showActionModal("ผู้เล่นไม่พอ", "กรุณากรอกชื่อผู้เล่นอย่างน้อย 2 คน", [{ text: 'ตกลง', callback: ui.hideActionModal }], true);
+    
+    // เงื่อนไขใหม่: เล่นคนเดียวได้ถ้ามี AI
+    if (newPlayers.length < 1) {
+        ui.showActionModal("ผู้เล่นไม่พอ", "กรุณาตั้งค่าผู้เล่นอย่างน้อย 1 คน (สามารถเป็นคนหรือ AI ก็ได้)", [{ text: 'ตกลง', callback: ui.hideActionModal }], true);
         return;
     }
     
@@ -140,7 +153,7 @@ function startGame() {
         ui.updateAllUI();
         state.setCurrentPlayerIndex(0);
         console.log(`เกมเริ่มต้นแล้ว! ตาของ ${state.players[0].name}`);
-        startTurn();
+        startTurn(); // เริ่มตาแรก (เราจะไปแก้ไฟล์ gameLogic.js ต่อ)
     }, 50);
 }
 
@@ -168,5 +181,4 @@ export function initializeGameSetup() {
     document.getElementById('close-about-btn').addEventListener('click', () => {
         document.getElementById('about-modal').style.display = 'none';
     });
-
 }
