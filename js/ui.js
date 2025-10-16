@@ -59,13 +59,10 @@ export function updatePlayerInfo() {
                 <div class="player-properties">
                     <span>เมือง: ${player.properties.length} แห่ง</span>
                 </div>
-                <div class="player-status">${statusHTML || '&nbsp;'}</div>
-            `;
+                <div class="player-status">${statusHTML || ' '}</div> `;
         } else {
             // สร้างการ์ดว่างสำหรับช่องที่ไม่มีผู้เล่น
             playerDiv.classList.add('empty');
-            playerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-            playerDiv.style.borderStyle = 'dashed';
         }
         playerContainer.appendChild(playerDiv);
     }
@@ -129,19 +126,16 @@ export function enableTurnActions() {
     document.getElementById('end-turn-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = false;
 }
-
 export function disableGameActions() {
     document.getElementById('roll-dice-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = true;
     document.getElementById('end-turn-btn').disabled = true;
 }
-
 export function enableEndTurnButton() {
     document.getElementById('roll-dice-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = false;
 }
-
 export function showActionModal(title, text, buttons, isError = false) {
     const actionModal = document.getElementById('action-modal');
     const titleEl = document.getElementById('action-title');
@@ -165,11 +159,9 @@ export function showActionModal(title, text, buttons, isError = false) {
     });
     actionModal.style.display = 'flex';
 }
-
 export function hideActionModal() {
     document.getElementById('action-modal').style.display = 'none';
 }
-
 export function showQuestionModalForPurchase(player, title) {
     const questionModal = document.getElementById('question-modal');
     const question = generateQuestion(player.difficulty);
@@ -182,7 +174,6 @@ export function showQuestionModalForPurchase(player, title) {
     questionModal.style.display = 'flex';
     document.getElementById('question-answer').focus();
 }
-
 export function showInfoSheet(spaceData) {
     if (!spaceData.mathematician) return;
     document.getElementById('info-sheet-name').textContent = spaceData.mathematician.fullName;
@@ -192,7 +183,6 @@ export function showInfoSheet(spaceData) {
     document.getElementById('info-sheet-img').src = spaceData.mathematician.img;
     document.getElementById('info-sheet-modal').style.display = 'flex';
 }
-
 export function showSummary() {
     const summaryBody = document.getElementById('summary-body');
     summaryBody.innerHTML = '';
@@ -223,7 +213,6 @@ export function showSummary() {
     });
     document.getElementById('summary-modal').style.display = 'flex';
 }
-
 export function showInsufficientFundsModal(onCloseCallback) {
     showActionModal(
         "เงินไม่พอ!",
@@ -240,11 +229,9 @@ export function showInsufficientFundsModal(onCloseCallback) {
         ]
     );
 }
-
 export function hideManagePropertyModal() {
     document.getElementById('manage-property-modal').style.display = 'none';
 }
-
 export function showManagePropertyModal(isForced = false) {
     const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
