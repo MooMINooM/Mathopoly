@@ -150,23 +150,20 @@ function startGame() {
 export function initializeGameSetup() {
     document.querySelector('.game-container').style.display = 'none';
 
-    // --- START: แก้ไข Event Listeners ---
     // Main menu buttons
     document.getElementById('classic-mode-btn').addEventListener('click', () => {
         document.getElementById('setup-title').textContent = 'ตั้งค่าเกม - โหมดคลาสสิค';
-        // TODO: ในอนาคตจะซ่อน/ตั้งค่าโหมดพิเศษตรงนี้
         document.getElementById('splash-screen').style.display = 'none';
         document.getElementById('setup-screen').style.display = 'flex';
     });
     
     document.getElementById('custom-mode-btn').addEventListener('click', () => {
         document.getElementById('setup-title').textContent = 'ตั้งค่าเกม - โหมดปรับแต่ง';
-        // TODO: ในอนาคตจะแสดงตัวเลือกโหมดพิเศษตรงนี้
         document.getElementById('splash-screen').style.display = 'none';
         document.getElementById('setup-screen').style.display = 'flex';
     });
     
-     document.getElementById('show-about-btn').addEventListener('click', () => {
+    document.getElementById('show-about-btn').addEventListener('click', () => {
         document.getElementById('about-modal').style.display = 'flex';
     });
 
@@ -176,8 +173,6 @@ export function initializeGameSetup() {
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('splash-screen').style.display = 'flex';
     });
-    // --- END: แก้ไข Event Listeners ---
-
 
     // About modal button
     document.getElementById('close-about-btn').addEventListener('click', () => {
