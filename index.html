@@ -32,6 +32,20 @@
     <div id="setup-screen" class="modal" style="display: none;">
         <div class="modal-content">
             <h2 id="setup-title">ตั้งค่าเกม</h2>
+            
+            <div id="special-rules-section" class="setup-section" style="display: none;">
+                <h4>กฎพิเศษ (เลือกได้มากกว่า 1 ข้อ)</h4>
+                <div class="special-rules-container">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="win-by-belt-check">
+                        <label for="win-by-belt-check">ชนะด้วย Monopoly Belt</label>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="win-by-corners-check">
+                        <label for="win-by-corners-check">ชนะด้วย Corner Dominance</label>
+                    </div>
+                </div>
+            </div>
             <div class="setup-section">
                 <div class="top-setup-row">
                     <div class="setting-row">
@@ -56,6 +70,7 @@
             </div>
         </div>
     </div>
+
     <div class="game-container" style="display: none;">
         <div id="game-board">
             <div id="control-panel">
