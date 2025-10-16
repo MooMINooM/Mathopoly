@@ -6,7 +6,7 @@ import { startTurn } from './gameLogic.js';
 function createBoard() {
     const boardElement = document.getElementById('game-board');
     const controlPanel = document.getElementById('control-panel');
-    
+
     if (state.boardSpaces.length > 0) return;
 
     boardElement.innerHTML = '';
@@ -127,7 +127,7 @@ function startGame() {
         ui.showActionModal("ผู้เล่นไม่พอ", "กรุณากรอกชื่อผู้เล่นอย่างน้อย 2 คน", [{ text: 'ตกลง', callback: ui.hideActionModal }], true);
         return;
     }
-    
+
     state.setPlayers(newPlayers);
     state.setGameStarted(true);
     state.setGameSetting('startingMoney', parseInt(document.getElementById('starting-money').value));
