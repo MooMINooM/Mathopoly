@@ -3,35 +3,22 @@ import * as state from './state.js';
 import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
 
-// --- DOM Elements ---
-const playerInfoContainer = document.getElementById('player-info-container');
-const boardElement = document.getElementById('game-board');
-const dice1El = document.getElementById('dice1');
-const dice2El = document.getElementById('dice2');
-const rollDiceBtn = document.getElementById('roll-dice-btn');
-const endTurnBtn = document.getElementById('end-turn-btn');
-const managePropertyBtn = document.getElementById('manage-property-btn');
-const questionModal = document.getElementById('question-modal');
-const actionModal = document.getElementById('action-modal');
-const managePropertyModal = document.getElementById('manage-property-modal');
-const gameLogList = document.getElementById('game-log-list');
 const MAX_LOG_MESSAGES = 40;
 
-// --- START: ฟังก์ชันใหม่สำหรับ Game Log ---
+// --- ฟังก์ชันสำหรับ Game Log (แก้ไขแล้ว) ---
 export function addLogMessage(message) {
+    const gameLogList = document.getElementById('game-log-list');
     if (!gameLogList) return;
 
     const logItem = document.createElement('li');
-    logItem.innerHTML = message; // ใช้ innerHTML เพื่อให้ใส่ <strong> ได้
+    logItem.innerHTML = message;
 
-    gameLogList.prepend(logItem); // เพิ่มข้อความใหม่ไว้บนสุด
+    gameLogList.prepend(logItem);
 
-    // จำกัดจำนวนข้อความในประวัติ
     while (gameLogList.children.length > MAX_LOG_MESSAGES) {
         gameLogList.removeChild(gameLogList.lastChild);
     }
 }
-// --- END: ฟังก์ชันใหม่สำหรับ Game Log ---
 
 // --- UI Update Functions ---
 export function updateAllUI() {
@@ -39,8 +26,9 @@ export function updateAllUI() {
     updateBoardUI();
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
-// ... (โค้ดส่วนที่เหลือของ ui.js เหมือนเดิม) ...
+
 export function updatePlayerInfo() {
+    const playerInfoContainer = document.getElementById('player-info-container');
     playerInfoContainer.innerHTML = '';
 
     if (state.players.filter(p => !p.bankrupt).length > 3) {
@@ -130,33 +118,32 @@ export function updatePawnPosition(player) {
 }
 
 export function updateDice(d1, d2) {
-    dice1El.textContent = d1;
-    dice2El.textContent = d2;
+    document.getElementById('dice1').textContent = d1;
+    document.getElementById('dice2').textContent = d2;
 }
-
 
 // --- Action Button Controls ---
 export function enableTurnActions() {
-    rollDiceBtn.disabled = false;
-    endTurnBtn.disabled = true;
-    managePropertyBtn.disabled = false;
+    document.getElementById('roll-dice-btn').disabled = false;
+    document.getElementById('end-turn-btn').disabled = true;
+    document.getElementById('manage-property-btn').disabled = false;
 }
 
 export function disableGameActions() {
-    rollDiceBtn.disabled = true;
-    managePropertyBtn.disabled = true;
-    endTurnBtn.disabled = true;
+    document.getElementById('roll-dice-btn').disabled = true;
+    document.getElementById('manage-property-btn').disabled = true;
+    document.getElementById('end-turn-btn').disabled = true;
 }
 
 export function enableEndTurnButton() {
-    rollDiceBtn.disabled = true;
-    managePropertyBtn.disabled = false;
-    endTurnBtn.disabled = false;
+    document.getElementById('roll-dice-btn').disabled = true;
+    document.getElementById('manage-property-btn').disabled = false;
+    document.getElementById('end-turn-btn').disabled = false;
 }
-
 
 // --- Modal Controls ---
 export function showActionModal(title, text, buttons, isError = false) {
+    const actionModal = document.getElementById('action-modal');
     const titleEl = document.getElementById('action-title');
     titleEl.textContent = title;
     titleEl.className = isError ? 'danger' : '';
@@ -180,10 +167,11 @@ export function showActionModal(title, text, buttons, isError = false) {
 }
 
 export function hideActionModal() {
-    actionModal.style.display = 'none';
+    document.getElementById('action-modal').style.display = 'none';
 }
 
 export function showQuestionModalForPurchase(player, title) {
+    const questionModal = document.getElementById('question-modal');
     const question = generateQuestion(player.difficulty);
     state.setCurrentQuestion(question);
     
@@ -254,10 +242,11 @@ export function showInsufficientFundsModal(onCloseCallback) {
 }
 
 export function hideManagePropertyModal() {
-    managePropertyModal.style.display = 'none';
+    document.getElementById('manage-property-modal').style.display = 'none';
 }
 
 export function showManagePropertyModal(isForced = false) {
+    const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
     const sellList = document.getElementById('sell-property-list');
     const financialActions = document.getElementById('financial-actions');
