@@ -55,46 +55,70 @@
     gap: 15px;
 }
 
+/* --- START: แก้ไข Splash Screen --- */
 #splash-screen {
-    background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
     background-size: cover;
     background-position: center;
     flex-direction: column;
-    justify-content: flex-end;
-    padding-bottom: 8vh;
+    justify-content: center; /* จัดกลาง */
 }
 .splash-content {
     text-align: center;
     animation: fade-in 1.5s ease-in-out;
 }
+.splash-title {
+    font-size: 4em;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    margin: 0;
+}
+.splash-subtitle {
+    font-size: 1.2em;
+    color: #eee;
+    text-shadow: 1px 1px 4px black;
+    margin: 0 0 40px 0;
+}
 .splash-buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
+    margin-bottom: 30px; /* เว้นระยะห่างจากปุ่ม About */
 }
 .splash-buttons button {
-    padding: 10px 20px;
+    padding: 12px 25px;
     font-size: 1.5em;
+    font-weight: 600;
     border-radius: 12px;
     border: 2px solid white;
     color: white;
     text-shadow: 1px 1px 3px black;
     transition: all 0.3s;
 }
-#show-setup-btn {
+#classic-mode-btn {
     background-color: var(--primary-color);
 }
-#show-setup-btn:hover {
+#classic-mode-btn:hover {
     background-color: #45a049;
     transform: translateY(-3px);
 }
-#show-about-btn {
+#custom-mode-btn {
     background-color: var(--accent-color);
 }
-#show-about-btn:hover {
+#custom-mode-btn:hover {
     background-color: #1e88e5;
     transform: translateY(-3px);
 }
+#show-about-btn {
+    background: transparent;
+    border: none;
+    color: #ddd;
+    text-decoration: underline;
+    font-size: 1em;
+    cursor: pointer;
+}
+/* --- END: แก้ไข Splash Screen --- */
+
 
 #setup-screen .modal-content {
     max-width: 800px;
