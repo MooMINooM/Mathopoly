@@ -1,6 +1,5 @@
 // js/state.js
 
-// --- Game State Variables ---
 export let players = [];
 export let boardSpaces = [];
 export let currentPlayerIndex = 0;
@@ -10,7 +9,8 @@ export let gameSettings = {
     totalSpaces: 40,
     winByBelt: false,
     winByCorners: false,
-    adjacencyBonus: false, // <-- เพิ่มบรรทัดนี้
+    adjacencyBonus: false,
+    careerMode: false, // <-- เพิ่มบรรทัดนี้
 };
 export let currentDiceRoll = [0, 0];
 export let currentQuestion = null;
@@ -19,7 +19,9 @@ export let onQuestionFail = null;
 export let isForcedToSell = false;
 export let isGameStarted = false;
 export let mathematicians = [];
-
+// --- START: เพิ่มตัวแปรสำหรับอาชีพ ---
+export let landlordBonusUsed = false; // สำหรับเจ้าสัวที่ดิน
+// --- END: เพิ่มตัวแปรสำหรับอาชีพ ---
 
 // --- Setter Functions ---
 export function setPlayers(newPlayers) { players = newPlayers; }
@@ -33,3 +35,4 @@ export function setOnQuestionFail(callback) { onQuestionFail = callback; }
 export function setForcedToSell(value) { isForcedToSell = value; }
 export function setGameStarted(value) { isGameStarted = value; }
 export function setMathematicians(data) { mathematicians = data; }
+export function setLandlordBonusUsed(value) { landlordBonusUsed = value; } // <-- เพิ่มบรรทัดนี้
