@@ -4,6 +4,7 @@ import * as ui from './ui.js';
 import { startTurn } from './gameLogic.js';
 
 function createBoard() {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     const boardElement = document.getElementById('game-board');
     const controlPanel = document.getElementById('control-panel');
     
@@ -81,6 +82,7 @@ function createBoard() {
 }
 
 function createPlayerPawns() {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     const boardElement = document.getElementById('game-board');
     document.querySelectorAll('.pawn').forEach(p => p.remove());
     for (let i = 0; i < state.players.length; i++) {
@@ -93,7 +95,14 @@ function createPlayerPawns() {
     }
 }
 
+// --- START: แก้ไขฟังก์ชัน startGame ---
 function startGame() {
+    // อ่านค่ากฎพิเศษ
+    const winByBelt = document.getElementById('win-by-belt-check').checked;
+    const winByCorners = document.getElementById('win-by-corners-check').checked;
+    state.setGameSetting('winByBelt', winByBelt);
+    state.setGameSetting('winByCorners', winByCorners);
+
     const playerInputs = document.querySelectorAll('.player-setup');
     const newPlayers = [];
 
@@ -145,7 +154,7 @@ function startGame() {
         startTurn();
     }, 50);
 }
-
+// --- END: แก้ไขฟังก์ชัน startGame ---
 
 export function initializeGameSetup() {
     document.querySelector('.game-container').style.display = 'none';
@@ -153,12 +162,14 @@ export function initializeGameSetup() {
     // Main menu buttons
     document.getElementById('classic-mode-btn').addEventListener('click', () => {
         document.getElementById('setup-title').textContent = 'ตั้งค่าเกม - โหมดคลาสสิค';
+        document.getElementById('special-rules-section').style.display = 'none'; // ซ่อนกฎพิเศษ
         document.getElementById('splash-screen').style.display = 'none';
         document.getElementById('setup-screen').style.display = 'flex';
     });
     
     document.getElementById('custom-mode-btn').addEventListener('click', () => {
         document.getElementById('setup-title').textContent = 'ตั้งค่าเกม - โหมดปรับแต่ง';
+        document.getElementById('special-rules-section').style.display = 'block'; // แสดงกฎพิเศษ
         document.getElementById('splash-screen').style.display = 'none';
         document.getElementById('setup-screen').style.display = 'flex';
     });
