@@ -3,7 +3,6 @@ import * as state from './state.js';
 import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
 
-// ... (logger code remains the same) ...
 const MAX_LOG_MESSAGES = 40;
 
 export function addLogMessage(message) {
@@ -15,7 +14,6 @@ export function addLogMessage(message) {
 
     const logItem = document.createElement('li');
     logItem.innerHTML = message;
-
     gameLogList.prepend(logItem);
 
     while (gameLogList.children.length > MAX_LOG_MESSAGES) {
@@ -32,13 +30,13 @@ export function updateAllUI() {
 
 // --- START: แก้ไขฟังก์ชัน updatePlayerInfo ---
 export function updatePlayerInfo() {
-    const col1 = document.getElementById('player-info-col-1');
-    const col2 = document.getElementById('player-info-col-2');
-    const col3 = document.getElementById('player-info-col-3');
+    const cols = [
+        document.getElementById('player-info-col-1'),
+        document.getElementById('player-info-col-2'),
+        document.getElementById('player-info-col-3')
+    ];
     
-    col1.innerHTML = '';
-    col2.innerHTML = '';
-    col3.innerHTML = '';
+    cols.forEach(col => col.innerHTML = ''); // เคลียร์ข้อมูลเก่า
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
 
@@ -51,15 +49,9 @@ export function updatePlayerInfo() {
         playerDiv.style.setProperty('--player-color', player.color);
 
         let statusHTML = '';
-        if (player.inJailTurns > 0) {
-            statusHTML += `<span>ติดเกาะร้าง</span>`;
-        }
-        if (player.loan) {
-            statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
-        }
-        if (player.getOutOfJailFree > 0) {
-            statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
-        }
+        if (player.inJailTurns > 0) statusHTML += `<span>ติดเกาะร้าง</span>`;
+        if (player.loan) statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
+        if (player.getOutOfJailFree > 0) statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
 
         playerDiv.innerHTML = `
             <div class="player-header">
@@ -74,11 +66,11 @@ export function updatePlayerInfo() {
 
         // แบ่งผู้เล่นลง 3 คอลัมน์ คอลัมน์ละ 2 คน
         if (player.id < 2) {
-            col1.appendChild(playerDiv);
+            cols[0].appendChild(playerDiv);
         } else if (player.id < 4) {
-            col2.appendChild(playerDiv);
+            cols[1].appendChild(playerDiv);
         } else {
-            col3.appendChild(playerDiv);
+            cols[2].appendChild(playerDiv);
         }
     });
 }
