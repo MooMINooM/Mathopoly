@@ -55,7 +55,7 @@ export function startTurn() {
         }
         return;
     }
-    
+
     ui.enableTurnActions();
 }
 
@@ -81,7 +81,7 @@ export function endTurn() {
     do {
         nextPlayerIndex = (nextPlayerIndex + 1) % state.players.length;
     } while (state.players[nextPlayerIndex].bankrupt)
-    
+
     state.setCurrentPlayerIndex(nextPlayerIndex);
     startTurn();
 }
@@ -108,7 +108,7 @@ export async function movePlayer(steps) {
 
 export function rollDice() {
     ui.disableGameActions();
-    
+
     const d1 = Math.floor(Math.random() * 6) + 1;
     const d2 = Math.floor(Math.random() * 6) + 1;
     state.setCurrentDiceRoll([d1, d2]);
