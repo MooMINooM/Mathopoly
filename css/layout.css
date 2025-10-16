@@ -32,13 +32,12 @@
     background-color: transparent;
     border-radius: 10px;
     padding: 15px;
-    display: grid; /* เปลี่ยนเป็น Grid */
-    grid-template-columns: 1fr 1fr; /* 2 คอลัมน์ */
-    grid-template-rows: 1fr 1fr;    /* 2 แถว */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 15px;
 }
 
-/* กำหนดพื้นที่แต่ละส่วน */
 #player-info-top-left {
     grid-area: 1 / 1 / 2 / 2;
 }
@@ -52,12 +51,14 @@
     grid-area: 2 / 2 / 3 / 3;
 }
 
+/* --- START: แก้ไขส่วนแสดงผลผู้เล่น --- */
 .player-info-quadrant {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 คอลัมน์ */
     gap: 8px;
-    overflow-y: auto; /* เผื่อผู้เล่นเยอะ */
+    align-content: start; /* จัดเรียงการ์ดผู้เล่นให้อยู่ด้านบน */
 }
+/* --- END: แก้ไขส่วนแสดงผลผู้เล่น --- */
 
 #action-container {
     display: flex;
