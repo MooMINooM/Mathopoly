@@ -3,7 +3,40 @@ import * as state from './state.js';
 import { finishTurn } from './gameLogic.js';
 import * as bot from './bot.js';
 import { addLogMessage } from './logger.js';
-import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal } from './ui.js';
+import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary } from './ui.js';
+
+// --- START: เพิ่มฟังก์ชันตรวจสอบการชนะ ---
+const WIN_CONDITIONS = {
+    BELT_A: [1, 2, 3, 4, 5, 37, 38, 39],
+    BELT_B: [7, 8, 9, 10, 11, 13, 14, 15],
+    BELT_C: [17, 18, 19, 21, 22, 23, 24, 25],
+    BELT_D: [27, 28, 29, 30, 31, 33, 34, 35],
+    CORNERS: [1, 11, 13, 19, 21, 31, 33, 39]
+};
+
+function checkWinConditions(player) {
+    if (state.gameSettings.winByBelt) {
+        for (const beltKey in WIN_CONDITIONS) {
+            if (beltKey.startsWith('BELT_')) {
+                const belt = WIN_CONDITIONS[beltKey];
+                if (belt.every(spaceId => player.properties.includes(spaceId))) {
+                    addLogMessage(`<strong>${player.name}</strong> ชนะเกมด้วย <strong>Monopoly ${beltKey}</strong>!`);
+                    setTimeout(() => showSummary(), 500); // หน่วงเวลาเล็กน้อย
+                    return true;
+                }
+            }
+        }
+    }
+    if (state.gameSettings.winByCorners) {
+        if (WIN_CONDITIONS.CORNERS.every(spaceId => player.properties.includes(spaceId))) {
+            addLogMessage(`<strong>${player.name}</strong> ชนะเกมด้วย <strong>Corner Dominance</strong>!`);
+            setTimeout(() => showSummary(), 500);
+            return true;
+        }
+    }
+    return false;
+}
+// --- END: เพิ่มฟังก์ชันตรวจสอบการชนะ ---
 
 export function changePlayerMoney(player, amount, reason) {
     player.money += amount;
@@ -18,8 +51,9 @@ export function changePlayerMoney(player, amount, reason) {
     }
     updatePlayerInfo();
 }
-//... (โค้ดที่เหลือใน actions.js เหมือนเดิมจากคำตอบที่แล้ว แต่ให้แน่ใจว่า import ถูกต้องตามนี้)
+
 function handleDebt(player) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     const totalAssetValue = player.properties.reduce((sum, pId) => {
         return sum + (state.boardSpaces[pId].investment * 0.6);
     }, 0);
@@ -37,6 +71,7 @@ function handleDebt(player) {
 }
 
 function handleBankruptcy(player) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     addLogMessage(`<span style="color: red; font-weight: bold;">!!! ${player.name} ล้มละลาย! !!!</span>`);
     player.bankrupt = true;
     player.money = 0;
@@ -55,19 +90,22 @@ function handleBankruptcy(player) {
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
     if (activePlayers.length <= 1) {
-        ui.showSummary();
+        showSummary();
     } else {
         finishTurn();
     }
 }
 
 export function calculateRent(space) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     return Math.round(space.investment * 0.5);
 }
 export function calculateBuyoutPrice(space) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     return Math.round(space.investment * 1.2);
 }
 export function calculateExpansionCost(space) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     if (space.level === 1) {
         return Math.round(space.basePrice * 0.5);
     } else if (space.level === 2) {
@@ -85,10 +123,13 @@ export function buyProperty(player, space) {
     player.properties.push(space.id);
     hideActionModal();
     updateAllUI();
+
+    if (checkWinConditions(player)) return; // ตรวจสอบการชนะ
     finishTurn();
 }
 
 export function expandProperty(player, space) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     const cost = calculateExpansionCost(space);
     changePlayerMoney(player, -cost, `ขยาย ${space.name}`);
     if(player.bankrupt) { hideActionModal(); return; }
@@ -100,6 +141,7 @@ export function expandProperty(player, space) {
 }
 
 export function payRent(player, owner, rent) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     hideActionModal();
     changePlayerMoney(player, -rent, `จ่ายค่าผ่านทางให้ ${owner.name}`);
     if(player.bankrupt) return;
@@ -123,10 +165,13 @@ export function buyOutProperty(player, owner, space) {
     player.properties.push(space.id);
 
     updateAllUI();
+
+    if (checkWinConditions(player)) return; // ตรวจสอบการชนะ
     finishTurn();
 }
 
 export function sellProperty(player, pId) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     const space = state.boardSpaces[pId];
     const sellPrice = Math.round(space.investment * 0.6);
 
@@ -142,7 +187,7 @@ export function sellProperty(player, pId) {
     if (state.isForcedToSell && player.money >= 0) {
         state.setForcedToSell(false);
         addLogMessage(`<strong>${player.name}</strong> ชำระหนี้สำเร็จแล้ว!`);
-        hideManagePropertyModal();
+        hideActionModal();
         finishTurn();
     } else {
         showManagePropertyModal(state.isForcedToSell);
@@ -150,6 +195,7 @@ export function sellProperty(player, pId) {
 }
 
 export function takeLoan(player) {
+    // ... (โค้ดส่วนนี้เหมือนเดิม)
     const amount = Math.round(state.gameSettings.startingMoney / 3);
     player.loan = {
         amount: amount,
