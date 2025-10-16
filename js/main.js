@@ -15,7 +15,7 @@ async function main() {
         }
         const mathematiciansData = await response.json();
         state.setMathematicians(mathematiciansData);
-        
+
         initializeGameSetup();
         addEventListeners();
 
@@ -37,9 +37,9 @@ function addEventListeners() {
     document.getElementById('submit-answer-btn').addEventListener('click', () => {
         const answer = parseFloat(document.getElementById('question-answer').value);
         document.getElementById('question-modal').style.display = 'none';
-        
+
         const currentPlayer = state.players[state.currentPlayerIndex];
-        
+
         if (answer === state.currentQuestion.answer) {
             console.log("ตอบถูก!");
             currentPlayer.correctAnswers++;
@@ -66,7 +66,7 @@ function addEventListeners() {
     document.getElementById('restart-game-btn').addEventListener('click', () => {
         window.location.reload();
     });
-    
+
     // Listener ตัวเดียวสำหรับจัดการทุกอย่างใน Manage Property Modal
     const manageModal = document.getElementById('manage-property-modal');
     manageModal.addEventListener('click', (e) => {
