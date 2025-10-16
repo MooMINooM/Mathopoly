@@ -42,9 +42,7 @@ function createBoard() {
             spaceData.name = 'สถานีรถไฟ';
             spaceEl.classList.add('corner');
             spaceEl.innerHTML = `<div class="corner-text-overlay"><span>สถานีรถไฟ</span></div>`;
-        // --- START: แก้ไขตำแหน่งการ์ดดวง ---
-        } else if ([6, 16, 26, 36].includes(i)) { // เปลี่ยนจาก 5 เป็น 6
-        // --- END: แก้ไขตำแหน่งการ์ดดวง ---
+        } else if ([6, 16, 26, 36].includes(i)) {
             spaceData.type = 'chance';
             spaceData.name = 'การ์ดดวง';
             spaceEl.classList.add('chance-space');
@@ -152,11 +150,22 @@ function startGame() {
 export function initializeGameSetup() {
     document.querySelector('.game-container').style.display = 'none';
 
+    // --- START: แก้ไข Event Listeners ---
     // Main menu buttons
-    document.getElementById('show-setup-btn').addEventListener('click', () => {
+    document.getElementById('classic-mode-btn').addEventListener('click', () => {
+        document.getElementById('setup-title').textContent = 'ตั้งค่าเกม - โหมดคลาสสิค';
+        // TODO: ในอนาคตจะซ่อน/ตั้งค่าโหมดพิเศษตรงนี้
         document.getElementById('splash-screen').style.display = 'none';
         document.getElementById('setup-screen').style.display = 'flex';
     });
+    
+    document.getElementById('custom-mode-btn').addEventListener('click', () => {
+        document.getElementById('setup-title').textContent = 'ตั้งค่าเกม - โหมดปรับแต่ง';
+        // TODO: ในอนาคตจะแสดงตัวเลือกโหมดพิเศษตรงนี้
+        document.getElementById('splash-screen').style.display = 'none';
+        document.getElementById('setup-screen').style.display = 'flex';
+    });
+    
      document.getElementById('show-about-btn').addEventListener('click', () => {
         document.getElementById('about-modal').style.display = 'flex';
     });
@@ -167,10 +176,11 @@ export function initializeGameSetup() {
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('splash-screen').style.display = 'flex';
     });
+    // --- END: แก้ไข Event Listeners ---
+
 
     // About modal button
     document.getElementById('close-about-btn').addEventListener('click', () => {
         document.getElementById('about-modal').style.display = 'none';
     });
-
 }
