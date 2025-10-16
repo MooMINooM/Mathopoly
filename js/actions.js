@@ -1,14 +1,12 @@
 // js/actions.js
 import * as state from './state.js';
 import * as ui from './ui.js';
+import { finishTurn } from './gameLogic.js'; // <-- เพิ่ม import
 
 // --- Helper & Financial Functions ---
 export function changePlayerMoney(player, amount, reason) {
     player.money += amount;
-
-    // --- บรรทัดที่เพิ่มเข้ามาเพื่อแก้ไขปัญหาทศนิยม ---
     player.money = Math.round(player.money);
-
     console.log(`${player.name} ${amount > 0 ? 'ได้รับ' : 'เสีย'}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})`);
 
     if (player.money < 0) {
@@ -25,8 +23,12 @@ function handleDebt(player) {
     if (player.money + totalAssetValue < 0) {
         handleBankruptcy(player);
     } else {
-        state.setForcedToSell(true);
-        ui.showManagePropertyModal(true);
+        if (player.isBot) {
+            bot.manageBotAssets(player);
+        } else {
+            state.setForcedToSell(true);
+            ui.showManagePropertyModal(true);
+        }
     }
 }
 
@@ -51,7 +53,7 @@ function handleBankruptcy(player) {
     if (activePlayers.length <= 1) {
         ui.showSummary();
     } else {
-        ui.enableEndTurnButton();
+        finishTurn(); // <-- เปลี่ยน
     }
 }
 
@@ -81,7 +83,7 @@ export function buyProperty(player, space) {
     console.log(`${player.name} ซื้อ ${space.name} ในราคา ฿${space.price.toLocaleString()}`);
     ui.hideActionModal();
     ui.updateAllUI();
-    ui.enableEndTurnButton();
+    finishTurn(); // <-- เปลี่ยน
 }
 
 export function expandProperty(player, space) {
@@ -93,7 +95,7 @@ export function expandProperty(player, space) {
     console.log(`${player.name} ขยาย ${space.name} ระดับ ${space.level} ในราคา ฿${cost.toLocaleString()}`);
     ui.hideActionModal();
     ui.updateAllUI();
-    ui.enableEndTurnButton();
+    finishTurn(); // <-- เปลี่ยน
 }
 
 export function payRent(player, owner, rent) {
@@ -101,7 +103,7 @@ export function payRent(player, owner, rent) {
     changePlayerMoney(player, -rent, `จ่ายค่าผ่านทางให้ ${owner.name}`);
     if(player.bankrupt) return;
     changePlayerMoney(owner, rent, `รับค่าผ่านทางจาก ${player.name}`);
-    ui.enableEndTurnButton();
+    finishTurn(); // <-- เปลี่ยน
 }
 
 export function buyOutProperty(player, owner, space) {
@@ -119,7 +121,7 @@ export function buyOutProperty(player, owner, space) {
 
     console.log(`${player.name} ซื้อ ${space.name} ต่อจาก ${owner.name} ในราคา ฿${price.toLocaleString()}`);
     ui.updateAllUI();
-    ui.enableEndTurnButton();
+    finishTurn(); // <-- เปลี่ยน
 }
 
 export function sellProperty(player, pId) {
@@ -141,9 +143,8 @@ export function sellProperty(player, pId) {
         state.setForcedToSell(false);
         console.log("ชำระหนี้สำเร็จแล้ว!");
         ui.hideManagePropertyModal();
-        ui.enableEndTurnButton();
+        finishTurn(); // <-- เปลี่ยน
     } else {
-        // อัปเดตหน้าต่างจัดการทรัพย์สินใหม่หลังจากขายไปแล้ว
         ui.showManagePropertyModal(state.isForcedToSell);
     }
 }
@@ -156,6 +157,5 @@ export function takeLoan(player) {
     };
     changePlayerMoney(player, amount, "กู้เงิน");
     console.log(`${player.name} กู้เงิน ฿${amount.toLocaleString()}. ต้องคืนใน 10 ตา`);
-    // อัปเดตหน้าต่างจัดการทรัพย์สินใหม่หลังจากกู้เงินแล้ว
     ui.showManagePropertyModal();
 }
