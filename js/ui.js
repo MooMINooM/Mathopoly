@@ -3,6 +3,7 @@ import * as state from './state.js';
 import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
 
+// ... (logger code remains the same) ...
 const MAX_LOG_MESSAGES = 40;
 
 export function addLogMessage(message) {
@@ -30,49 +31,44 @@ export function updateAllUI() {
 
 // --- START: แก้ไขฟังก์ชัน updatePlayerInfo ---
 export function updatePlayerInfo() {
-    const cols = [
-        document.getElementById('player-info-col-1'),
-        document.getElementById('player-info-col-2'),
-        document.getElementById('player-info-col-3')
-    ];
-    
-    cols.forEach(col => col.innerHTML = ''); // เคลียร์ข้อมูลเก่า
+    const playerContainer = document.getElementById('player-info-container');
+    playerContainer.innerHTML = ''; // เคลียร์ข้อมูลเก่า
 
-    const activePlayers = state.players.filter(p => !p.bankrupt);
-
-    activePlayers.forEach(player => {
+    // สร้างการ์ดผู้เล่นสำหรับผู้เล่นทุกคน (สูงสุด 6 คน)
+    for (let i = 0; i < 6; i++) {
+        const player = state.players.find(p => p.id === i && !p.bankrupt);
         const playerDiv = document.createElement('div');
         playerDiv.className = 'player-info';
-        if (player.id === state.currentPlayerIndex) {
-            playerDiv.classList.add('active');
-        }
-        playerDiv.style.setProperty('--player-color', player.color);
 
-        let statusHTML = '';
-        if (player.inJailTurns > 0) statusHTML += `<span>ติดเกาะร้าง</span>`;
-        if (player.loan) statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
-        if (player.getOutOfJailFree > 0) statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
+        if (player) {
+            if (player.id === state.currentPlayerIndex) {
+                playerDiv.classList.add('active');
+            }
+            playerDiv.style.setProperty('--player-color', player.color);
 
-        playerDiv.innerHTML = `
-            <div class="player-header">
-                <h3>${player.name}</h3>
-                <span class="player-money">฿${player.money.toLocaleString()}</span>
-            </div>
-            <div class="player-status">${statusHTML || ''}</div>
-            <div class="player-properties">
-                <span>เมือง: ${player.properties.length} แห่ง</span>
-            </div>
-        `;
+            let statusHTML = '';
+            if (player.inJailTurns > 0) statusHTML += `<span>ติดเกาะร้าง</span>`;
+            if (player.loan) statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
+            if (player.getOutOfJailFree > 0) statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
 
-        // แบ่งผู้เล่นลง 3 คอลัมน์ คอลัมน์ละ 2 คน
-        if (player.id < 2) {
-            cols[0].appendChild(playerDiv);
-        } else if (player.id < 4) {
-            cols[1].appendChild(playerDiv);
+            playerDiv.innerHTML = `
+                <div class="player-header">
+                    <h3>${player.name}</h3>
+                    <span class="player-money">฿${player.money.toLocaleString()}</span>
+                </div>
+                <div class="player-properties">
+                    <span>เมือง: ${player.properties.length} แห่ง</span>
+                </div>
+                <div class="player-status">${statusHTML || '&nbsp;'}</div>
+            `;
         } else {
-            cols[2].appendChild(playerDiv);
+            // สร้างการ์ดว่างสำหรับช่องที่ไม่มีผู้เล่น
+            playerDiv.classList.add('empty');
+            playerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+            playerDiv.style.borderStyle = 'dashed';
         }
-    });
+        playerContainer.appendChild(playerDiv);
+    }
 }
 // --- END: แก้ไขฟังก์ชัน updatePlayerInfo ---
 
@@ -127,8 +123,7 @@ export function updateDice(d1, d2) {
     document.getElementById('dice2').textContent = d2;
 }
 
-
-// --- Action Button Controls ---
+// ... (โค้ดส่วนที่เหลือของ ui.js เหมือนเดิม) ...
 export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = true;
@@ -147,8 +142,6 @@ export function enableEndTurnButton() {
     document.getElementById('end-turn-btn').disabled = false;
 }
 
-
-// --- Modal Controls ---
 export function showActionModal(title, text, buttons, isError = false) {
     const actionModal = document.getElementById('action-modal');
     const titleEl = document.getElementById('action-title');
