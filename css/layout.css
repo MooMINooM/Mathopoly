@@ -29,42 +29,37 @@
 
 #control-panel {
     grid-area: 2 / 2 / 9 / 13;
-    background-color: transparent;
     border-radius: 10px;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 คอลัมน์ */
-    grid-template-rows: auto 1fr;      /* แถวบนปรับตามเนื้อหา, แถวล่างเต็มที่ */
-    grid-template-areas:
-        "players players players"
-        "log     actions actions";
-    gap: 15px;
-}
-
-/* --- จัดวางพื้นที่ Grid Area --- */
-#player-info-top-row {
-    grid-area: players;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-}
-#game-log-container { 
-    grid-area: log; 
-    min-height: 150px; /* กำหนดความสูงขั้นต่ำ */
-}
-#action-container { 
-    grid-area: actions; 
-}
-
-
-.player-info-col {
+    padding: 15px;
     display: flex;
     flex-direction: column;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+#player-info-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 10px;
-    justify-content: start;
+    height: 55%; /* ใช้พื้นที่ 55% ของ control panel */
+}
+
+#bottom-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    height: 45%; /* ใช้พื้นที่ 45% ของ control panel */
+}
+
+#game-log-container {
+    grid-column: 1 / 2;
 }
 
 #action-container {
+    grid-column: 2 / 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
