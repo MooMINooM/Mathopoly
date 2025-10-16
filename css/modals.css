@@ -55,13 +55,12 @@
     gap: 15px;
 }
 
-/* --- START: แก้ไข Splash Screen กลับเป็นแบบเดิม --- */
 #splash-screen {
     background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
     background-size: cover;
     background-position: center;
     flex-direction: column;
-    justify-content: flex-end; /* จัดไว้ด้านล่าง */
+    justify-content: flex-end;
     padding-bottom: 8vh;
 }
 .splash-content {
@@ -82,21 +81,31 @@
     text-shadow: 1px 1px 3px black;
     transition: all 0.3s;
 }
-#classic-mode-btn, #custom-mode-btn {
+
+/* --- START: แก้ไขสไตล์ปุ่ม --- */
+#classic-mode-btn {
     background-color: var(--primary-color);
 }
-#classic-mode-btn:hover, #custom-mode-btn:hover {
+#classic-mode-btn:hover {
     background-color: #45a049;
     transform: translateY(-3px);
 }
-#show-about-btn {
+#custom-mode-btn {
     background-color: var(--accent-color);
 }
-#show-about-btn:hover {
+#custom-mode-btn:hover {
     background-color: #1e88e5;
     transform: translateY(-3px);
 }
-/* --- END: แก้ไข Splash Screen --- */
+#show-about-btn {
+    background-color: #6c757d; /* สีเทา */
+    border-color: #6c757d;
+}
+#show-about-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-3px);
+}
+/* --- END: แก้ไขสไตล์ปุ่ม --- */
 
 
 #setup-screen .modal-content {
