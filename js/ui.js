@@ -3,23 +3,6 @@ import * as state from './state.js';
 import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
 
-const MAX_LOG_MESSAGES = 40;
-
-// --- ฟังก์ชันสำหรับ Game Log (แก้ไขแล้ว) ---
-export function addLogMessage(message) {
-    const gameLogList = document.getElementById('game-log-list');
-    if (!gameLogList) return;
-
-    const logItem = document.createElement('li');
-    logItem.innerHTML = message;
-
-    gameLogList.prepend(logItem);
-
-    while (gameLogList.children.length > MAX_LOG_MESSAGES) {
-        gameLogList.removeChild(gameLogList.lastChild);
-    }
-}
-
 // --- UI Update Functions ---
 export function updateAllUI() {
     updatePlayerInfo();
@@ -122,6 +105,7 @@ export function updateDice(d1, d2) {
     document.getElementById('dice2').textContent = d2;
 }
 
+
 // --- Action Button Controls ---
 export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
@@ -140,6 +124,7 @@ export function enableEndTurnButton() {
     document.getElementById('manage-property-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = false;
 }
+
 
 // --- Modal Controls ---
 export function showActionModal(title, text, buttons, isError = false) {
