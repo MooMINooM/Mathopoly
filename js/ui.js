@@ -1,9 +1,9 @@
 // js/ui.js
 import * as state from './state.js';
-import { calculateRent } from './actions.js';
 import { generateQuestion } from './questions.js';
+import { calculateRent } from './utils.js'; // <-- แก้ไข Import
 
-// ... (logger code remains the same) ...
+// ... (โค้ดที่เหลือเหมือนเดิมทั้งหมด)
 const MAX_LOG_MESSAGES = 40;
 
 export function addLogMessage(message) {
@@ -12,45 +12,34 @@ export function addLogMessage(message) {
         console.log("Log UI not ready:", message.replace(/<[^>]*>/g, ''));
         return;
     }
-
     const logItem = document.createElement('li');
     logItem.innerHTML = message;
     gameLogList.prepend(logItem);
-
     while (gameLogList.children.length > MAX_LOG_MESSAGES) {
         gameLogList.removeChild(gameLogList.lastChild);
     }
 }
-
-// --- UI Update Functions ---
 export function updateAllUI() {
     updatePlayerInfo();
     updateBoardUI();
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
-
-// --- START: แก้ไขฟังก์ชัน updatePlayerInfo ---
 export function updatePlayerInfo() {
     const playerContainer = document.getElementById('player-info-container');
-    playerContainer.innerHTML = ''; // เคลียร์ข้อมูลเก่า
-
-    // สร้างการ์ดผู้เล่นสำหรับผู้เล่นทุกคน (สูงสุด 6 คน)
+    playerContainer.innerHTML = '';
     for (let i = 0; i < 6; i++) {
         const player = state.players.find(p => p.id === i && !p.bankrupt);
         const playerDiv = document.createElement('div');
         playerDiv.className = 'player-info';
-
         if (player) {
             if (player.id === state.currentPlayerIndex) {
                 playerDiv.classList.add('active');
             }
             playerDiv.style.setProperty('--player-color', player.color);
-
             let statusHTML = '';
             if (player.inJailTurns > 0) statusHTML += `<span>ติดเกาะร้าง</span>`;
             if (player.loan) statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
             if (player.getOutOfJailFree > 0) statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
-
             playerDiv.innerHTML = `
                 <div class="player-header">
                     <h3>${player.name}</h3>
@@ -59,17 +48,14 @@ export function updatePlayerInfo() {
                 <div class="player-properties">
                     <span>เมือง: ${player.properties.length} แห่ง</span>
                 </div>
-                <div class="player-status">${statusHTML || ' '}</div> `;
+                <div class="player-status">${statusHTML || ' '}</div>
+            `;
         } else {
-            // สร้างการ์ดว่างสำหรับช่องที่ไม่มีผู้เล่น
             playerDiv.classList.add('empty');
         }
         playerContainer.appendChild(playerDiv);
     }
 }
-// --- END: แก้ไขฟังก์ชัน updatePlayerInfo ---
-
-
 export function updateBoardUI() {
     state.boardSpaces.forEach(space => {
         if (space.type === 'property') {
@@ -77,7 +63,6 @@ export function updateBoardUI() {
             const spaceInfo = spaceEl.querySelector('.space-info');
             const priceEl = spaceEl.querySelector('.space-price');
             const levelBadgeContainer = spaceEl.querySelector('.level-badge-container');
-
             if (space.owner !== null) {
                 const owner = state.players[space.owner];
                 spaceInfo.style.backgroundColor = owner.color;
@@ -87,7 +72,6 @@ export function updateBoardUI() {
                    spaceInfo.style.color = 'white';
                 }
                 priceEl.textContent = `฿${calculateRent(space).toLocaleString()}`;
-
                 levelBadgeContainer.innerHTML = '';
                 if(space.level > 1) {
                     const levelBadge = document.createElement('div');
@@ -104,23 +88,18 @@ export function updateBoardUI() {
         }
     });
 }
-
 export function updatePawnPosition(player) {
     const pawn = document.getElementById(`pawn-${player.id}`);
     const spaceEl = document.getElementById(`space-${player.position}`);
     if (!pawn || !spaceEl) return;
-
     const pawnOffset = player.id * 5;
     pawn.style.left = `${spaceEl.offsetLeft + pawnOffset}px`;
     pawn.style.top = `${spaceEl.offsetTop + pawnOffset}px`;
 }
-
 export function updateDice(d1, d2) {
     document.getElementById('dice1').textContent = d1;
     document.getElementById('dice2').textContent = d2;
 }
-
-// ... (โค้ดส่วนที่เหลือของ ui.js เหมือนเดิม) ...
 export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = true;
@@ -141,7 +120,6 @@ export function showActionModal(title, text, buttons, isError = false) {
     const titleEl = document.getElementById('action-title');
     titleEl.textContent = title;
     titleEl.className = isError ? 'danger' : '';
-
     document.getElementById('action-text').textContent = text;
     const buttonsContainer = document.getElementById('action-modal-buttons');
     buttonsContainer.innerHTML = '';
