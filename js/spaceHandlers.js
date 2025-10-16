@@ -2,10 +2,47 @@
 import * as state from './state.js';
 import * as ui from './ui.js';
 import * as actions from './actions.js';
-import { movePlayer } from './gameLogic.js';
-import * as bot from './bot.js';
+import { movePlayer, finishTurn } from './gameLogic.js'; // <-- เพิ่ม finishTurn
 
+// -- แก้ไข handlePropertyLanding --
 function handlePropertyLanding(player, space) {
+    // --- ส่วนตรรกะของบอท ---
+    if (player.isBot) {
+        setTimeout(() => {
+            const owner = space.owner !== null ? state.players[space.owner] : null;
+
+            if (owner === null) { // ที่ดินว่าง
+                const buyChance = (player.money / state.gameSettings.startingMoney) * 0.75;
+                if (player.money >= space.price && Math.random() < buyChance) {
+                    console.log(`Bot ${player.name} ตัดสินใจซื้อ ${space.name}`);
+                    player.totalQuestions++; player.correctAnswers++; // บอทตอบถูกเสมอ
+                    actions.buyProperty(player, space);
+                } else {
+                    console.log(`Bot ${player.name} ตัดสินใจไม่ซื้อ ${space.name}`);
+                    finishTurn();
+                }
+            } else if (owner.id === player.id) { // ที่ดินตัวเอง
+                if (space.level < 3) {
+                    const expansionCost = actions.calculateExpansionCost(space);
+                    if (player.money >= expansionCost * 2 && Math.random() < 0.5) { // จะขยายเมื่อมีเงินเหลืออย่างน้อย 2 เท่า
+                        console.log(`Bot ${player.name} ตัดสินใจขยาย ${space.name}`);
+                        player.totalQuestions++; player.correctAnswers++;
+                        actions.expandProperty(player, space);
+                    } else {
+                        finishTurn();
+                    }
+                } else {
+                    finishTurn();
+                }
+            } else { // ที่ดินคนอื่น
+                const rent = actions.calculateRent(space);
+                actions.payRent(player, owner, rent);
+            }
+        }, 1500); // หน่วงเวลาให้เหมือนบอทคิด
+        return;
+    }
+
+    // --- ส่วนตรรกะของผู้เล่นปกติ (เหมือนเดิม) ---
     if (space.owner === null) { // Unowned
         state.setOnQuestionSuccess(() => {
             ui.showActionModal(
@@ -15,13 +52,13 @@ function handlePropertyLanding(player, space) {
                     { text: 'ซื้อ', callback: () => actions.buyProperty(player, space), enabled: player.money >= space.price },
                     { text: 'ไม่ซื้อ', className: 'danger', callback: () => {
                         ui.hideActionModal();
-                        ui.enableEndTurnButton();
+                        finishTurn();
                     }}
                 ]
             );
         });
         state.setOnQuestionFail(() => {
-            ui.enableEndTurnButton();
+            finishTurn();
         });
         ui.showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}"`);
 
@@ -36,18 +73,18 @@ function handlePropertyLanding(player, space) {
                         { text: 'ขยาย', callback: () => actions.expandProperty(player, space), enabled: player.money >= expansionCost },
                         { text: 'ไม่ขยาย', className: 'danger', callback: () => {
                             ui.hideActionModal();
-                            ui.enableEndTurnButton();
+                            finishTurn();
                         }}
                     ]
                 );
             });
             state.setOnQuestionFail(() => {
-                ui.enableEndTurnButton();
+                finishTurn();
             });
             ui.showQuestionModalForPurchase(player, `ตอบคำถามเพื่อขยายเมือง "${space.name}"`);
         } else {
             console.log(`"${space.name}" ขยายเต็มระดับแล้ว`);
-            ui.enableEndTurnButton();
+            finishTurn();
         }
 
     } else { // Owned by another player
@@ -76,7 +113,7 @@ function handlePropertyLanding(player, space) {
 }
 
 function handleTrainStation(player) {
-    const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000)); // ปัดเศษ
+    const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000));
     ui.showActionModal(
         'สถานีรถไฟ',
         `จ่าย ฿${cost.toLocaleString()} เพื่อเดินทางไปยังเมืองใดก็ได้?`,
@@ -84,7 +121,7 @@ function handleTrainStation(player) {
             { text: 'เดินทาง', callback: () => travelByTrain(player), enabled: player.money >= cost },
             { text: 'ไม่เดินทาง', className: 'danger', callback: () => {
                 ui.hideActionModal();
-                ui.enableEndTurnButton();
+                finishTurn();
             }}
         ]
     );
@@ -92,7 +129,7 @@ function handleTrainStation(player) {
 
 async function travelByTrain(player) {
     ui.hideActionModal();
-    const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000)); // ปัดเศษ
+    const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000));
     actions.changePlayerMoney(player, -cost, "ค่าเดินทางรถไฟ");
     if(player.bankrupt) return;
 
@@ -134,7 +171,7 @@ function handleMathematicianCorner(player) {
         'คุณได้รับสิทธิ์ในการซื้อ (ถ้ามีเมืองว่าง) หรือขยายเมือง (ถ้ามีเมืองของตัวเอง) ใดก็ได้ 1 แห่งทันที',
         [
             { text: 'ใช้สิทธิ์', callback: () => selectPropertyForBonus(player) },
-            { text: 'ไม่ใช้สิทธิ์', className: 'danger', callback: () => { ui.hideActionModal(); ui.enableEndTurnButton(); }}
+            { text: 'ไม่ใช้สิทธิ์', className: 'danger', callback: () => { ui.hideActionModal(); finishTurn(); }}
         ]
     );
 }
@@ -169,23 +206,23 @@ function selectPropertyForBonus(player) {
 
         if (space.owner === null) {
             state.setOnQuestionSuccess(() => actions.buyProperty(player, space));
-            state.setOnQuestionFail(() => { console.log("ตอบผิด! เสียสิทธิ์โบนัส"); ui.enableEndTurnButton(); });
+            state.setOnQuestionFail(() => { console.log("ตอบผิด! เสียสิทธิ์โบนัส"); finishTurn(); });
             ui.showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}" (สิทธิ์โบนัส)`);
         } else if (space.owner === player.id && space.level < 3) {
             state.setOnQuestionSuccess(() => actions.expandProperty(player, space));
-            state.setOnQuestionFail(() => { console.log("ตอบผิด! เสียสิทธิ์โบนัส"); ui.enableEndTurnButton(); });
+            state.setOnQuestionFail(() => { console.log("ตอบผิด! เสียสิทธิ์โบนัส"); finishTurn(); });
             ui.showQuestionModalForPurchase(player, `ตอบคำถามเพื่อขยาย "${space.name}" (สิทธิ์โบนัส)`);
         } else {
             console.log("ไม่สามารถใช้สิทธิ์กับเมืองนี้ได้");
-            ui.enableEndTurnButton();
+            finishTurn();
         }
     };
 }
 
-
+// -- แก้ไข drawChanceCard --
 function drawChanceCard(player) {
     const moneyScale = state.gameSettings.startingMoney / 15000;
-
+    
     const lotteryWin = Math.round(1000 * moneyScale);
     const roadRepairCost = Math.round(player.properties.length * 250 * moneyScale);
     const dividend = Math.round(500 * moneyScale);
@@ -217,27 +254,26 @@ function drawChanceCard(player) {
     document.getElementById('chance-card-text').textContent = card.text;
     document.getElementById('chance-card-modal').style.display = 'flex';
 
-    document.getElementById('chance-card-ok-btn').onclick = async () => {
+    const onCardAcknowledge = async () => {
         document.getElementById('chance-card-modal').style.display = 'none';
         const isMoveAction = await card.action(player);
         if (!isMoveAction) {
-            ui.enableEndTurnButton();
+            finishTurn();
         }
     };
+
+    if (player.isBot) {
+        setTimeout(onCardAcknowledge, 1500); // บอทจะ "กดปุ่ม" อัตโนมัติ
+    } else {
+        document.getElementById('chance-card-ok-btn').onclick = onCardAcknowledge;
+    }
 }
 
-
+// -- แก้ไข handleSpaceLanding --
 export function handleSpaceLanding() {
     const player = state.players[state.currentPlayerIndex];
     const space = state.boardSpaces[player.position];
     console.log(`${player.name} เดินมาตกที่ช่อง "${space.name}"`);
-
-    // --- ตรวจสอบว่าเป็นบอทหรือไม่ ---
-    if(player.isBot) {
-        bot.handleBotLanding(player, space);
-        return;
-    }
-    // --- จบส่วนของบอท ---
 
     switch (space.type) {
         case 'property':
@@ -249,7 +285,7 @@ export function handleSpaceLanding() {
         case 'jail':
             console.log(`${player.name} ติดเกาะร้าง! ต้องหยุดเดิน 1 ตา`);
             player.inJailTurns = 1;
-            ui.enableEndTurnButton();
+            finishTurn();
             break;
         case 'train_station':
             handleTrainStation(player);
@@ -259,9 +295,9 @@ export function handleSpaceLanding() {
             break;
         case 'start':
             console.log("พักผ่อนที่จุดเริ่มต้น");
-            ui.enableEndTurnButton();
+            finishTurn();
             break;
         default:
-            ui.enableEndTurnButton();
+            finishTurn();
     }
 }
