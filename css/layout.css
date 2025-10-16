@@ -29,14 +29,15 @@
 
 #control-panel {
     grid-area: 2 / 2 / 9 / 13;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 15px;
-    display: flex;
+    display: flex; /* เปลี่ยนเป็น Flexbox */
     flex-direction: column;
     gap: 15px;
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 #player-info-container {
@@ -44,14 +45,15 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 10px;
-    height: 55%; /* ใช้พื้นที่ 55% ของ control panel */
+    flex-grow: 1; /* ทำให้ขยายเต็มพื้นที่ที่เหลือ */
+    min-height: 0;
 }
 
 #bottom-panel {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr; /* ประวัติ 2 ส่วน, ปุ่ม 1 ส่วน */
     gap: 15px;
-    height: 45%; /* ใช้พื้นที่ 45% ของ control panel */
+    flex-shrink: 0; /* ไม่ให้หด */
 }
 
 #game-log-container {
