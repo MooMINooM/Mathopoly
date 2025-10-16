@@ -31,26 +31,37 @@
     grid-area: 2 / 2 / 9 / 13;
     background-color: transparent;
     border-radius: 10px;
-    padding: 10px; /* ลด padding เล็กน้อย */
+    padding: 10px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr; /* 3 คอลัมน์ */
-    grid-template-rows: 1fr auto;       /* แถวบนเต็มที่ แถวล่างปรับตามเนื้อหา */
-    gap: 10px;
+    grid-template-rows: auto 1fr;      /* แถวบนปรับตามเนื้อหา, แถวล่างเต็มที่ */
+    grid-template-areas:
+        "players players players"
+        "log     actions actions";
+    gap: 15px;
 }
 
 /* --- จัดวางพื้นที่ Grid Area --- */
-#player-info-col-1 { grid-area: 1 / 1 / 2 / 2; }
-#player-info-col-2 { grid-area: 1 / 2 / 2 / 3; }
-#player-info-col-3 { grid-area: 1 / 3 / 2 / 4; }
-#game-log-container { grid-area: 2 / 1 / 3 / 3; } /* Log กินพื้นที่ 2 คอลัมน์ */
-#action-container { grid-area: 2 / 3 / 3 / 4; } /* Action อยู่คอลัมน์สุดท้าย */
+#player-info-top-row {
+    grid-area: players;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+#game-log-container { 
+    grid-area: log; 
+    min-height: 150px; /* กำหนดความสูงขั้นต่ำ */
+}
+#action-container { 
+    grid-area: actions; 
+}
 
 
 .player-info-col {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    justify-content: start; /* จัดเรียงการ์ดจากบนลงล่าง */
+    gap: 10px;
+    justify-content: start;
 }
 
 #action-container {
