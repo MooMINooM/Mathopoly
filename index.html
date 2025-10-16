@@ -29,6 +29,7 @@
         </div>
     </div>
 
+    <!-- ===== SETUP SCREEN (MODIFIED) ===== -->
     <div id="setup-screen" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>Mathopoly - ตั้งค่าเกม</h2>
@@ -44,19 +45,100 @@
                     </div>
                 </div>
                 <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
-                <h3>ตั้งค่าผู้เล่น (กรอกอย่างน้อย 2 คน)</h3>
+                
+                <!-- Player Setup Section: Updated with AI selection -->
+                <h3>ตั้งค่าผู้เล่น (กรอกชื่อเพื่อเปิดใช้งาน)</h3>
                 <div id="player-details-container" class="player-setup-container">
-                    <div class="player-setup"><h4>ผู้เล่น 1</h4><input type="text" class="player-name-input" placeholder="ชื่อผู้เล่น 1" value="ผู้เล่น 1" style="margin-bottom: 8px;"><select class="player-difficulty-select"><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p4">ประถม 4</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option></select></div>
-                    <div class="player-setup"><h4>ผู้เล่น 2</h4><input type="text" class="player-name-input" placeholder="ชื่อผู้เล่น 2" value="ผู้เล่น 2" style="margin-bottom: 8px;"><select class="player-difficulty-select"><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p4">ประถม 4</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option></select></div>
-                    <div class="player-setup"><h4>ผู้เล่น 3</h4><input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;"><select class="player-difficulty-select"><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p4">ประถม 4</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option></select></div>
-                    <div class="player-setup"><h4>ผู้เล่น 4</h4><input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;"><select class="player-difficulty-select"><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p4">ประถม 4</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option></select></div>
-                    <div class="player-setup"><h4>ผู้เล่น 5</h4><input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;"><select class="player-difficulty-select"><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p4">ประถม 4</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option></select></div>
-                    <div class="player-setup"><h4>ผู้เล่น 6</h4><input type="text" class="player-name-input" placeholder="เว้นว่างไว้ถ้าไม่เล่น" style="margin-bottom: 8px;"><select class="player-difficulty-select"><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p4">ประถม 4</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option></select></div>
+                    <!-- Player 1 -->
+                    <div class="player-setup">
+                        <h4>ผู้เล่น 1</h4>
+                        <input type="text" class="player-name-input" placeholder="ชื่อผู้เล่น" value="ผู้เล่น 1">
+                        <div class="player-options">
+                            <select class="player-type-select">
+                                <option value="human" selected>ผู้เล่น</option>
+                                <option value="ai">คอมพิวเตอร์ (AI)</option>
+                            </select>
+                            <select class="player-difficulty-select">
+                                <option value="p4" selected>ประถม 4</option><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Player 2 -->
+                    <div class="player-setup">
+                        <h4>ผู้เล่น 2</h4>
+                        <input type="text" class="player-name-input" placeholder="ชื่อผู้เล่น" value="ผู้เล่น 2">
+                        <div class="player-options">
+                            <select class="player-type-select">
+                                <option value="human" selected>ผู้เล่น</option>
+                                <option value="ai">คอมพิวเตอร์ (AI)</option>
+                            </select>
+                            <select class="player-difficulty-select">
+                                <option value="p4" selected>ประถม 4</option><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Player 3 -->
+                    <div class="player-setup">
+                        <h4>ผู้เล่น 3</h4>
+                        <input type="text" class="player-name-input" placeholder="เว้นว่าง/ตั้งชื่อ AI">
+                        <div class="player-options">
+                            <select class="player-type-select">
+                                <option value="human">ผู้เล่น</option>
+                                <option value="ai" selected>คอมพิวเตอร์ (AI)</option>
+                            </select>
+                            <select class="player-difficulty-select">
+                                <option value="p4" selected>ประถม 4</option><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Player 4 -->
+                    <div class="player-setup">
+                        <h4>ผู้เล่น 4</h4>
+                        <input type="text" class="player-name-input" placeholder="เว้นว่าง/ตั้งชื่อ AI">
+                        <div class="player-options">
+                            <select class="player-type-select">
+                                <option value="human">ผู้เล่น</option>
+                                <option value="ai" selected>คอมพิวเตอร์ (AI)</option>
+                            </select>
+                            <select class="player-difficulty-select">
+                                <option value="p4" selected>ประถม 4</option><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Player 5 -->
+                    <div class="player-setup">
+                        <h4>ผู้เล่น 5</h4>
+                        <input type="text" class="player-name-input" placeholder="เว้นว่าง/ตั้งชื่อ AI">
+                        <div class="player-options">
+                            <select class="player-type-select">
+                                <option value="human">ผู้เล่น</option>
+                                <option value="ai" selected>คอมพิวเตอร์ (AI)</option>
+                            </select>
+                            <select class="player-difficulty-select">
+                                <option value="p4" selected>ประถม 4</option><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Player 6 -->
+                    <div class="player-setup">
+                        <h4>ผู้เล่น 6</h4>
+                        <input type="text" class="player-name-input" placeholder="เว้นว่าง/ตั้งชื่อ AI">
+                        <div class="player-options">
+                            <select class="player-type-select">
+                                <option value="human">ผู้เล่น</option>
+                                <option value="ai" selected>คอมพิวเตอร์ (AI)</option>
+                            </select>
+                            <select class="player-difficulty-select">
+                                <option value="p4" selected>ประถม 4</option><option value="p1">ประถม 1</option><option value="p2">ประถม 2</option><option value="p3">ประถม 3</option><option value="p5">ประถม 5</option><option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option><option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    
+    <!-- The rest of your HTML code remains the same -->
     <div class="game-container" style="display: none;">
         <div id="game-board">
             <div id="control-panel">
@@ -162,7 +244,7 @@
                     <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczM8aWMXmvXSO44duWQ5MZrA65rWOc-fV2YlOMU5-JbJv6zoO90yf0sJJS6yZQfGuLAe58k2W_LtG_cuvv8fZbhdRs2Wjq55v-eLt1ASl9Yxw_emUeVnMPGsQS83tzxLo8SEwp5XyA3FXMwm53XjG0Gu=w160-h160-s-no-gm?authuser=0" alt="ผู้จัดทำ 1"><p style="font-size: 0.7em;">นายญาณวุฒิ บุตรสมบัติ</p><p style="font-size: 0.6em; color: #666;">ครูที่ปรึกษาโครงงาน</p></div>
                     <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczMsOzLIk7mORWFfmsVQHQX8cXANSQ4pcKT7FMqOViL2eup1ay8zEYApWl5hxIIipt_ISFroy6PQfuw6bNjnQrW13Z84e7_rVkeeoy_1_vO2pXY5o_dzt28aERhQXENPRIWcB-HXQxnzsaiwKS8XxHuX=w693-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 2"><p style="font-size: 0.7em;">นายดอกคูณ พูดเพราะ</p><p style="font-size: 0.6em; color: #666;">ครูที่ปรึกษาโครงงาน</p></div>
                     <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczOhSMjRGUBLZ9AZ9JtLGI1PbBspVWAPMIpWjxAh0CHDXUE9AqCIIj56q_XEFfuJ3C2h_QXcM3ATRowkwNN8FuV2zNR9t60NtYx_dyRtf7hLHgQ3qRtMdTWL4W6grBW8ZUiGlXZ6Ob87j5CYOiFdglOG=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 3"><p style="font-size: 0.7em;">ด.ช.อัครเดช สมพร</p><p style="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p></div>
-                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczO_zxu-vZzy72yo9ox21mS8KXpRzGhmdiVG653__t57nkVP16kc79t-NL59q0hixrVYEHqzO3oaZHLoZOXbvWE-ejjrTK31DkzC_kTH7jzjd9UmTXlslEvl4UFY6J57tWjE67CdFZVamtgNQ40JQyMk=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 4"><p style="font-size: 0.7em;">ด.ญ.สุณิสา สุวรรณท้าว</p><p style="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p></div>
+                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczO_zxu-vZzy72yo9ox21mS8KXpRzGhmdiVG653__t57nkVP16kc79t-NL59q0hixrVYEHqzO3oaZHLoZOXbvWE-ejjrTK31DkzC_kTH7jzjd9UmTXlslEvl4UFY6J57tWjE67CdFZVamtgNQ40JQyMk=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 4"><p style="font-size: 0.7em;">ด.ญ.สุณิสา สุวรรณท้าว</p><p style-="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p></div>
                     <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczMTi0JxVQuYq6IYs13RdxvEa1SUexaI0Ads1uRlLU3VpA3hMrOt9Sh9u70EviEyHMfcn4ArddSL0rEnLWoWnXzrkp8Y4lTLE-ISyXh-FDde1Qj7CqLII3Z1qkMN4m56QRNwyDEPZmJFm-r5u2yWW3FN=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 5"><p style="font-size: 0.7em;">ด.ญ.ญารินทร์ เวฬุวะณารักษ์</p><p style="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 3</p></div>
                 </div>
             </div>
@@ -173,4 +255,3 @@
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
