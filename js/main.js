@@ -10,11 +10,13 @@ async function main() {
     try {
         console.log("Fetching game data...");
         // Fetch all necessary data files individually
+        // ===== CORRECT FILENAMES BASED ON GITHUB =====
         const [mathematiciansRes, questionsRes, chanceRes] = await Promise.all([
             fetch('data/mathematicians.json'),
-            fetch('data/questions.json'),
-            fetch('data/chanceCards.json')
+            fetch('data/questions.json'),      // Correct filename
+            fetch('data/chanceCards.json')     // Correct filename (camelCase)
         ]);
+        // ===============================================
 
         if (!mathematiciansRes.ok || !questionsRes.ok || !chanceRes.ok) {
             throw new Error('Network response was not ok while fetching game data.');
