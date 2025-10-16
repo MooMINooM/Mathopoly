@@ -5,10 +5,12 @@ import * as actions from './actions.js';
 import { movePlayer, finishTurn } from './gameLogic.js';
 
 function handlePropertyLanding(player, space) {
+    // --- START: ตรรกะใหม่ทั้งหมดสำหรับบอท ---
     if (player.isBot) {
         setTimeout(() => {
             const owner = space.owner !== null ? state.players[space.owner] : null;
 
+            // กรณี 1: เมืองว่าง
             if (owner === null) {
                 const buyChance = (player.money / state.gameSettings.startingMoney) * 0.75;
                 if (player.money >= space.price && Math.random() < buyChance) {
@@ -19,6 +21,7 @@ function handlePropertyLanding(player, space) {
                     console.log(`Bot ${player.name} ตัดสินใจไม่ซื้อ ${space.name}`);
                     finishTurn();
                 }
+            // กรณี 2: เมืองของตัวเอง
             } else if (owner.id === player.id) {
                 if (space.level < 3) {
                     const expansionCost = actions.calculateExpansionCost(space);
@@ -32,14 +35,26 @@ function handlePropertyLanding(player, space) {
                 } else {
                     finishTurn();
                 }
+            // กรณี 3: เมืองของคนอื่น (ตรรกะใหม่)
             } else {
                 const rent = actions.calculateRent(space);
-                actions.payRent(player, owner, rent);
+                const buyoutPrice = actions.calculateBuyoutPrice(space);
+                
+                // พิจารณาซื้อต่อ ถ้ามีเงินพอและมีโอกาส 30%
+                if (player.money >= buyoutPrice && Math.random() < 0.3) {
+                    console.log(`Bot ${player.name} พิจารณาซื้อต่อ ${space.name} จาก ${owner.name}`);
+                    actions.buyOutProperty(player, owner, space);
+                } else {
+                    // ถ้าไม่ซื้อต่อ ก็จ่ายค่าเช่าตามปกติ
+                    actions.payRent(player, owner, rent);
+                }
             }
         }, 1500);
         return;
     }
+    // --- END: ตรรกะใหม่ทั้งหมดสำหรับบอท ---
 
+    // --- ตรรกะสำหรับผู้เล่นคน (เหมือนเดิม) ---
     if (space.owner === null) {
         state.setOnQuestionSuccess(() => {
             ui.showActionModal(
@@ -98,7 +113,7 @@ function handlePropertyLanding(player, space) {
                         } else {
                             actions.buyOutProperty(player, owner, space);
                         }
-                    }}
+                    }, enabled: player.money >= buyoutPrice}
                 ]
             );
         };
@@ -106,16 +121,12 @@ function handlePropertyLanding(player, space) {
     }
 }
 
-// --- START: ส่วนที่แก้ไขสำหรับบอทสถานีรถไฟ ---
 async function botTravelByTrain(player) {
     const cost = Math.round(500 * (state.gameSettings.startingMoney / 15000));
     actions.changePlayerMoney(player, -cost, "ค่าเดินทางรถไฟ");
     if(player.bankrupt) return;
 
-    // ตรรกะการเลือกที่หมายของบอท
     let destinationId = -1;
-
-    // 1. หาเมืองว่างที่แพงที่สุด
     const unownedProperties = state.boardSpaces
         .filter(s => s.type === 'property' && s.owner === null)
         .sort((a, b) => b.price - a.price);
@@ -124,12 +135,11 @@ async function botTravelByTrain(player) {
         destinationId = unownedProperties[0].id;
         console.log(`Bot ${player.name} เลือกเดินทางไปเมืองว่างที่แพงที่สุด: ${unownedProperties[0].name}`);
     } else {
-        // 2. ถ้าไม่มีเมืองว่าง หาเมืองของตัวเองที่อัปเกรดได้
         const upgradableProperties = state.boardSpaces
             .filter(s => s.type === 'property' && s.owner === player.id && s.level < 3);
 
         if (upgradableProperties.length > 0) {
-            destinationId = upgradableProperties[Math.floor(Math.random() * upgradableProperties.length)].id; // สุ่มเลือก 1 เมือง
+            destinationId = upgradableProperties[Math.floor(Math.random() * upgradableProperties.length)].id;
             console.log(`Bot ${player.name} เลือกเดินทางไปขยายเมืองของตัวเอง: ${state.boardSpaces[destinationId].name}`);
         }
     }
@@ -148,7 +158,7 @@ function handleTrainStation(player) {
 
     if (player.isBot) {
         setTimeout(() => {
-            if (player.money >= cost && Math.random() < 0.7) { // 70% ที่บอทจะเดินทางถ้ามีเงินพอ
+            if (player.money >= cost && Math.random() < 0.7) {
                 console.log(`Bot ${player.name} ตัดสินใจเดินทางด้วยรถไฟ`);
                 botTravelByTrain(player);
             } else {
@@ -171,7 +181,6 @@ function handleTrainStation(player) {
         ]
     );
 }
-// --- END: ส่วนที่แก้ไขสำหรับบอทสถานีรถไฟ ---
 
 async function travelByTrain(player) {
     ui.hideActionModal();
@@ -211,7 +220,52 @@ async function travelByTrain(player) {
     };
 }
 
+// --- START: ตรรกะใหม่สำหรับบอทที่มุมนักคณิตศาสตร์ ---
+function botHandleMathematicianCorner(player) {
+    if (Math.random() < 0.9) { // 90% ที่จะใช้สิทธิ์
+        console.log(`Bot ${player.name} ตัดสินใจใช้สิทธิ์จากมุมนักคณิตศาสตร์`);
+        let targetSpace = null;
+
+        // 1. หาเมืองว่างที่แพงที่สุด
+        const unowned = state.boardSpaces
+            .filter(s => s.type === 'property' && s.owner === null)
+            .sort((a, b) => b.price - a.price);
+
+        if (unowned.length > 0) {
+            targetSpace = unowned[0];
+            console.log(`Bot เลือกซื้อเมืองฟรี: ${targetSpace.name}`);
+            player.totalQuestions++; player.correctAnswers++;
+            actions.buyProperty(player, targetSpace);
+        } else {
+            // 2. หาเมืองตัวเองที่อัปเกรดได้และคุ้มค่าที่สุด
+            const upgradable = state.boardSpaces
+                .filter(s => s.type === 'property' && s.owner === player.id && s.level < 3)
+                .sort((a, b) => b.investment - a.investment);
+
+            if (upgradable.length > 0) {
+                targetSpace = upgradable[0];
+                console.log(`Bot เลือกขยายเมืองฟรี: ${targetSpace.name}`);
+                player.totalQuestions++; player.correctAnswers++;
+                actions.expandProperty(player, targetSpace);
+            }
+        }
+
+        if (!targetSpace) {
+            console.log(`Bot ไม่มีเป้าหมายที่น่าสนใจ จึงไม่ใช้สิทธิ์`);
+            finishTurn();
+        }
+    } else {
+        console.log(`Bot ${player.name} ตัดสินใจเก็บสิทธิ์ไว้ก่อน`);
+        finishTurn();
+    }
+}
+
 function handleMathematicianCorner(player) {
+    if (player.isBot) {
+        setTimeout(() => botHandleMathematicianCorner(player), 1500);
+        return;
+    }
+
     console.log(`${player.name} ได้รับสิทธิ์ในการซื้อหรือขยายเมืองใดก็ได้ฟรี 1 ครั้ง!`);
     ui.showActionModal('มุมนักคณิตศาสตร์!',
         'คุณได้รับสิทธิ์ในการซื้อ (ถ้ามีเมืองว่าง) หรือขยายเมือง (ถ้ามีเมืองของตัวเอง) ใดก็ได้ 1 แห่งทันที',
@@ -221,6 +275,7 @@ function handleMathematicianCorner(player) {
         ]
     );
 }
+// --- END: ตรรกะใหม่สำหรับบอทที่มุมนักคณิตศาสตร์ ---
 
 function selectPropertyForBonus(player) {
     ui.hideActionModal();
@@ -264,6 +319,7 @@ function selectPropertyForBonus(player) {
         }
     };
 }
+
 
 function drawChanceCard(player) {
     const moneyScale = state.gameSettings.startingMoney / 15000;
