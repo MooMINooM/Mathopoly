@@ -1,8 +1,9 @@
 // js/main.js
-import { gameBoard, mathematicians, questions, chanceCards } from '../data/gamedata.js';
+// NO LONGER IMPORTS from gamedata.js
+
 import * as state from './state.js';
 import * as ui from './ui.js';
-import { endTurn as originalEndTurn, rollDice as originalRollDice, handleTileAction } from './gameLogic.js';
+import { endTurn, rollDice } from './gameLogic.js';
 import * as actions from './actions.js';
 
 // --- DOM Elements ---
@@ -13,238 +14,192 @@ const startGameBtn = document.getElementById('start-game-btn');
 const questionModal = document.getElementById('question-modal');
 const actionModal = document.getElementById('action-modal');
 
-// --- Main Initializer ---
-function main() {
-    state.setGameBoard(gameBoard);
-    state.setMathematicians(mathematicians);
-    state.setQuestions(questions);
-    state.setChanceCards(chanceCards);
+// --- Main Initializer (FIXED) ---
+async function main() {
+    try {
+        // Fetch all necessary data files individually
+        const [mathematiciansRes, questionsRes, chanceRes] = await Promise.all([
+            fetch('data/mathematicians.json'),
+            fetch('data/questions.json'),
+            fetch('data/chanceCards.json')
+        ]);
 
-    initializeUISetupListeners();
-    addGameEventListeners();
-}
+        if (!mathematiciansRes.ok || !questionsRes.ok || !chanceRes.ok) {
+            throw new Error('Network response was not ok while fetching game data.');
+        }
 
-// --- Setup & Initialization ---
-function initializeUISetupListeners() {
-    document.getElementById('show-setup-btn').addEventListener('click', () => {
-        splashScreen.style.display = 'none';
-        setupScreen.style.display = 'flex';
-    });
-    
-    document.getElementById('show-about-btn').addEventListener('click', () => ui.showAboutModal(true));
-    document.getElementById('close-about-btn').addEventListener('click', () => ui.showAboutModal(false));
-
-    document.getElementById('close-setup-btn').addEventListener('click', () => {
-        setupScreen.style.display = 'none';
-        splashScreen.style.display = 'flex';
-    });
-
-    startGameBtn.addEventListener('click', createPlayersAndStartGame);
-}
-
-function createPlayersAndStartGame() {
-    const playerSetups = document.querySelectorAll('.player-setup');
-    const players = [];
-    const startingMoney = parseInt(document.getElementById('starting-money').value, 10);
-
-    playerSetups.forEach((setup, index) => {
-        const nameInput = setup.querySelector('.player-name-input');
-        const name = nameInput.value.trim();
-        const type = setup.querySelector('.player-type-select').value;
+        const mathematiciansData = await mathematiciansRes.json();
+        const questionsData = await questionsRes.json();
+        const chanceCardsData = await chanceRes.json();
         
-        // เพิ่มผู้เล่นเมื่อมีชื่อ หรือเป็น AI
-        if (name || type === 'ai') {
-            const difficulty = setup.querySelector('.player-difficulty-select').value;
-            
-            let playerName = name;
-            if (type === 'ai' && !name) {
-                playerName = `คอมพิวเตอร์ ${players.filter(p => p.isAI).length + 1}`;
+        // Set the fetched data into the game state
+        state.setMathematicians(mathematiciansData);
+        state.setAllQuestions(questionsData);
+        state.setChanceCards(chanceCardsData);
+
+        // This function now correctly initializes the setup process AFTER data is loaded
+        initializeGameSetup();
+        addGameEventListeners();
+
+    } catch (error) {
+        console.error('Failed to load game data:', error);
+        alert('ไม่สามารถโหลดข้อมูลสำคัญของเกมได้ กรุณาลองรีเฟรชหน้าเว็บ');
+    }
+}
+
+// NOTE: This is the original 'initializeGameSetup' function from your code
+// It's being kept, but it is now called from within main()
+export function initializeGameSetup() {
+    document.querySelector('.game-container').style.display = 'none';
+
+    // Main menu buttons
+    document.getElementById('show-setup-btn').addEventListener('click', () => {
+        document.getElementById('splash-screen').style.display = 'none';
+        document.getElementById('setup-screen').style.display = 'flex';
+    });
+     document.getElementById('show-about-btn').addEventListener('click', () => {
+        document.getElementById('about-modal').style.display = 'flex';
+    });
+
+    // Setup screen buttons
+    document.getElementById('start-game-btn').addEventListener('click', startGame); // This now calls the correct startGame
+    document.getElementById('close-setup-btn').addEventListener('click', () => {
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('splash-screen').style.display = 'flex';
+    });
+
+    // About modal button
+    document.getElementById('close-about-btn').addEventListener('click', () => {
+        document.getElementById('about-modal').style.display = 'none';
+    });
+}
+
+
+// This function is now simplified as it doesn't need to create players
+function startGame() {
+    const playerInputs = document.querySelectorAll('.player-setup');
+    const newPlayers = [];
+    let aiCount = 0;
+
+    playerInputs.forEach((inputEl) => {
+        const nameInput = inputEl.querySelector('.player-name-input');
+        const difficultySelect = inputEl.querySelector('.player-difficulty-select');
+        const typeSelect = inputEl.querySelector('.player-type-select');
+        const playerName = nameInput.value.trim();
+        const playerType = typeSelect.value;
+
+        if (playerName !== '' || playerType === 'ai') {
+            let finalName = playerName;
+            if (playerType === 'ai' && playerName === '') {
+                aiCount++;
+                finalName = `คอมพิวเตอร์ ${aiCount}`;
             }
 
-            players.push({
-                id: index,
-                name: playerName,
-                money: startingMoney,
+            newPlayers.push({
+                id: newPlayers.length,
+                name: finalName,
+                money: parseInt(document.getElementById('starting-money').value),
                 position: 0,
                 properties: [],
-                isAI: type === 'ai',
-                difficulty: difficulty,
-                inJail: false,
-                jailTurns: 0,
-                status: 'playing',
+                difficulty: difficultySelect.value,
+                isAI: playerType === 'ai',
                 correctAnswers: 0,
                 totalQuestions: 0,
+                inJailTurns: 0,
+                loan: null,
                 getOutOfJailFree: 0,
-                tokenColor: state.playerColors[index]
+                bankrupt: false,
+                color: `var(--player${newPlayers.length + 1}-color)`
             });
         }
     });
-
-    if (players.length < 1) {
-        alert('กรุณาตั้งค่าผู้เล่นอย่างน้อย 1 คน (สามารถเลือกเป็น AI ได้)');
+    
+    if (newPlayers.length < 1) {
+        ui.showActionModal("ผู้เล่นไม่พอ", "กรุณาตั้งค่าผู้เล่นอย่างน้อย 1 คน (สามารถเป็นคนหรือ AI ก็ได้)", [{ text: 'ตกลง', callback: ui.hideActionModal }], true);
         return;
     }
+    
+    state.setPlayers(newPlayers);
+    state.setGameStarted(true);
+    state.setGameSetting('startingMoney', parseInt(document.getElementById('starting-money').value));
 
-    state.setPlayers(players);
-    setupScreen.style.display = 'none';
-    gameContainer.style.display = 'flex';
-    startGame();
+    // We no longer call createBoard here, it should be part of the UI initialization
+    ui.createBoard();
+
+    document.getElementById('setup-screen').style.display = 'none';
+    document.querySelector('.game-container').style.display = 'flex';
+
+    setTimeout(() => {
+        ui.createPlayerPawns();
+        ui.updateAllUI();
+        state.setCurrentPlayerIndex(0);
+        console.log(`เกมเริ่มต้นแล้ว! ตาของ ${state.players[0].name}`);
+        // This is now handled by gameLogic
+        // startTurn(); 
+        const firstPlayer = state.players[0];
+        if (firstPlayer.isAI) {
+            // A function to specifically start AI turn might be needed in gameLogic
+            // for now let's rely on gameLogic.startTurn() to have the AI check
+            import('./gameLogic.js').then(gameLogic => gameLogic.startTurn());
+        } else {
+             import('./gameLogic.js').then(gameLogic => gameLogic.startTurn());
+        }
+
+    }, 50);
 }
 
-function startGame() {
-    state.setGameActive(true);
-    state.setCurrentPlayerIndex(0);
-    ui.initializeBoard(state.gameBoard);
-    ui.initializePlayersOnBoard(state.players);
-    ui.updatePlayerInfo();
-    checkCurrentPlayerIsAI();
-}
 
 // --- Event Listeners ---
 function addGameEventListeners() {
-    document.getElementById('roll-dice-btn').addEventListener('click', () => {
-        if (!state.players[state.currentPlayerIndex].isAI) {
-            originalRollDice();
-        }
-    });
+    document.getElementById('roll-dice-btn').addEventListener('click', rollDice);
     document.getElementById('end-turn-btn').addEventListener('click', endTurn);
     document.getElementById('end-game-btn').addEventListener('click', ui.showSummary);
     document.getElementById('manage-property-btn').addEventListener('click', () => ui.showManagePropertyModal(false));
-    document.getElementById('submit-answer-btn').addEventListener('click', handleSubmitAnswer);
-    document.getElementById('close-info-sheet-btn').addEventListener('click', () => ui.showInfoSheetModal(false));
+
+    document.getElementById('submit-answer-btn').addEventListener('click', () => {
+        const answer = document.getElementById('question-answer').value;
+        ui.hideQuestionModal();
+        
+        const currentPlayer = state.players[state.currentPlayerIndex];
+        currentPlayer.totalQuestions++;
+        
+        if (answer == state.currentQuestion.answer) {
+            currentPlayer.correctAnswers++;
+            ui.showActionModal("ถูกต้อง!", "คุณตอบคำถามถูกต้อง", [{ text: 'ตกลง', callback: () => {
+                ui.hideActionModal();
+                if(state.onQuestionSuccess) state.onQuestionSuccess();
+            }}]);
+        } else {
+            ui.showActionModal("ผิด!", `น่าเสียดาย! คำตอบที่ถูกต้องคือ: ${state.currentQuestion.answer}`, [{ text: 'ตกลง', callback: () => {
+                ui.hideActionModal();
+                if(state.onQuestionFail) state.onQuestionFail();
+            }}], true);
+        }
+        ui.updateAllUI();
+    });
+
+    document.getElementById('close-info-sheet-btn').addEventListener('click', () => ui.showInfoSheet(null));
     document.getElementById('restart-game-btn').addEventListener('click', () => window.location.reload());
-    document.getElementById('chance-card-ok-btn').addEventListener('click', () => ui.showChanceCardModal(false));
+    document.getElementById('chance-card-ok-btn').addEventListener('click', () => {
+        ui.showChanceCardModal(false);
+        const endTurnBtn = document.getElementById('end-turn-btn');
+        if (!endTurnBtn.disabled) {
+            endTurn();
+        }
+    });
 
     const manageModal = document.getElementById('manage-property-modal');
     manageModal.addEventListener('click', (e) => {
         const targetElement = e.target;
         const action = targetElement.dataset.action;
-        const currentPlayer = state.players[state.currentPlayerIndex];
-
         if (targetElement.id === 'close-manage-modal-btn') {
             ui.hideManagePropertyModal();
         } else if (action === 'sell') {
-            const pId = parseInt(targetElement.dataset.pid);
-            if (!isNaN(pId)) actions.sellProperty(currentPlayer, pId);
+            actions.sellProperty(state.players[state.currentPlayerIndex], parseInt(targetElement.dataset.pid));
         } else if (action === 'loan') {
-            actions.takeLoan(currentPlayer);
+            actions.takeLoan(state.players[state.currentPlayerIndex]);
         }
     });
-}
-
-function handleSubmitAnswer() {
-    const answer = document.getElementById('question-answer').value.trim();
-    ui.showQuestionModal(false);
-
-    const currentPlayer = state.players[state.currentPlayerIndex];
-    currentPlayer.totalQuestions++;
-    
-    // Use '==' for flexible comparison (string vs number)
-    if (answer == state.currentQuestion.answer) {
-        currentPlayer.correctAnswers++;
-        ui.showActionModal("ถูกต้อง!", "คุณตอบคำถามถูกต้อง", [{ text: 'ตกลง', callback: () => {
-            ui.hideActionModal();
-            if(state.onQuestionSuccess) state.onQuestionSuccess();
-        }}]);
-    } else {
-        ui.showActionModal("ผิด!", `น่าเสียดาย! คำตอบที่ถูกต้องคือ: ${state.currentQuestion.answer}`, [{ text: 'ตกลง', callback: () => {
-            ui.hideActionModal();
-            if(state.onQuestionFail) state.onQuestionFail();
-        }}], true);
-    }
-    ui.updatePlayerInfo();
-}
-
-
-// --- Turn Management with AI ---
-function endTurn() {
-    originalEndTurn(); // เปลี่ยนตาผู้เล่นใน state
-    checkCurrentPlayerIsAI();
-}
-
-function checkCurrentPlayerIsAI() {
-    if (!state.gameActive) return;
-
-    const currentPlayer = state.players[state.currentPlayerIndex];
-    if (currentPlayer.isAI) {
-        ui.disableControls();
-        ui.showActionModal(`ตาของ ${currentPlayer.name}`, "คอมพิวเตอร์กำลังคิด...", [], false, 1500);
-        setTimeout(playAITurn, 2000);
-    } else {
-        ui.enableControls();
-    }
-}
-
-// --- AI Logic ---
-function playAITurn() {
-    const aiPlayer = state.players[state.currentPlayerIndex];
-    if (aiPlayer.status === 'bankrupt' || !state.gameActive) {
-        endTurn();
-        return;
-    }
-
-    console.log(`--- Executing AI turn for ${aiPlayer.name} ---`);
-    
-    // ตั้งค่า Observer เพื่อ "ดักฟัง" ว่ามี Modal เปิดขึ้นมาหรือไม่
-    const observerCallback = (modalElement, handler) => {
-        const observer = new MutationObserver((mutations) => {
-            if (modalElement.style.display !== 'none') {
-                observer.disconnect(); // หยุด observe ทันทีที่เจอ
-                setTimeout(() => handler(modalElement), 1200); // หน่วงเวลาให้เหมือน AI คิด
-            }
-        });
-        observer.observe(modalElement, { attributes: true, attributeFilter: ['style'] });
-        return observer;
-    };
-
-    const questionObserver = observerCallback(questionModal, aiAnswerQuestion);
-    const actionObserver = observerCallback(actionModal, aiHandleAction);
-
-    // AI เริ่มทอยลูกเต๋า ซึ่งจะไปกระตุ้น Logic ของเกม
-    originalRollDice();
-
-    // หากไม่มี Modal ใดๆ แสดงขึ้นมาใน 4 วินาที ให้จบตาเลย
-    setTimeout(() => {
-        questionObserver.disconnect();
-        actionObserver.disconnect();
-        if (questionModal.style.display === 'none' && actionModal.style.display === 'none') {
-            const endTurnBtn = document.getElementById('end-turn-btn');
-            if (!endTurnBtn.disabled) {
-                console.log("AI sees no action, ending turn.");
-                endTurn();
-            }
-        }
-    }, 4000);
-}
-
-// AI ตอบคำถาม
-function aiAnswerQuestion() {
-    console.log("AI is answering question...");
-    const answer = state.currentQuestion.answer;
-    const isCorrect = Math.random() < 0.75; // AI มีโอกาสตอบถูก 75%
-
-    document.getElementById('question-answer').value = isCorrect ? answer : (typeof answer === 'number' ? answer + 1 : 'wrong_answer');
-    document.getElementById('submit-answer-btn').click();
-}
-
-// AI ตัดสินใจใน Action Modal (เช่น ซื้อ, จ่ายเงิน, ตกลง)
-function aiHandleAction(modalElement) {
-    console.log("AI is handling an action...");
-    const buttonsContainer = modalElement.querySelector('#action-modal-buttons');
-    if (!buttonsContainer) return;
-
-    const primaryButton = buttonsContainer.querySelector('button:not(.danger):not(.secondary)');
-    
-    // AI จะพยายามกดปุ่มหลัก (เช่น 'ซื้อ', 'ตกลง') ก่อนเสมอ
-    if (primaryButton) {
-        primaryButton.click();
-    } else {
-        // หากไม่มีปุ่มหลัก ให้กดปุ่มแรกที่เจอ
-        const anyButton = buttonsContainer.querySelector('button');
-        if (anyButton) {
-            anyButton.click();
-        }
-    }
 }
 
 // Start the entire process
