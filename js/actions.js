@@ -1,12 +1,12 @@
 // js/actions.js
 import * as state from './state.js';
-import { finishTurn } from './gameLogic.js';
+import { finishTurn } from './gameFlow.js'; // <-- แก้ไข Import
 import * as bot from './bot.js';
 import { addLogMessage } from './logger.js';
-import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary, updatePawnPosition } from './ui.js';
-import { calculateBuyoutPrice, calculateExpansionCost } from './utils.js'; // <-- แก้ไข Import
+import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary } from './ui.js';
+import { calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
 
-// --- START: เพิ่มฟังก์ชันตรวจสอบการชนะ ---
+// ... (โค้ดที่เหลือทั้งหมดในไฟล์นี้เหมือนเดิม ไม่ต้องเปลี่ยนแปลง)
 const WIN_CONDITIONS = {
     BELT_A: [1, 2, 3, 4, 5, 37, 38, 39],
     BELT_B: [7, 8, 9, 10, 11, 13, 14, 15],
@@ -14,7 +14,6 @@ const WIN_CONDITIONS = {
     BELT_D: [27, 28, 29, 30, 31, 33, 34, 35],
     CORNERS: [1, 11, 13, 19, 21, 31, 33, 39]
 };
-
 function checkWinConditions(player) {
     if (state.gameSettings.winByBelt) {
         for (const beltKey in WIN_CONDITIONS) {
@@ -37,8 +36,6 @@ function checkWinConditions(player) {
     }
     return false;
 }
-// --- END: เพิ่มฟังก์ชันตรวจสอบการชนะ ---
-
 export function changePlayerMoney(player, amount, reason) {
     player.money += amount;
     player.money = Math.round(player.money);
@@ -52,7 +49,6 @@ export function changePlayerMoney(player, amount, reason) {
     }
     updatePlayerInfo();
 }
-
 function handleDebt(player) {
     const totalAssetValue = player.properties.reduce((sum, pId) => {
         return sum + (state.boardSpaces[pId].investment * 0.6);
@@ -69,7 +65,6 @@ function handleDebt(player) {
         }
     }
 }
-
 function handleBankruptcy(player) {
     addLogMessage(`<span style="color: red; font-weight: bold;">!!! ${player.name} ล้มละลาย! !!!</span>`);
     player.bankrupt = true;
@@ -94,11 +89,6 @@ function handleBankruptcy(player) {
         finishTurn();
     }
 }
-
-
-// --- ฟังก์ชันคำนวณถูกย้ายไปที่ utils.js แล้ว ---
-
-
 export function buyProperty(player, space) {
     changePlayerMoney(player, -space.price, `ซื้อ ${space.name}`);
     if(player.bankrupt) { hideActionModal(); return; }
@@ -112,7 +102,6 @@ export function buyProperty(player, space) {
     if (checkWinConditions(player)) return;
     finishTurn();
 }
-
 export function expandProperty(player, space) {
     const cost = calculateExpansionCost(space);
     changePlayerMoney(player, -cost, `ขยาย ${space.name}`);
@@ -123,7 +112,6 @@ export function expandProperty(player, space) {
     updateAllUI();
     finishTurn();
 }
-
 export function payRent(player, owner, rent) {
     hideActionModal();
     changePlayerMoney(player, -rent, `จ่ายค่าผ่านทางให้ ${owner.name}`);
@@ -131,7 +119,6 @@ export function payRent(player, owner, rent) {
     changePlayerMoney(owner, rent, `รับค่าผ่านทางจาก ${player.name}`);
     finishTurn();
 }
-
 export function buyOutProperty(player, owner, space) {
     hideActionModal();
     const price = calculateBuyoutPrice(space);
@@ -152,7 +139,6 @@ export function buyOutProperty(player, owner, space) {
     if (checkWinConditions(player)) return;
     finishTurn();
 }
-
 export function sellProperty(player, pId) {
     const space = state.boardSpaces[pId];
     const sellPrice = Math.round(space.investment * 0.6);
@@ -175,7 +161,6 @@ export function sellProperty(player, pId) {
         showManagePropertyModal(state.isForcedToSell);
     }
 }
-
 export function takeLoan(player) {
     const amount = Math.round(state.gameSettings.startingMoney / 3);
     player.loan = {
