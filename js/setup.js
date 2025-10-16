@@ -6,7 +6,7 @@ import { startTurn } from './gameLogic.js';
 function createBoard() {
     const boardElement = document.getElementById('game-board');
     const controlPanel = document.getElementById('control-panel');
-
+    
     if (state.boardSpaces.length > 0) return;
 
     boardElement.innerHTML = '';
@@ -42,7 +42,9 @@ function createBoard() {
             spaceData.name = 'สถานีรถไฟ';
             spaceEl.classList.add('corner');
             spaceEl.innerHTML = `<div class="corner-text-overlay"><span>สถานีรถไฟ</span></div>`;
-        } else if ([5, 16, 26, 36].includes(i)) {
+        // --- START: แก้ไขตำแหน่งการ์ดดวง ---
+        } else if ([6, 16, 26, 36].includes(i)) { // เปลี่ยนจาก 5 เป็น 6
+        // --- END: แก้ไขตำแหน่งการ์ดดวง ---
             spaceData.type = 'chance';
             spaceData.name = 'การ์ดดวง';
             spaceEl.classList.add('chance-space');
@@ -127,7 +129,7 @@ function startGame() {
         ui.showActionModal("ผู้เล่นไม่พอ", "กรุณากรอกชื่อผู้เล่นอย่างน้อย 2 คน", [{ text: 'ตกลง', callback: ui.hideActionModal }], true);
         return;
     }
-
+    
     state.setPlayers(newPlayers);
     state.setGameStarted(true);
     state.setGameSetting('startingMoney', parseInt(document.getElementById('starting-money').value));
