@@ -1,7 +1,8 @@
 // js/spaceHandlers.js
 import * as state from './state.js';
 import * as actions from './actions.js';
-import { movePlayer, finishTurn } from './gameLogic.js';
+import { movePlayer } from './gameLogic.js'; // <-- แก้ไข Import
+import { finishTurn } from './gameFlow.js';  // <-- แก้ไข Import
 import { addLogMessage } from './logger.js';
 import { showActionModal, hideActionModal, showQuestionModalForPurchase, showInsufficientFundsModal } from './ui.js';
 
@@ -417,3 +418,4 @@ export function handleSpaceLanding() {
             finishTurn();
     }
 }
+
