@@ -3,7 +3,8 @@ import { initializeGameSetup } from './setup.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
 import { endTurn, rollDice } from './gameLogic.js';
-import * as actions from './actions.js'; // <-- นี่คือบรรทัดที่เพิ่มเข้ามาเพื่อแก้ Error
+import * as actions from './actions.js';
+import * as bot from './bot.js'; // <-- เพิ่มบรรทัดนี้
 
 // --- Main Initializer ---
 async function main() {
