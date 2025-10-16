@@ -1,81 +1,88 @@
 /* css/_components.css */
-
-/* ไม่ต้องใช้ #player-info-container แบบ grid อีกต่อไป */
-/* แต่ใช้ style ของ .player-info เหมือนเดิม */
 .player-info {
-    padding: 8px;
-    border-radius: 8px;
-    border: 2px solid var(--border-color);
-    background-color: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     transition: all 0.3s;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    min-height: 90px; /* ปรับขนาดให้พอดี */
-    flex-shrink: 0;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 .player-info.active {
-    box-shadow: 0 0 15px var(--primary-color);
-    transform: scale(1.02);
+    box-shadow: 0 0 20px var(--player-color);
+    transform: translateY(-4px);
+    border-color: var(--player-color);
 }
 .player-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 .player-header h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.9em;
+    font-size: 1em;
+    font-weight: 700;
     margin: 0;
+    color: var(--text-color);
 }
 .player-header h3::before {
     content: '';
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background-color: var(--player-color, #ccc);
     display: inline-block;
     flex-shrink: 0;
+    border: 2px solid white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 .player-money {
-    font-size: 0.85em;
-    font-weight: 600;
-    white-space: nowrap;
-    margin-left: 5px;
+    font-size: 1em;
+    font-weight: 700;
 }
 .player-status {
-    font-size: 0.7em;
-    padding: 3px 0;
-    border-top: 1px solid #f0f0f0;
-    margin: 4px 0;
-    min-height: 18px;
+    font-size: 0.75em;
+    padding-top: 5px;
+    margin-top: 5px;
+    border-top: 1px solid #eee;
+    min-height: 22px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 .player-status span {
-    margin-right: 8px;
-    color: #555;
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #495057;
+    font-weight: 600;
 }
 .player-properties {
     font-size: 0.8em;
+    font-weight: 600;
+    color: #495057;
 }
 
-/* --- Game Log Style (ปรับปรุง) --- */
 #game-log-container {
     width: 100%;
-    height: 100%; /* ทำให้เต็มช่อง */
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 8px;
-    background-color: rgba(255, 255, 255, 0.7);
+    height: 100%;
+    border-radius: 12px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     display: flex;
     flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 #game-log-container h4 {
-    margin: 0 0 5px 0;
-    padding-bottom: 5px;
-    font-size: 0.9em;
+    margin: 0 0 8px 0;
+    padding-bottom: 8px;
+    font-size: 1em;
     text-align: center;
     color: #333;
     border-bottom: 1px solid var(--border-color);
@@ -83,23 +90,22 @@
 }
 #game-log-list {
     list-style-type: none;
-    padding: 0;
+    padding: 0 5px 0 0;
     margin: 0;
-    overflow-y: auto; /* เปลี่ยนเป็น auto */
+    overflow-y: auto;
     flex-grow: 1;
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: #444;
 }
 #game-log-list li {
-    padding: 3px 5px;
-    border-bottom: 1px solid #eee;
+    padding: 4px 5px;
+    border-bottom: 1px solid #f0f0f0;
 }
 #game-log-list li:last-child {
     border-bottom: none;
 }
-#game-log-list strong {
-    font-weight: 700;
-}
+#game-log-list::-webkit-scrollbar { width: 5px; }
+#game-log-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
 
 .pawn {
     width: 20px;
@@ -118,28 +124,34 @@
 }
 
 .dice {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background-color: white;
-    border: 2px solid var(--text-color);
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
+    font-size: 2.5em;
     font-weight: bold;
+    color: var(--text-color);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
 }
 
 #action-buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* เปลี่ยนเป็น 2 คอลัมน์ */
-    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     width: 100%;
+    max-width: 350px;
 }
 
+#action-buttons button {
+    padding: 14px 10px;
+    font-size: 1em;
+    font-weight: 600;
+}
+/* ... (ส่วนที่เหลือของ components.css เหมือนเดิม) ... */
 #action-buttons button, .modal-content button {
-    padding: 12px 10px; /* ปรับ padding */
-    font-size: 0.9em; /* ปรับ font size */
     font-family: 'Noto Sans Thai', sans-serif;
     border-radius: 8px;
     border: none;
@@ -149,7 +161,6 @@
     transition: background-color 0.2s, transform 0.2s;
     margin: 0;
 }
-
 #action-buttons button:hover, .modal-content button:hover {
     background-color: #45a049;
     transform: translateY(-2px);
@@ -163,8 +174,6 @@
 #action-buttons button.secondary:hover, .modal-content button.secondary:hover { background-color: #1e88e5; }
 #action-buttons button.danger, .modal-content button.danger { background-color: var(--danger-color); }
 #action-buttons button.danger:hover, .modal-content button.danger:hover { background-color: #e53935; }
-
-/* ... (โค้ดที่เหลือเหมือนเดิม) ... */
 .level-badge {
     position: absolute;
     top: 2px;
