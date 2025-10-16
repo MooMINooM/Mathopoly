@@ -31,34 +31,27 @@
     grid-area: 2 / 2 / 9 / 13;
     background-color: transparent;
     border-radius: 10px;
-    padding: 15px;
+    padding: 10px; /* ลด padding เล็กน้อย */
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 15px;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 คอลัมน์ */
+    grid-template-rows: 1fr auto;       /* แถวบนเต็มที่ แถวล่างปรับตามเนื้อหา */
+    gap: 10px;
 }
 
-#player-info-top-left {
-    grid-area: 1 / 1 / 2 / 2;
-}
-#player-info-top-right {
-    grid-area: 1 / 2 / 2 / 3;
-}
-#game-log-container {
-    grid-area: 2 / 1 / 3 / 2;
-}
-#action-container {
-    grid-area: 2 / 2 / 3 / 3;
-}
+/* --- จัดวางพื้นที่ Grid Area --- */
+#player-info-col-1 { grid-area: 1 / 1 / 2 / 2; }
+#player-info-col-2 { grid-area: 1 / 2 / 2 / 3; }
+#player-info-col-3 { grid-area: 1 / 3 / 2 / 4; }
+#game-log-container { grid-area: 2 / 1 / 3 / 3; } /* Log กินพื้นที่ 2 คอลัมน์ */
+#action-container { grid-area: 2 / 3 / 3 / 4; } /* Action อยู่คอลัมน์สุดท้าย */
 
-/* --- START: แก้ไขส่วนแสดงผลผู้เล่น --- */
-.player-info-quadrant {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 คอลัมน์ */
+
+.player-info-col {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    align-content: start; /* จัดเรียงการ์ดผู้เล่นให้อยู่ด้านบน */
+    justify-content: start; /* จัดเรียงการ์ดจากบนลงล่าง */
 }
-/* --- END: แก้ไขส่วนแสดงผลผู้เล่น --- */
 
 #action-container {
     display: flex;
