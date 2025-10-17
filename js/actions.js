@@ -1,12 +1,11 @@
 // js/actions.js
 import * as state from './state.js';
-import { finishTurn } from './gameFlow.js'; // <-- แก้ไข Import
+import { finishTurn } from './gameFlow.js';
 import * as bot from './bot.js';
 import { addLogMessage } from './logger.js';
-import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary } from './ui.js';
+import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary, hideManagePropertyModal } from './ui.js';
 import { calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
 
-// ... (โค้ดที่เหลือทั้งหมดในไฟล์นี้เหมือนเดิม ไม่ต้องเปลี่ยนแปลง)
 const WIN_CONDITIONS = {
     BELT_A: [1, 2, 3, 4, 5, 37, 38, 39],
     BELT_B: [7, 8, 9, 10, 11, 13, 14, 15],
@@ -14,6 +13,7 @@ const WIN_CONDITIONS = {
     BELT_D: [27, 28, 29, 30, 31, 33, 34, 35],
     CORNERS: [1, 11, 13, 19, 21, 31, 33, 39]
 };
+
 function checkWinConditions(player) {
     if (state.gameSettings.winByBelt) {
         for (const beltKey in WIN_CONDITIONS) {
@@ -36,19 +36,24 @@ function checkWinConditions(player) {
     }
     return false;
 }
+
 export function changePlayerMoney(player, amount, reason) {
     player.money += amount;
     player.money = Math.round(player.money);
     
     const action = amount > 0 ? 'ได้รับ' : 'เสีย';
     const color = amount > 0 ? 'green' : 'red';
-    addLogMessage(`<span style="color: ${color};"><strong>${player.name}</strong> ${action}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})</span>`);
+    if (reason) { // ไม่แสดง log ถ้าไม่มีเหตุผล (เช่น ปันผลนักธุรกิจ)
+        addLogMessage(`<span style="color: ${color};"><strong>${player.name}</strong> ${action}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})</span>`);
+    }
+
 
     if (player.money < 0) {
         handleDebt(player);
     }
     updatePlayerInfo();
 }
+
 function handleDebt(player) {
     const totalAssetValue = player.properties.reduce((sum, pId) => {
         return sum + (state.boardSpaces[pId].investment * 0.6);
@@ -65,6 +70,7 @@ function handleDebt(player) {
         }
     }
 }
+
 function handleBankruptcy(player) {
     addLogMessage(`<span style="color: red; font-weight: bold;">!!! ${player.name} ล้มละลาย! !!!</span>`);
     player.bankrupt = true;
@@ -89,6 +95,8 @@ function handleBankruptcy(player) {
         finishTurn();
     }
 }
+
+
 export function buyProperty(player, space) {
     changePlayerMoney(player, -space.price, `ซื้อ ${space.name}`);
     if(player.bankrupt) { hideActionModal(); return; }
@@ -102,8 +110,9 @@ export function buyProperty(player, space) {
     if (checkWinConditions(player)) return;
     finishTurn();
 }
+
 export function expandProperty(player, space) {
-    const cost = calculateExpansionCost(space);
+    const cost = calculateExpansionCost(space, player);
     changePlayerMoney(player, -cost, `ขยาย ${space.name}`);
     if(player.bankrupt) { hideActionModal(); return; }
     space.investment += cost;
@@ -112,6 +121,7 @@ export function expandProperty(player, space) {
     updateAllUI();
     finishTurn();
 }
+
 export function payRent(player, owner, rent) {
     hideActionModal();
     changePlayerMoney(player, -rent, `จ่ายค่าผ่านทางให้ ${owner.name}`);
@@ -119,9 +129,10 @@ export function payRent(player, owner, rent) {
     changePlayerMoney(owner, rent, `รับค่าผ่านทางจาก ${player.name}`);
     finishTurn();
 }
+
 export function buyOutProperty(player, owner, space) {
     hideActionModal();
-    const price = calculateBuyoutPrice(space);
+    const price = calculateBuyoutPrice(space, player);
     
     addLogMessage(`<strong>${player.name}</strong> ซื้อ <strong>${space.name}</strong> ต่อจาก <strong>${owner.name}</strong>`);
 
@@ -139,6 +150,7 @@ export function buyOutProperty(player, owner, space) {
     if (checkWinConditions(player)) return;
     finishTurn();
 }
+
 export function sellProperty(player, pId) {
     const space = state.boardSpaces[pId];
     const sellPrice = Math.round(space.investment * 0.6);
@@ -155,12 +167,15 @@ export function sellProperty(player, pId) {
     if (state.isForcedToSell && player.money >= 0) {
         state.setForcedToSell(false);
         addLogMessage(`<strong>${player.name}</strong> ชำระหนี้สำเร็จแล้ว!`);
-        hideActionModal();
+        hideManagePropertyModal();
         finishTurn();
+    } else if (state.isForcedToSell) {
+        showManagePropertyModal(true);
     } else {
-        showManagePropertyModal(state.isForcedToSell);
+        hideManagePropertyModal();
     }
 }
+
 export function takeLoan(player) {
     const amount = Math.round(state.gameSettings.startingMoney / 3);
     player.loan = {
@@ -168,5 +183,5 @@ export function takeLoan(player) {
         roundsLeft: 10
     };
     changePlayerMoney(player, amount, "กู้เงิน");
-    showManagePropertyModal();
+    hideManagePropertyModal();
 }
