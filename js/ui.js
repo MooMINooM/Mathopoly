@@ -22,11 +22,9 @@ export function addLogMessage(message) {
     }
 }
 
-// --- UI Update Functions ---
 export function updateAllUI() {
     updatePlayerInfo();
     updateBoardUI();
-    // อัปเดตตำแหน่งผู้เล่นทุกคนเพื่อให้การจัดเรียงถูกต้องเสมอ
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
 
@@ -71,17 +69,21 @@ export function updatePlayerInfo() {
     }
 }
 
+// --- START: แก้ไขฟังก์ชัน updateBoardUI ---
 export function updateBoardUI() {
     state.boardSpaces.forEach(space => {
         if (space.type === 'property') {
             const spaceEl = document.getElementById(`space-${space.id}`);
+            if (!spaceEl) return; // เพิ่มการป้องกัน Error
+
             const spaceInfo = spaceEl.querySelector('.space-info');
             const priceEl = spaceEl.querySelector('.space-price');
             const levelBadgeContainer = spaceEl.querySelector('.level-badge-container');
 
             if (space.owner !== null) {
+                // ใช้วิธีค้นหาที่ปลอดภัยกว่าเดิม
                 const owner = state.players.find(p => p.id === space.owner);
-                if (owner) {
+                if (owner) { // ตรวจสอบให้แน่ใจว่าเจอเจ้าของ
                     spaceInfo.style.backgroundColor = owner.color;
                     if (owner.color === 'var(--player2-color)' || owner.color === 'var(--player3-color)') {
                        spaceInfo.style.color = '#333';
@@ -107,22 +109,18 @@ export function updateBoardUI() {
         }
     });
 }
+// --- END: แก้ไขฟังก์ชัน updateBoardUI ---
 
-
-// --- START: ฟังก์ชัน updatePawnPosition ฉบับแก้ไขสมบูรณ์ ---
 export function updatePawnPosition(player) {
     const spaceEl = document.getElementById(`space-${player.position}`);
     if (!spaceEl) return;
 
-    // 1. หาทั้งหมดว่ามีผู้เล่นกี่คนบนช่องนี้
     const playersOnSpace = state.players.filter(p => p.position === player.position && !p.bankrupt);
     
-    // 2. กำหนด Layout การจัดเรียง (เช่น 2x3)
     const columns = 2;
-    const pawnSize = 20; // ขนาดตัวหมาก
-    const padding = 2;   // ระยะห่างระหว่างตัวหมาก
+    const pawnSize = 20;
+    const padding = 2;
 
-    // 3. จัดเรียงผู้เล่นทุกคนที่อยู่บนช่องนี้ใหม่
     playersOnSpace.forEach((p, index) => {
         const pawn = document.getElementById(`pawn-${p.id}`);
         if (!pawn) return;
@@ -133,14 +131,12 @@ export function updatePawnPosition(player) {
         const spaceWidth = spaceEl.offsetWidth;
         const spaceHeight = spaceEl.offsetHeight;
 
-        // คำนวณจุดศูนย์กลางของพื้นที่จัดวาง
         const totalWidth = columns * (pawnSize + padding) - padding;
         const totalHeight = Math.ceil(playersOnSpace.length / columns) * (pawnSize + padding) - padding;
         
         const startX = (spaceWidth - totalWidth) / 2;
         const startY = (spaceHeight - totalHeight) / 2;
 
-        // คำนวณตำแหน่งของตัวหมากแต่ละตัว
         const newLeft = spaceEl.offsetLeft + startX + col * (pawnSize + padding);
         const newTop = spaceEl.offsetTop + startY + row * (pawnSize + padding);
 
@@ -148,8 +144,6 @@ export function updatePawnPosition(player) {
         pawn.style.top = `${newTop}px`;
     });
 }
-// --- END: ฟังก์ชัน updatePawnPosition ฉบับแก้ไขสมบูรณ์ ---
-
 
 export function updateDice(d1, d2) {
     document.getElementById('dice1').textContent = d1;
