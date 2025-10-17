@@ -4,7 +4,6 @@ import { generateQuestion } from './questions.js';
 import { calculateRent } from './utils.js';
 import { CAREERS } from './careers.js';
 
-// --- Logger Code (Moved to its own file but kept here for simplicity if needed) ---
 const MAX_LOG_MESSAGES = 40;
 
 export function addLogMessage(message) {
@@ -27,6 +26,7 @@ export function addLogMessage(message) {
 export function updateAllUI() {
     updatePlayerInfo();
     updateBoardUI();
+    // อัปเดตตำแหน่งผู้เล่นทุกคนเพื่อให้การจัดเรียงถูกต้องเสมอ
     state.players.forEach(p => { if(!p.bankrupt) updatePawnPosition(p) });
 }
 
@@ -49,7 +49,7 @@ export function updatePlayerInfo() {
             if (player.inJailTurns > 0) statusHTML += `<span>ติดเกาะร้าง</span>`;
             if (player.loan) statusHTML += `<span>หนี้ (${player.loan.roundsLeft} ตา)</span>`;
             if (player.getOutOfJailFree > 0) statusHTML += `<span>การ์ดฟรี ${player.getOutOfJailFree} ใบ</span>`;
-
+            
             const career = CAREERS[player.career];
             const careerHTML = state.gameSettings.careerMode ? `<div class="player-career" title="${career.description}">${career.name}</div>` : '';
 
@@ -80,12 +80,14 @@ export function updateBoardUI() {
             const levelBadgeContainer = spaceEl.querySelector('.level-badge-container');
 
             if (space.owner !== null) {
-                const owner = state.players[space.owner];
-                spaceInfo.style.backgroundColor = owner.color;
-                if (owner.color === 'var(--player2-color)' || owner.color === 'var(--player3-color)') {
-                   spaceInfo.style.color = '#333';
-                } else {
-                   spaceInfo.style.color = 'white';
+                const owner = state.players.find(p => p.id === space.owner);
+                if (owner) {
+                    spaceInfo.style.backgroundColor = owner.color;
+                    if (owner.color === 'var(--player2-color)' || owner.color === 'var(--player3-color)') {
+                       spaceInfo.style.color = '#333';
+                    } else {
+                       spaceInfo.style.color = 'white';
+                    }
                 }
                 priceEl.textContent = `฿${calculateRent(space).toLocaleString()}`;
 
@@ -106,23 +108,54 @@ export function updateBoardUI() {
     });
 }
 
-export function updatePawnPosition(player) {
-    const pawn = document.getElementById(`pawn-${player.id}`);
-    const spaceEl = document.getElementById(`space-${player.position}`);
-    if (!pawn || !spaceEl) return;
 
-    const pawnOffset = player.id * 5;
-    pawn.style.left = `${spaceEl.offsetLeft + pawnOffset}px`;
-    pawn.style.top = `${spaceEl.offsetTop + pawnOffset}px`;
+// --- START: ฟังก์ชัน updatePawnPosition ฉบับแก้ไขสมบูรณ์ ---
+export function updatePawnPosition(player) {
+    const spaceEl = document.getElementById(`space-${player.position}`);
+    if (!spaceEl) return;
+
+    // 1. หาทั้งหมดว่ามีผู้เล่นกี่คนบนช่องนี้
+    const playersOnSpace = state.players.filter(p => p.position === player.position && !p.bankrupt);
+    
+    // 2. กำหนด Layout การจัดเรียง (เช่น 2x3)
+    const columns = 2;
+    const pawnSize = 20; // ขนาดตัวหมาก
+    const padding = 2;   // ระยะห่างระหว่างตัวหมาก
+
+    // 3. จัดเรียงผู้เล่นทุกคนที่อยู่บนช่องนี้ใหม่
+    playersOnSpace.forEach((p, index) => {
+        const pawn = document.getElementById(`pawn-${p.id}`);
+        if (!pawn) return;
+
+        const row = Math.floor(index / columns);
+        const col = index % columns;
+        
+        const spaceWidth = spaceEl.offsetWidth;
+        const spaceHeight = spaceEl.offsetHeight;
+
+        // คำนวณจุดศูนย์กลางของพื้นที่จัดวาง
+        const totalWidth = columns * (pawnSize + padding) - padding;
+        const totalHeight = Math.ceil(playersOnSpace.length / columns) * (pawnSize + padding) - padding;
+        
+        const startX = (spaceWidth - totalWidth) / 2;
+        const startY = (spaceHeight - totalHeight) / 2;
+
+        // คำนวณตำแหน่งของตัวหมากแต่ละตัว
+        const newLeft = spaceEl.offsetLeft + startX + col * (pawnSize + padding);
+        const newTop = spaceEl.offsetTop + startY + row * (pawnSize + padding);
+
+        pawn.style.left = `${newLeft}px`;
+        pawn.style.top = `${newTop}px`;
+    });
 }
+// --- END: ฟังก์ชัน updatePawnPosition ฉบับแก้ไขสมบูรณ์ ---
+
 
 export function updateDice(d1, d2) {
     document.getElementById('dice1').textContent = d1;
     document.getElementById('dice2').textContent = d2;
 }
 
-
-// --- Action Button Controls ---
 export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = true;
@@ -141,8 +174,6 @@ export function enableEndTurnButton() {
     document.getElementById('end-turn-btn').disabled = false;
 }
 
-
-// --- Modal Controls ---
 export function showActionModal(title, text, buttons, isError = false) {
     const actionModal = document.getElementById('action-modal');
     const titleEl = document.getElementById('action-title');
