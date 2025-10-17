@@ -29,6 +29,16 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+.modal-content h2.danger {
+    color: var(--danger-color);
+}
+.modal-content p {
+    margin-bottom: 20px;
+}
 #action-modal-buttons {
     display: flex;
     justify-content: center;
@@ -79,7 +89,7 @@
 
 /* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า --- */
 #setup-screen {
-    align-items: flex-start; /* จัดชิดบน */
+    align-items: flex-start;
     background-color: #f4f7f6;
     overflow-y: auto;
 }
@@ -142,7 +152,6 @@
     font-size: 0.9em;
     font-weight: 700;
 }
-
 #special-rules-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -165,13 +174,11 @@
     font-size: 0.95em;
     font-weight: 600;
 }
-
 #setup-screen .setting-row input {
     max-width: none;
     padding: 12px;
     font-size: 1em;
 }
-
 #setup-screen .player-setup-container {
     display: grid;
     grid-template-columns: 1fr;
@@ -202,14 +209,13 @@
     margin-bottom: 4px;
     color: #495057;
 }
-
 #setup-screen .player-setup input, #setup-screen .player-setup select {
     padding: 10px;
     margin-bottom: 0;
     width: 100%;
 }
 .career-description {
-    grid-column: 1 / -1; /* ทำให้เต็มความกว้าง */
+    grid-column: 1 / -1;
     font-size: 0.85em;
     color: #6c757d;
     background-color: #e9ecef;
@@ -218,7 +224,6 @@
     margin-top: 5px;
     min-height: 38px;
 }
-
 .setup-footer {
     display: flex;
     justify-content: space-between;
@@ -233,15 +238,67 @@
     font-size: 1.1em;
     font-weight: 600;
 }
-
 #setup-screen .player-setup:nth-child(1) { border-left-color: var(--player1-color); }
 #setup-screen .player-setup:nth-child(2) { border-left-color: var(--player2-color); }
 #setup-screen .player-setup:nth-child(3) { border-left-color: var(--player3-color); }
 #setup-screen .player-setup:nth-child(4) { border-left-color: var(--player4-color); }
 #setup-screen .player-setup:nth-child(5) { border-left-color: var(--player5-color); }
 #setup-screen .player-setup:nth-child(6) { border-left-color: var(--player6-color); }
+/* --- END: ดีไซน์ใหม่สำหรับหน้าตั้งค่า --- */
 
-/* ... (โค้ด Modal ที่เหลือเหมือนเดิม) ... */
+
+/* --- START: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
+#question-modal .modal-content {
+    max-width: 550px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 0;
+    overflow: hidden; /* ทำให้ border-radius แสดงผล */
+}
+#question-modal h2 {
+    font-size: 1.4em;
+    margin: 0;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+.question-body {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+#question-text {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: var(--text-color);
+    background-color: #e9ecef;
+    padding: 15px 30px;
+    border-radius: 10px;
+    margin: 0;
+}
+.answer-group {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+}
+#question-answer {
+    flex-grow: 1;
+    padding: 12px 15px;
+    font-size: 1.2em;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    text-align: center;
+}
+#submit-answer-btn {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+/* --- END: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
+
+
 #info-sheet-modal .modal-content {
     max-width: 800px;
     display: flex;
