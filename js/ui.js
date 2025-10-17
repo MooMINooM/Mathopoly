@@ -4,24 +4,24 @@ import { generateQuestion } from './questions.js';
 import { calculateRent } from './utils.js';
 import { CAREERS } from './careers.js';
 
+// ... (logger code remains the same) ...
 const MAX_LOG_MESSAGES = 40;
-
 export function addLogMessage(message) {
     const gameLogList = document.getElementById('game-log-list');
     if (!gameLogList) {
         console.log("Log UI not ready:", message.replace(/<[^>]*>/g, ''));
         return;
     }
-
     const logItem = document.createElement('li');
     logItem.innerHTML = message;
     gameLogList.prepend(logItem);
-
     while (gameLogList.children.length > MAX_LOG_MESSAGES) {
         gameLogList.removeChild(gameLogList.lastChild);
     }
 }
 
+
+// --- UI Update Functions ---
 export function updateAllUI() {
     updatePlayerInfo();
     updateBoardUI();
@@ -69,21 +69,19 @@ export function updatePlayerInfo() {
     }
 }
 
-// --- START: แก้ไขฟังก์ชัน updateBoardUI ---
 export function updateBoardUI() {
     state.boardSpaces.forEach(space => {
         if (space.type === 'property') {
             const spaceEl = document.getElementById(`space-${space.id}`);
-            if (!spaceEl) return; // เพิ่มการป้องกัน Error
+            if (!spaceEl) return; 
 
             const spaceInfo = spaceEl.querySelector('.space-info');
             const priceEl = spaceEl.querySelector('.space-price');
             const levelBadgeContainer = spaceEl.querySelector('.level-badge-container');
 
             if (space.owner !== null) {
-                // ใช้วิธีค้นหาที่ปลอดภัยกว่าเดิม
                 const owner = state.players.find(p => p.id === space.owner);
-                if (owner) { // ตรวจสอบให้แน่ใจว่าเจอเจ้าของ
+                if (owner) { 
                     spaceInfo.style.backgroundColor = owner.color;
                     if (owner.color === 'var(--player2-color)' || owner.color === 'var(--player3-color)') {
                        spaceInfo.style.color = '#333';
@@ -109,7 +107,6 @@ export function updateBoardUI() {
         }
     });
 }
-// --- END: แก้ไขฟังก์ชัน updateBoardUI ---
 
 export function updatePawnPosition(player) {
     const spaceEl = document.getElementById(`space-${player.position}`);
@@ -168,13 +165,23 @@ export function enableEndTurnButton() {
     document.getElementById('end-turn-btn').disabled = false;
 }
 
-export function showActionModal(title, text, buttons, isError = false) {
+
+// --- START: แก้ไข Modal Functions ---
+export function showActionModal(title, text, buttons, options = {}) {
+    const { isError = false, customHTML = '' } = options;
     const actionModal = document.getElementById('action-modal');
     const titleEl = document.getElementById('action-title');
+    const textEl = document.getElementById('action-text');
+
     titleEl.textContent = title;
     titleEl.className = isError ? 'danger' : '';
 
-    document.getElementById('action-text').textContent = text;
+    if (customHTML) {
+        textEl.innerHTML = customHTML;
+    } else {
+        textEl.textContent = text;
+    }
+
     const buttonsContainer = document.getElementById('action-modal-buttons');
     buttonsContainer.innerHTML = '';
     buttons.forEach(btnInfo => {
@@ -284,12 +291,15 @@ export function showManagePropertyModal(isForced = false) {
 
     if (isForced) {
         state.setForcedToSell(true);
-        const debt = -player.money;
-        modalTitle.textContent = `คุณเป็นหนี้! ต้องขายทรัพย์สินเพื่อชำระ ฿${debt.toLocaleString()}`;
+        const debt = Math.abs(player.money);
+        // --- แก้ไขข้อความตรงนี้ ---
+        modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
+        modalTitle.classList.add('danger');
         closeBtn.disabled = true;
     } else {
         state.setForcedToSell(false);
         modalTitle.textContent = 'จัดการทรัพย์สิน';
+        modalTitle.classList.remove('danger');
         closeBtn.disabled = false;
     }
 
@@ -321,3 +331,4 @@ export function showManagePropertyModal(isForced = false) {
     }
     managePropertyModal.style.display = 'flex';
 }
+// --- END: แก้ไข Modal Functions ---
