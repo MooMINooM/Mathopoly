@@ -27,17 +27,19 @@
     flex-shrink: 0;
 }
 
+/* --- START: แก้ไข Control Panel ทั้งหมด --- */
 #control-panel {
     grid-area: 2 / 2 / 9 / 13;
     border-radius: 12px;
     padding: 15px;
-    display: flex; /* เปลี่ยนเป็น Flexbox */
+    display: flex;
     flex-direction: column;
     gap: 15px;
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    overflow: hidden; /* ป้องกันการล้น */
 }
 
 #player-info-container {
@@ -46,15 +48,16 @@
     grid-template-rows: repeat(2, 1fr);
     gap: 10px;
     flex-grow: 1; /* ทำให้ขยายเต็มพื้นที่ที่เหลือ */
-    min-height: 0;
+    min-height: 0; /* สำคัญมากสำหรับ Flexbox */
 }
 
 #bottom-panel {
     display: grid;
     grid-template-columns: 2fr 1fr; /* ประวัติ 2 ส่วน, ปุ่ม 1 ส่วน */
     gap: 15px;
-    flex-shrink: 0; /* ไม่ให้หด */
+    flex-shrink: 0; /* ไม่ให้ส่วนนี้หดตัว */
 }
+/* --- END: แก้ไข Control Panel ทั้งหมด --- */
 
 #game-log-container {
     grid-column: 1 / 2;
