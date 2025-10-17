@@ -4,22 +4,23 @@ import { generateQuestion } from './questions.js';
 import { calculateRent } from './utils.js';
 import { CAREERS } from './careers.js';
 
-// ... (logger code remains the same) ...
 const MAX_LOG_MESSAGES = 40;
+
 export function addLogMessage(message) {
     const gameLogList = document.getElementById('game-log-list');
     if (!gameLogList) {
         console.log("Log UI not ready:", message.replace(/<[^>]*>/g, ''));
         return;
     }
+
     const logItem = document.createElement('li');
     logItem.innerHTML = message;
     gameLogList.prepend(logItem);
+
     while (gameLogList.children.length > MAX_LOG_MESSAGES) {
         gameLogList.removeChild(gameLogList.lastChild);
     }
 }
-
 
 // --- UI Update Functions ---
 export function updateAllUI() {
@@ -165,8 +166,6 @@ export function enableEndTurnButton() {
     document.getElementById('end-turn-btn').disabled = false;
 }
 
-
-// --- START: แก้ไข Modal Functions ---
 export function showActionModal(title, text, buttons, options = {}) {
     const { isError = false, customHTML = '' } = options;
     const actionModal = document.getElementById('action-modal');
@@ -278,6 +277,7 @@ export function hideManagePropertyModal() {
     document.getElementById('manage-property-modal').style.display = 'none';
 }
 
+// --- START: แก้ไขฟังก์ชัน showManagePropertyModal ---
 export function showManagePropertyModal(isForced = false) {
     const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
@@ -292,7 +292,7 @@ export function showManagePropertyModal(isForced = false) {
     if (isForced) {
         state.setForcedToSell(true);
         const debt = Math.abs(player.money);
-        // --- แก้ไขข้อความตรงนี้ ---
+        // ใช้ innerHTML เพื่อให้ขึ้นบรรทัดใหม่และจัดสไตล์ได้
         modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
         modalTitle.classList.add('danger');
         closeBtn.disabled = true;
@@ -331,4 +331,4 @@ export function showManagePropertyModal(isForced = false) {
     }
     managePropertyModal.style.display = 'flex';
 }
-// --- END: แก้ไข Modal Functions ---
+// --- END: แก้ไขฟังก์ชัน showManagePropertyModal ---
