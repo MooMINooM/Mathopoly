@@ -1,16 +1,19 @@
 // js/spaceHandlers.js
 import * as state from './state.js';
 import * as actions from './actions.js';
-import { movePlayer } from './gameLogic.js'; // <-- แก้ไข Import
-import { finishTurn } from './gameFlow.js';  // <-- แก้ไข Import
+import { movePlayer } from './gameLogic.js';
+import { finishTurn } from './gameFlow.js';
 import { addLogMessage } from './logger.js';
-import { showActionModal, hideActionModal, showQuestionModalForPurchase, showInsufficientFundsModal } from './ui.js';
+import { showActionModal, hideActionModal, showQuestionModalForPurchase, showInsufficientFundsModal, updatePawnPosition } from './ui.js';
+// --- START: แก้ไข Import ---
+import { calculateRent, calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
+// --- END: แก้ไข Import ---
 
-//... (โค้ดที่เหลือใน spaceHandlers.js เหมือนเดิมจากคำตอบที่แล้ว แต่ให้แน่ใจว่า import ถูกต้องตามนี้)
 function handlePropertyLanding(player, space) {
     if (player.isBot) {
         setTimeout(() => {
             const owner = space.owner !== null ? state.players[space.owner] : null;
+
             if (owner === null) {
                 const buyChance = (player.money / state.gameSettings.startingMoney) * 0.75;
                 if (player.money >= space.price && Math.random() < buyChance) {
@@ -21,7 +24,7 @@ function handlePropertyLanding(player, space) {
                 }
             } else if (owner.id === player.id) {
                 if (space.level < 3) {
-                    const expansionCost = actions.calculateExpansionCost(space);
+                    const expansionCost = calculateExpansionCost(space); // <-- แก้ไข: ลบ actions.
                     if (player.money >= expansionCost * 2 && Math.random() < 0.5) {
                         player.totalQuestions++; player.correctAnswers++;
                         actions.expandProperty(player, space);
@@ -32,8 +35,8 @@ function handlePropertyLanding(player, space) {
                     finishTurn();
                 }
             } else {
-                const rent = actions.calculateRent(space);
-                const buyoutPrice = actions.calculateBuyoutPrice(space);
+                const rent = calculateRent(space); // <-- แก้ไข: ลบ actions.
+                const buyoutPrice = calculateBuyoutPrice(space); // <-- แก้ไข: ลบ actions.
                 
                 if (player.money >= buyoutPrice && Math.random() < 0.3) {
                     actions.buyOutProperty(player, owner, space);
@@ -65,7 +68,7 @@ function handlePropertyLanding(player, space) {
         showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}"`);
     } else if (space.owner === player.id) {
         if (space.level < 3) {
-            const expansionCost = actions.calculateExpansionCost(space);
+            const expansionCost = calculateExpansionCost(space); // <-- แก้ไข: ลบ actions.
             state.setOnQuestionSuccess(() => {
                 showActionModal(
                     `ขยายเมือง ${space.name}?`,
@@ -87,9 +90,9 @@ function handlePropertyLanding(player, space) {
             finishTurn();
         }
     } else {
-        const owner = state.players[space.owner];
-        const rent = actions.calculateRent(space);
-        const buyoutPrice = actions.calculateBuyoutPrice(space);
+        const owner = state.players.find(p => p.id === space.owner);
+        const rent = calculateRent(space); // <-- แก้ไข: ลบ actions.
+        const buyoutPrice = calculateBuyoutPrice(space); // <-- แก้ไข: ลบ actions.
         const showBuyOrPayModal = () => {
             showActionModal(
                 `ที่ดินของ ${owner.name}`,
@@ -340,15 +343,15 @@ function drawChanceCard(player) {
     const cards = [
         { text: `ถูกลอตเตอรี่! รับเงิน ฿${lotteryWin.toLocaleString()}`, action: (p) => { actions.changePlayerMoney(p, lotteryWin, "ถูกลอตเตอรี่"); }},
         { text: "ทฤษฎีบทใหม่ถูกค้นพบ! เลือกขยายเมืองของคุณ 1 แห่งฟรี", action: (p) => { selectPropertyToUpgradeForFree(p); return true; }},
-        { text: "ไปที่เกาะร้างทันที!", action: (p) => { p.position = 12; p.inJailTurns = 1; actions.updatePawnPosition(p); }},
+        { text: "ไปที่เกาะร้างทันที!", action: (p) => { p.position = 12; p.inJailTurns = 1; updatePawnPosition(p); }},
         { text: "รับการ์ด 'ออกจากเกาะร้างฟรี'", action: (p) => { p.getOutOfJailFree++; }},
         { text: `จ่ายค่าเทอม ฿${tuitionFee.toLocaleString()}`, action: (p) => { actions.changePlayerMoney(p, -tuitionFee, "ค่าเทอม"); }},
         { text: "เดินทางข้ามมิติ! สลับตำแหน่งกับผู้เล่นที่รวยที่สุด", action: (p) => {
             const richestPlayer = state.players.filter(pl => !pl.bankrupt && pl.id !== p.id).sort((a,b) => b.money - a.money)[0];
             if (richestPlayer) {
                 [p.position, richestPlayer.position] = [richestPlayer.position, p.position];
-                actions.updatePawnPosition(p);
-                actions.updatePawnPosition(richestPlayer);
+                updatePawnPosition(p);
+                updatePawnPosition(richestPlayer);
                 addLogMessage(`<strong>${p.name}</strong> สลับตำแหน่งกับ <strong>${richestPlayer.name}</strong>!`);
             }
             return true;
@@ -418,6 +421,3 @@ export function handleSpaceLanding() {
             finishTurn();
     }
 }
-
-
-
