@@ -66,11 +66,11 @@
             </div>
         </div>
     </div>
+
     <div class="game-container" style="display: none;">
         <div id="game-board">
             <div id="control-panel">
-                <div id="player-info-container">
-                </div>
+                <div id="player-info-container"></div>
                 <div id="bottom-panel">
                     <div id="game-log-container">
                         <h4>ประวัติล่าสุด</h4>
@@ -108,7 +108,7 @@
     <div id="action-modal" class="modal">
         <div class="modal-content">
             <h2 id="action-title">Title</h2>
-            <p id="action-text">Text</p>
+            <p id="action-text"></p>
             <div id="action-modal-buttons"></div>
         </div>
     </div>
@@ -130,16 +130,9 @@
             <h2>สรุปผลการเล่น</h2>
             <table id="summary-table">
                 <thead>
-                    <tr>
-                        <th>ผู้เล่น</th>
-                        <th>สถานะ</th>
-                        <th>เงินคงเหลือ</th>
-                        <th>คะแนน (ถูก/ทั้งหมด)</th>
-                        <th>เมืองที่ครอบครอง</th>
-                    </tr>
+                    <tr><th>ผู้เล่น</th><th>สถานะ</th><th>เงินคงเหลือ</th><th>คะแนน (ถูก/ทั้งหมด)</th><th>เมืองที่ครอบครอง</th></tr>
                 </thead>
-                <tbody id="summary-body">
-                </tbody>
+                <tbody id="summary-body"></tbody>
             </table>
             <button id="restart-game-btn">กลับหน้าหลัก</button>
         </div>
@@ -151,18 +144,39 @@
             <button id="chance-card-ok-btn">ตกลง</button>
         </div>
     </div>
+    
     <div id="manage-property-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="manage-title">จัดการทรัพย์สิน</h2>
-            <div class="management-section">
-                <h3>ขายเมือง (ราคาขาย 60% ของเงินลงทุน)</h3>
-                <div id="sell-property-list"></div>
+        <div class="setup-screen-container" style="max-width: 800px;"> <div class="setup-header">
+                <h2 id="manage-title">จัดการทรัพย์สิน</h2>
             </div>
-            <div class="management-section">
-                <h3>การเงิน</h3>
-                <div id="financial-actions"></div>
+            <div class="setup-main-container" style="grid-template-columns: 1fr; padding: 20px;">
+                <div class="setup-column-left" style="border-right: none; padding-right: 0;">
+                    <div class="setup-section" id="financial-summary-section">
+                        <h4>📊 สถานะการเงิน</h4>
+                        <div class="financial-summary-grid">
+                            <div class="summary-item">
+                                <label>เงินสดปัจจุบัน</label>
+                                <span id="summary-money">฿0</span>
+                            </div>
+                            <div class="summary-item" id="summary-debt-item" style="display: none;">
+                                <label>หนี้ที่ต้องชำระ</label>
+                                <span id="summary-debt">฿0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setup-section">
+                        <h4>🏦 ขายเมือง (ได้เงิน 60%)</h4>
+                        <div id="sell-property-list" class="property-list-container"></div>
+                    </div>
+                    <div class="setup-section">
+                        <h4>💰 การเงิน</h4>
+                        <div id="financial-actions"></div>
+                    </div>
+                </div>
             </div>
-            <button id="close-manage-modal-btn">ปิด</button>
+            <div class="setup-footer">
+                <button id="close-manage-modal-btn">ปิด</button>
+            </div>
         </div>
     </div>
     <div id="about-modal" class="modal" style="display: none;">
@@ -170,21 +184,17 @@
             <h2>เกี่ยวกับเกม</h2>
             <div class="about-section">
                 <h3>ที่มาของเกม</h3>
-                <p>เกมนี้จัดทำขึ้นเพื่อเป็นส่วนหนึ่งของโครงงานคณิตศาสตร์ ประเภทบูรณาการความรู้คณิตศาสตร์ไปประยุกต์ใช้ โดยมีวัตถุประสงค์เพื่อสร้างสื่อการเรียนรู้ที่สนุกสนานในวิชาคณิตศาสตร์ ผสมผสานการเล่นเกมเศรษฐีเข้ากับการแก้โจทย์ปัญหาตามระดับชั้น เพื่อให้ผู้เล่นได้ทั้งความสนุกและทบทวนความรู้ไปพร้อมกัน</p>
+                <p>...</p>
             </div>
             <div class="about-section">
                 <h3>ผู้จัดทำ</h3>
                 <div class="creators-container">
-                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczM8aWMXmvXSO44duWQ5MZrA65rWOc-fV2YlOMU5-JbJv6zoO90yf0sJJS6yZQfGuLAe58k2W_LtG_cuvv8fZbhdRs2Wjq55v-eLt1ASl9Yxw_emUeVnMPGsQS83tzxLo8SEwp5XyA3FXMwm53XjG0Gu=w160-h160-s-no-gm?authuser=0" alt="ผู้จัดทำ 1"><p style="font-size: 0.7em;">นายญาณวุฒิ บุตรสมบัติ</p><p style="font-size: 0.6em; color: #666;">ครูที่ปรึกษาโครงงาน</p></div>
-                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczMsOzLIk7mORWFfmsVQHQX8cXANSQ4pcKT7FMqOViL2eup1ay8zEYApWl5hxIIipt_ISFroy6PQfuw6bNjnQrW13Z84e7_rVkeeoy_1_vO2pXY5o_dzt28aERhQXENPRIWcB-HXQxnzsaiwKS8XxHuX=w693-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 2"><p style="font-size: 0.7em;">นายดอกคูณ พูดเพราะ</p><p style="font-size: 0.6em; color: #666;">ครูที่ปรึกษาโครงงาน</p></div>
-                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczOhSMjRGUBLZ9AZ9JtLGI1PbBspVWAPMIpWjxAh0CHDXUE9AqCIIj56q_XEFfuJ3C2h_QXcM3ATRowkwNN8FuV2zNR9t60NtYx_dyRtf7hLHgQ3qRtMdTWL4W6grBW8ZUiGlXZ6Ob87j5CYOiFdglOG=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 3"><p style="font-size: 0.7em;">ด.ช.อัครเดช สมพร</p><p style="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p></div>
-                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczO_zxu-vZzy72yo9ox21mS8KXpRzGhmdiVG653__t57nkVP16kc79t-NL59q0hixrVYEHqzO3oaZHLoZOXbvWE-ejjrTK31DkzC_kTH7jzjd9UmTXlslEvl4UFY6J57tWjE67CdFZVamtgNQ40JQyMk=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 4"><p style="font-size: 0.7em;">ด.ญ.สุณิสา สุวรรณท้าว</p><p style="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 2</p></div>
-                    <div class="creator-profile"><img src="https://lh3.googleusercontent.com/pw/AP1GczMTi0JxVQuYq6IYs13RdxvEa1SUexaI0Ads1uRlLU3VpA3hMrOt9Sh9u70EviEyHMfcn4ArddSL0rEnLWoWnXzrkp8Y4lTLE-ISyXh-FDde1Qj7CqLII3Z1qkMN4m56QRNwyDEPZmJFm-r5u2yWW3FN=w739-h923-s-no-gm?authuser=0" alt="ผู้จัดทำ 5"><p style="font-size: 0.7em;">ด.ญ.ญารินทร์ เวฬุวะณารักษ์</p><p style="font-size: 0.6em; color: #666;">นักเรียนระดับชั้นมัธยมศึกษาปีที่ 3</p></div>
-                </div>
+                    </div>
             </div>
             <button id="close-about-btn" class="danger">ปิด</button>
         </div>
     </div>
+
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
