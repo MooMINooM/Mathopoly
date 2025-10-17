@@ -2,8 +2,8 @@
 import { initializeGameSetup } from './setup.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
-import { rollDice } from './gameLogic.js';    // <-- แก้ไข Import
-import { endTurn } from './gameFlow.js';      // <-- แก้ไข Import
+import { rollDice } from './gameLogic.js';
+import { endTurn } from './gameFlow.js';
 import * as actions from './actions.js';
 import * as bot from './bot.js';
 
@@ -92,3 +92,4 @@ function addEventListeners() {
 
 // Start the entire process
 main();
+
