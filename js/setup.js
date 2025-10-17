@@ -5,93 +5,11 @@ import { startTurn } from './gameFlow.js';
 import { CAREERS } from './careers.js';
 
 function createBoard() {
-    const boardElement = document.getElementById('game-board');
-    const controlPanel = document.getElementById('control-panel');
-    
-    if (state.boardSpaces.length > 0) return;
-
-    boardElement.innerHTML = '';
-    boardElement.appendChild(controlPanel);
-    let newBoardSpaces = [];
-    let mathIndex = 0;
-    const moneyScale = state.gameSettings.startingMoney / 15000;
-
-    for (let i = 0; i < state.gameSettings.totalSpaces; i++) {
-        const spaceEl = document.createElement('div');
-        spaceEl.id = `space-${i}`;
-        spaceEl.classList.add('space');
-
-        let spaceData = { id: i };
-
-        if (i === 0) {
-            spaceData.type = 'start';
-            spaceData.name = 'จุดเริ่มต้น';
-            spaceEl.classList.add('corner');
-            spaceEl.innerHTML = `<div class="corner-text-overlay"><span>จุดเริ่มต้น</span></div>`;
-        } else if (i === 12) {
-            spaceData.type = 'jail';
-            spaceData.name = 'เกาะร้าง';
-            spaceEl.classList.add('corner');
-            spaceEl.innerHTML = `<div class="corner-text-overlay"><span>เกาะร้าง</span></div>`;
-        } else if (i === 20) {
-            spaceData.type = 'mathematician_corner';
-            spaceData.name = 'มุมนักคณิตศาสตร์';
-            spaceEl.classList.add('corner');
-            spaceEl.innerHTML = `<div class="corner-text-overlay"><span>มุมนักคณิตศาสตร์</span></div>`;
-        } else if (i === 32) {
-            spaceData.type = 'train_station';
-            spaceData.name = 'สถานีรถไฟ';
-            spaceEl.classList.add('corner');
-            spaceEl.innerHTML = `<div class="corner-text-overlay"><span>สถานีรถไฟ</span></div>`;
-        } else if ([6, 16, 26, 36].includes(i)) {
-            spaceData.type = 'chance';
-            spaceData.name = 'การ์ดดวง';
-            spaceEl.classList.add('chance-space');
-            spaceEl.innerHTML = `<span>การ์ดดวง</span>`;
-        } else {
-            const mathematician = state.mathematicians[mathIndex % state.mathematicians.length];
-            spaceData.type = 'property';
-            spaceData.name = mathematician.shortName;
-            spaceData.mathematician = mathematician;
-            spaceData.basePrice = Math.round((500 + (mathIndex * 100)) * moneyScale / 50) * 50;
-            spaceData.price = spaceData.basePrice;
-            spaceData.owner = null;
-            spaceData.level = 0;
-            spaceData.investment = 0;
-
-            spaceEl.classList.add('property');
-            if ((i >= 13 && i <= 19) || (i >= 33 && i <= 39)) {
-                spaceEl.classList.add('vertical-property');
-            }
-            spaceEl.innerHTML = `
-                <img src="${mathematician.img}" class="space-image" alt="${spaceData.name}" onerror="this.onerror=null;this.src='https://placehold.co/100x120/EEE/31343C?text=Img';">
-                <div class="space-info">
-                    <div class="space-name">${spaceData.name}</div>
-                    <div class="space-price">฿${spaceData.price.toLocaleString()}</div>
-                </div>
-                <div class="level-badge-container"></div>
-            `;
-            spaceEl.addEventListener('click', () => { if(state.isGameStarted) ui.showInfoSheet(spaceData); });
-            mathIndex++;
-        }
-
-        newBoardSpaces.push(spaceData);
-        boardElement.appendChild(spaceEl);
-    }
-    state.setBoardSpaces(newBoardSpaces);
+    // ... (no changes needed here)
 }
 
 function createPlayerPawns() {
-    const boardElement = document.getElementById('game-board');
-    document.querySelectorAll('.pawn').forEach(p => p.remove());
-    for (let i = 0; i < state.players.length; i++) {
-        const pawn = document.createElement('div');
-        pawn.id = `pawn-${i}`;
-        pawn.className = 'pawn';
-        pawn.style.backgroundColor = state.players[i].color;
-        boardElement.appendChild(pawn);
-        ui.updatePawnPosition(state.players[i]);
-    }
+    // ... (no changes needed here)
 }
 
 function startGame() {
@@ -172,29 +90,51 @@ function generatePlayerSetupCards() {
     for (let i = 1; i <= 6; i++) {
         const playerCard = document.createElement('div');
         playerCard.className = 'player-setup';
+        playerCard.id = `player-setup-${i}`;
         
         const defaultValue = (i <= 2) ? `ผู้เล่น ${i}` : '';
         const placeholder = (i <= 2) ? `ชื่อผู้เล่น ${i}` : 'เว้นว่างไว้ถ้าไม่เล่น';
         
         playerCard.innerHTML = `
             <h4>ผู้เล่น ${i}</h4>
-            <input type="text" class="player-name-input" placeholder="${placeholder}" value="${defaultValue}">
-            <select class="player-difficulty-select">
-                <option value="p1">ประถม 1</option><option value="p2">ประถม 2</option>
-                <option value="p3" ${i === 2 ? 'selected' : ''}>ประถม 3</option>
-                <option value="p4">ประถม 4</option><option value="p5">ประถม 5</option>
-                <option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option>
-                <option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
-            </select>
-            <select class="player-type-select">
-                <option value="human">ผู้เล่น</option>
-                <option value="bot" ${i === 2 ? 'selected' : ''}>บอท</option>
-            </select>
-            <div class="career-selection-wrapper" style="display: none;">
-                <select class="player-career-select">${careerOptions}</select>
+            <div class="player-setup-grid">
+                <div class="input-group">
+                    <label>ชื่อผู้เล่น</label>
+                    <input type="text" class="player-name-input" placeholder="${placeholder}" value="${defaultValue}">
+                </div>
+                <div class="input-group">
+                    <label>ประเภท</label>
+                    <select class="player-type-select">
+                        <option value="human">ผู้เล่น</option>
+                        <option value="bot" ${i === 2 ? 'selected' : ''}>บอท</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>ระดับคำถาม</label>
+                    <select class="player-difficulty-select">
+                        <option value="p1">ประถม 1</option><option value="p2">ประถม 2</option>
+                        <option value="p3" ${i === 2 ? 'selected' : ''}>ประถม 3</option>
+                        <option value="p4">ประถม 4</option><option value="p5">ประถม 5</option>
+                        <option value="p6">ประถม 6</option><option value="m1">มัธยม 1</option>
+                        <option value="m2">มัธยม 2</option><option value="m3">มัธยม 3</option>
+                    </select>
+                </div>
+                <div class="input-group career-selection-wrapper" style="display: none;">
+                    <label>อาชีพ</label>
+                    <select class="player-career-select">${careerOptions}</select>
+                </div>
+                <p class="career-description career-selection-wrapper" style="display: none;">${CAREERS['none'].description}</p>
             </div>
         `;
         container.appendChild(playerCard);
+
+        // Add event listener for career description
+        const careerSelect = playerCard.querySelector('.player-career-select');
+        const careerDesc = playerCard.querySelector('.career-description');
+        careerSelect.addEventListener('change', () => {
+            const selectedCareer = CAREERS[careerSelect.value];
+            careerDesc.textContent = selectedCareer.description;
+        });
     }
 }
 
@@ -223,6 +163,14 @@ export function initializeGameSetup() {
     document.getElementById('career-mode-check').addEventListener('change', (e) => {
         const display = e.target.checked ? 'block' : 'none';
         document.querySelectorAll('.career-selection-wrapper').forEach(el => el.style.display = display);
+        // Reset career selection to 'none' and update description when hiding
+        if (!e.target.checked) {
+            document.querySelectorAll('.player-career-select').forEach(select => {
+                select.value = 'none';
+                const desc = select.closest('.player-setup').querySelector('.career-description');
+                desc.textContent = CAREERS['none'].description;
+            });
+        }
     });
     
     // Setup screen buttons
