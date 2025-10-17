@@ -12,7 +12,7 @@ import { calculateRent, calculateBuyoutPrice, calculateExpansionCost } from './u
 function handlePropertyLanding(player, space) {
     if (player.isBot) {
         setTimeout(() => {
-            const owner = space.owner !== null ? state.players[space.owner] : null;
+            const owner = space.owner !== null ? state.players.find(p => p.id === space.owner) : null;
 
             if (owner === null) {
                 const buyChance = (player.money / state.gameSettings.startingMoney) * 0.75;
@@ -353,8 +353,10 @@ function drawChanceCard(player) {
                 updatePawnPosition(p);
                 updatePawnPosition(richestPlayer);
                 addLogMessage(`<strong>${p.name}</strong> สลับตำแหน่งกับ <strong>${richestPlayer.name}</strong>!`);
+                handleSpaceLanding(); // <-- เพิ่มบรรทัดนี้
+                return true; // บอกระบบว่ามีการเคลื่อนที่เกิดขึ้น
             }
-            return true;
+            return; // ไม่มีผู้เล่นอื่นให้สลับด้วย ให้จบตาตามปกติ
         }},
         { text: `ตลาดหุ้นผันผวน! ผู้เล่นที่มีเงินเกิน ฿${taxThreshold.toLocaleString()} ต้องจ่ายภาษี 10%`, action: () => {
             state.players.forEach(p => {
