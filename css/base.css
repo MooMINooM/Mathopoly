@@ -37,3 +37,8 @@ body {
     overflow: hidden;
     padding: 10px;
 }
+
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+}
