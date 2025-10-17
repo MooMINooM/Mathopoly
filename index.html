@@ -29,11 +29,12 @@
     </div>
 
     <div id="setup-screen" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2 id="setup-title">ตั้งค่าเกม</h2>
-            
+        <div class="setup-screen-container">
+            <div class="setup-header">
+                <h2 id="setup-title">ตั้งค่าเกม</h2>
+            </div>
             <div class="setup-main-container">
-                <div class="setup-column">
+                <div class="setup-column-left">
                     <div id="special-rules-section" class="setup-section">
                         <h4><span class="step-number">1</span>กฎพิเศษ</h4>
                         <div class="special-rules-container">
@@ -51,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="setup-column">
+                <div class="setup-column-right">
                     <div class="setup-section">
                         <h4><span class="step-number">3</span>ตั้งค่าผู้เล่น (อย่างน้อย 2 คน)</h4>
                         <div id="player-details-container" class="player-setup-container">
@@ -59,14 +60,12 @@
                     </div>
                 </div>
             </div>
-
-            <div class="setup-actions">
+            <div class="setup-footer">
                 <button id="close-setup-btn" class="danger">ย้อนกลับ</button>
                 <button id="start-game-btn-confirm">เริ่มเล่น</button>
             </div>
-            </div>
+        </div>
     </div>
-
     <div class="game-container" style="display: none;">
         <div id="game-board">
             <div id="control-panel">
