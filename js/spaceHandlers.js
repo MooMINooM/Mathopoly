@@ -5,9 +5,7 @@ import { movePlayer } from './gameLogic.js';
 import { finishTurn } from './gameFlow.js';
 import { addLogMessage } from './logger.js';
 import { showActionModal, hideActionModal, showQuestionModalForPurchase, showInsufficientFundsModal, updatePawnPosition } from './ui.js';
-// --- START: แก้ไข Import ---
 import { calculateRent, calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
-// --- END: แก้ไข Import ---
 
 function handlePropertyLanding(player, space) {
     if (player.isBot) {
@@ -24,7 +22,7 @@ function handlePropertyLanding(player, space) {
                 }
             } else if (owner.id === player.id) {
                 if (space.level < 3) {
-                    const expansionCost = calculateExpansionCost(space); // <-- แก้ไข: ลบ actions.
+                    const expansionCost = calculateExpansionCost(space);
                     if (player.money >= expansionCost * 2 && Math.random() < 0.5) {
                         player.totalQuestions++; player.correctAnswers++;
                         actions.expandProperty(player, space);
@@ -35,8 +33,8 @@ function handlePropertyLanding(player, space) {
                     finishTurn();
                 }
             } else {
-                const rent = calculateRent(space); // <-- แก้ไข: ลบ actions.
-                const buyoutPrice = calculateBuyoutPrice(space); // <-- แก้ไข: ลบ actions.
+                const rent = calculateRent(space);
+                const buyoutPrice = calculateBuyoutPrice(space);
                 
                 if (player.money >= buyoutPrice && Math.random() < 0.3) {
                     actions.buyOutProperty(player, owner, space);
@@ -68,7 +66,7 @@ function handlePropertyLanding(player, space) {
         showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}"`);
     } else if (space.owner === player.id) {
         if (space.level < 3) {
-            const expansionCost = calculateExpansionCost(space); // <-- แก้ไข: ลบ actions.
+            const expansionCost = calculateExpansionCost(space);
             state.setOnQuestionSuccess(() => {
                 showActionModal(
                     `ขยายเมือง ${space.name}?`,
@@ -91,8 +89,8 @@ function handlePropertyLanding(player, space) {
         }
     } else {
         const owner = state.players.find(p => p.id === space.owner);
-        const rent = calculateRent(space); // <-- แก้ไข: ลบ actions.
-        const buyoutPrice = calculateBuyoutPrice(space); // <-- แก้ไข: ลบ actions.
+        const rent = calculateRent(space);
+        const buyoutPrice = calculateBuyoutPrice(space);
         const showBuyOrPayModal = () => {
             showActionModal(
                 `ที่ดินของ ${owner.name}`,
@@ -334,6 +332,7 @@ function selectPropertyToUpgradeForFree(player) {
     };
 }
 
+// --- START: แก้ไขฟังก์ชัน drawChanceCard ---
 function drawChanceCard(player) {
     const moneyScale = state.gameSettings.startingMoney / 15000;
     const lotteryWin = Math.round(1500 * moneyScale);
@@ -353,10 +352,10 @@ function drawChanceCard(player) {
                 updatePawnPosition(p);
                 updatePawnPosition(richestPlayer);
                 addLogMessage(`<strong>${p.name}</strong> สลับตำแหน่งกับ <strong>${richestPlayer.name}</strong>!`);
-                handleSpaceLanding(); // <-- เพิ่มบรรทัดนี้
-                return true; // บอกระบบว่ามีการเคลื่อนที่เกิดขึ้น
+                handleSpaceLanding();
+                return true;
             }
-            return; // ไม่มีผู้เล่นอื่นให้สลับด้วย ให้จบตาตามปกติ
+            return;
         }},
         { text: `ตลาดหุ้นผันผวน! ผู้เล่นที่มีเงินเกิน ฿${taxThreshold.toLocaleString()} ต้องจ่ายภาษี 10%`, action: () => {
             state.players.forEach(p => {
@@ -379,20 +378,17 @@ function drawChanceCard(player) {
     document.getElementById('chance-card-text').textContent = card.text;
     document.getElementById('chance-card-modal').style.display = 'flex';
 
-    const onCardAcknowledge = async () => {
+    // ทำให้เกมรอการคลิกจากผู้เล่นเสมอ
+    document.getElementById('chance-card-ok-btn').onclick = async () => {
         document.getElementById('chance-card-modal').style.display = 'none';
         const isMoveAction = await card.action(player);
         if (!isMoveAction) {
             finishTurn();
         }
     };
-
-    if (player.isBot) {
-        setTimeout(onCardAcknowledge, 1500);
-    } else {
-        document.getElementById('chance-card-ok-btn').onclick = onCardAcknowledge;
-    }
 }
+// --- END: แก้ไขฟังก์ชัน drawChanceCard ---
+
 
 export function handleSpaceLanding() {
     const player = state.players[state.currentPlayerIndex];
