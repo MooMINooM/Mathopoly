@@ -34,5 +34,5 @@ export function rollDice() {
 
     ui.updateDice(d1, d2);
     addLogMessage(`<strong>${state.players[state.currentPlayerIndex].name}</strong> ทอยได้ ${d1} + ${d2} = ${d1 + d2}`);
-    movePlayer(d1, d2);
+    movePlayer(d1 + d2);
 }
