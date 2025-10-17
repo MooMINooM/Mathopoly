@@ -174,10 +174,6 @@ async function travelByTrain(player) {
     actions.changePlayerMoney(player, -cost, "ค่าเดินทางรถไฟ");
     if(player.bankrupt) return;
 
-    const travelModal = document.createElement('div');
-    travelModal.className = 'modal';
-    travelModal.style.display = 'flex';
-
     let optionsHTML = state.boardSpaces
         .filter(s => s.type === 'property' && (s.owner === null || (s.owner === player.id && s.level < 3)))
         .map(s => {
@@ -185,23 +181,26 @@ async function travelByTrain(player) {
             return `<option value="${s.id}">${s.name}${status}</option>`;
         })
         .join('');
-
-    travelModal.innerHTML = `
-        <div class="modal-content">
-            <h2>เลือกเมืองปลายทาง</h2>
-            <select id="destination-select">${optionsHTML}</select>
-            <button id="confirm-travel-btn">ยืนยัน</button>
-        </div>
+    
+    const customHTML = `
+        <p>เลือกเมืองปลายทางที่คุณต้องการเดินทางไป</p>
+        <select id="destination-select" style="width: 80%; padding: 10px; font-size: 1em; margin-top: 10px;">
+            ${optionsHTML}
+        </select>
     `;
-    document.body.appendChild(travelModal);
 
-    document.getElementById('confirm-travel-btn').onclick = async () => {
-        const destinationId = parseInt(document.getElementById('destination-select').value);
-        document.body.removeChild(travelModal);
-        addLogMessage(`<strong>${player.name}</strong> เดินทางด้วยรถไฟไปที่ <strong>${state.boardSpaces[destinationId].name}</strong>`);
-        let steps = (destinationId - player.position + state.gameSettings.totalSpaces) % state.gameSettings.totalSpaces;
-        await movePlayer(steps);
-    };
+    showActionModal(
+        'เลือกเมืองปลายทาง',
+        '',
+        [{ text: 'ยืนยันการเดินทาง', callback: async () => {
+            const destinationId = parseInt(document.getElementById('destination-select').value);
+            hideActionModal();
+            addLogMessage(`<strong>${player.name}</strong> เดินทางด้วยรถไฟไปที่ <strong>${state.boardSpaces[destinationId].name}</strong>`);
+            let steps = (destinationId - player.position + state.gameSettings.totalSpaces) % state.gameSettings.totalSpaces;
+            await movePlayer(steps);
+        }}],
+        { customHTML: customHTML }
+    );
 }
 
 function botHandleMathematicianCorner(player) {
@@ -253,46 +252,46 @@ function handleMathematicianCorner(player) {
 
 function selectPropertyForBonus(player) {
     hideActionModal();
-    const selectModal = document.createElement('div');
-    selectModal.className = 'modal';
-    selectModal.style.display = 'flex';
-
+    
     let optionsHTML = state.boardSpaces
         .filter(s => s.type === 'property' && (s.owner === null || (s.owner === player.id && s.level < 3)))
         .map(s => {
-            let status = s.owner === null ? ' (ว่าง)' : ' (ของคนอื่น)';
+            let status = s.owner === null ? ' (ว่าง)' : ' (ของคุณ)';
             return `<option value="${s.id}">${s.name}${status}</option>`;
         })
         .join('');
 
-    selectModal.innerHTML = `
-        <div class="modal-content">
-            <h2>เลือกเมืองที่จะใช้สิทธิ์</h2>
-            <select id="bonus-select">${optionsHTML}</select>
-            <button id="confirm-bonus-btn">ยืนยัน</button>
-        </div>
+    const customHTML = `
+        <p>เลือกเมืองที่คุณต้องการใช้สิทธิ์พิเศษ</p>
+        <select id="bonus-select" style="width: 80%; padding: 10px; font-size: 1em; margin-top: 10px;">
+            ${optionsHTML}
+        </select>
     `;
-    document.body.appendChild(selectModal);
 
-    document.getElementById('confirm-bonus-btn').onclick = () => {
-        const spaceId = parseInt(document.getElementById('bonus-select').value);
-        const space = state.boardSpaces[spaceId];
-        document.body.removeChild(selectModal);
-        
-        if (space.owner === null) {
-            addLogMessage(`<strong>${player.name}</strong> ใช้สิทธิ์ซื้อ <strong>${space.name}</strong> ฟรี!`);
-            state.setOnQuestionSuccess(() => actions.buyProperty(player, space));
-            state.setOnQuestionFail(() => { finishTurn(); });
-            showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}" (สิทธิ์โบนัส)`);
-        } else if (space.owner === player.id && space.level < 3) {
-            addLogMessage(`<strong>${player.name}</strong> ใช้สิทธิ์ขยาย <strong>${space.name}</strong> ฟรี!`);
-            state.setOnQuestionSuccess(() => actions.expandProperty(player, space));
-            state.setOnQuestionFail(() => { finishTurn(); });
-            showQuestionModalForPurchase(player, `ตอบคำถามเพื่อขยาย "${space.name}" (สิทธิ์โบนัส)`);
-        } else {
-            finishTurn();
-        }
-    };
+    showActionModal(
+        'เลือกเมืองที่จะใช้สิทธิ์',
+        '',
+        [{ text: 'ยืนยัน', callback: () => {
+            const spaceId = parseInt(document.getElementById('bonus-select').value);
+            const space = state.boardSpaces[spaceId];
+            hideActionModal();
+            
+            if (space.owner === null) {
+                addLogMessage(`<strong>${player.name}</strong> ใช้สิทธิ์ซื้อ <strong>${space.name}</strong> ฟรี!`);
+                state.setOnQuestionSuccess(() => actions.buyProperty(player, space));
+                state.setOnQuestionFail(() => { finishTurn(); });
+                showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}" (สิทธิ์โบนัส)`);
+            } else if (space.owner === player.id && space.level < 3) {
+                addLogMessage(`<strong>${player.name}</strong> ใช้สิทธิ์ขยาย <strong>${space.name}</strong> ฟรี!`);
+                state.setOnQuestionSuccess(() => actions.expandProperty(player, space));
+                state.setOnQuestionFail(() => { finishTurn(); });
+                showQuestionModalForPurchase(player, `ตอบคำถามเพื่อขยาย "${space.name}" (สิทธิ์โบนัส)`);
+            } else {
+                finishTurn();
+            }
+        }}],
+        { customHTML: customHTML }
+    );
 }
 
 function selectPropertyToUpgradeForFree(player) {
@@ -310,29 +309,29 @@ function selectPropertyToUpgradeForFree(player) {
         actions.expandProperty(player, target);
         return;
     }
-
-    const selectModal = document.createElement('div');
-    selectModal.className = 'modal';
-    selectModal.style.display = 'flex';
+    
     const optionsHTML = upgradable.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-    selectModal.innerHTML = `
-        <div class="modal-content">
-            <h2>เลือกเมืองที่จะขยายฟรี</h2>
-            <select id="upgrade-select">${optionsHTML}</select>
-            <button id="confirm-upgrade-btn">ยืนยัน</button>
-        </div>
+    const customHTML = `
+        <p>การ์ดดวงให้สิทธิ์คุณขยายเมืองได้ฟรี 1 ระดับ</p>
+        <select id="upgrade-select" style="width: 80%; padding: 10px; font-size: 1em; margin-top: 10px;">
+            ${optionsHTML}
+        </select>
     `;
-    document.body.appendChild(selectModal);
-    document.getElementById('confirm-upgrade-btn').onclick = () => {
-        const spaceId = parseInt(document.getElementById('upgrade-select').value);
-        const space = state.boardSpaces[spaceId];
-        document.body.removeChild(selectModal);
-        addLogMessage(`<strong>${player.name}</strong> เลือกขยาย <strong>${space.name}</strong> ฟรี!`);
-        actions.expandProperty(player, space);
-    };
+
+    showActionModal(
+        'เลือกเมืองที่จะขยายฟรี',
+        '',
+        [{ text: 'ยืนยัน', callback: () => {
+            const spaceId = parseInt(document.getElementById('upgrade-select').value);
+            const space = state.boardSpaces[spaceId];
+            hideActionModal();
+            addLogMessage(`<strong>${player.name}</strong> เลือกขยาย <strong>${space.name}</strong> ฟรี!`);
+            actions.expandProperty(player, space);
+        }}],
+        { customHTML: customHTML }
+    );
 }
 
-// --- START: แก้ไขฟังก์ชัน drawChanceCard ---
 function drawChanceCard(player) {
     const moneyScale = state.gameSettings.startingMoney / 15000;
     const lotteryWin = Math.round(1500 * moneyScale);
@@ -378,7 +377,6 @@ function drawChanceCard(player) {
     document.getElementById('chance-card-text').textContent = card.text;
     document.getElementById('chance-card-modal').style.display = 'flex';
 
-    // ทำให้เกมรอการคลิกจากผู้เล่นเสมอ
     document.getElementById('chance-card-ok-btn').onclick = async () => {
         document.getElementById('chance-card-modal').style.display = 'none';
         const isMoveAction = await card.action(player);
@@ -387,8 +385,6 @@ function drawChanceCard(player) {
         }
     };
 }
-// --- END: แก้ไขฟังก์ชัน drawChanceCard ---
-
 
 export function handleSpaceLanding() {
     const player = state.players[state.currentPlayerIndex];
