@@ -148,6 +148,7 @@ export function updateDice(d1, d2) {
     document.getElementById('dice2').textContent = d2;
 }
 
+
 export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = true;
@@ -165,6 +166,7 @@ export function enableEndTurnButton() {
     document.getElementById('manage-property-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = false;
 }
+
 
 export function showActionModal(title, text, buttons, options = {}) {
     const { isError = false, customHTML = '' } = options;
@@ -277,32 +279,40 @@ export function hideManagePropertyModal() {
     document.getElementById('manage-property-modal').style.display = 'none';
 }
 
-// --- START: แก้ไขฟังก์ชัน showManagePropertyModal ---
 export function showManagePropertyModal(isForced = false) {
     const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
-    const sellList = document.getElementById('sell-property-list');
-    const financialActions = document.getElementById('financial-actions');
+
+    // Update financial summary
+    const summaryMoneyEl = document.getElementById('summary-money');
+    const summaryDebtItemEl = document.getElementById('summary-debt-item');
+    const summaryDebtEl = document.getElementById('summary-debt');
+    
+    summaryMoneyEl.textContent = `฿${player.money.toLocaleString()}`;
+    summaryMoneyEl.classList.toggle('negative', player.money < 0);
+
     const modalTitle = document.getElementById('manage-title');
     const closeBtn = document.getElementById('close-manage-modal-btn');
-
-    sellList.innerHTML = '';
-    financialActions.innerHTML = '';
 
     if (isForced) {
         state.setForcedToSell(true);
         const debt = Math.abs(player.money);
-        // ใช้ innerHTML เพื่อให้ขึ้นบรรทัดใหม่และจัดสไตล์ได้
         modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
         modalTitle.classList.add('danger');
+        summaryDebtItemEl.style.display = 'flex';
+        summaryDebtEl.textContent = `฿${debt.toLocaleString()}`;
         closeBtn.disabled = true;
     } else {
         state.setForcedToSell(false);
         modalTitle.textContent = 'จัดการทรัพย์สิน';
         modalTitle.classList.remove('danger');
+        summaryDebtItemEl.style.display = 'none';
         closeBtn.disabled = false;
     }
 
+    // Update property list
+    const sellList = document.getElementById('sell-property-list');
+    sellList.innerHTML = '';
     if (player.properties.length > 0) {
         player.properties.forEach(pId => {
             const space = state.boardSpaces[pId];
@@ -316,19 +326,22 @@ export function showManagePropertyModal(isForced = false) {
             sellList.appendChild(item);
         });
     } else {
-        sellList.innerHTML = '<p>คุณไม่มีเมืองที่จะขาย</p>';
+        sellList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 10px 0;">คุณไม่มีเมืองที่จะขาย</p>';
     }
 
+    // Update financial actions
+    const financialActions = document.getElementById('financial-actions');
+    financialActions.innerHTML = '';
     if (player.loan) {
-        financialActions.innerHTML = `<p>คุณมีเงินกู้ ฿${player.loan.amount.toLocaleString()} แล้ว (เหลือ ${player.loan.roundsLeft} ตา)</p>`;
+        financialActions.innerHTML = `<p style="text-align: center;">คุณมีเงินกู้ ฿${player.loan.amount.toLocaleString()} แล้ว (เหลือ ${player.loan.roundsLeft} ตา)</p>`;
     } else {
         const loanAmount = Math.round(state.gameSettings.startingMoney / 3);
         const loanButton = document.createElement('button');
-        loanButton.textContent = `กู้เงิน ฿${loanAmount.toLocaleString()}`;
+        loanButton.textContent = `กู้เงินฉุกเฉิน ฿${loanAmount.toLocaleString()}`;
         loanButton.dataset.action = "loan";
-        if(state.isForcedToSell) loanButton.disabled = true;
+        if(isForced) loanButton.disabled = true;
         financialActions.appendChild(loanButton);
     }
+    
     managePropertyModal.style.display = 'flex';
 }
-// --- END: แก้ไขฟังก์ชัน showManagePropertyModal ---
