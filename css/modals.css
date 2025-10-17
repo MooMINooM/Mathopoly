@@ -29,16 +29,6 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
-.modal-content h2 {
-    margin-bottom: 20px;
-    color: var(--primary-color);
-}
-.modal-content h2.danger {
-    color: var(--danger-color);
-}
-.modal-content p {
-    margin-bottom: 20px;
-}
 #action-modal-buttons {
     display: flex;
     justify-content: center;
@@ -87,8 +77,8 @@
 }
 
 
-/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า --- */
-#setup-screen {
+/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า และหน้าที่ใช้ร่วมกัน --- */
+#setup-screen, #manage-property-modal {
     align-items: flex-start;
     background-color: #f4f7f6;
     overflow-y: auto;
@@ -125,12 +115,13 @@
 .setup-column-right {
     padding-left: 30px;
 }
-#setup-screen .setup-section {
+#setup-screen .setup-section, #manage-property-modal .setup-section {
     padding: 0;
     border: none;
     background-color: transparent;
+    text-align: left;
 }
-#setup-screen .setup-section h4 {
+#setup-screen .setup-section h4, #manage-property-modal .setup-section h4 {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -253,7 +244,7 @@
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     padding: 0;
-    overflow: hidden; /* ทำให้ border-radius แสดงผล */
+    overflow: hidden;
 }
 #question-modal h2 {
     font-size: 1.4em;
@@ -299,6 +290,87 @@
 /* --- END: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
 
 
+/* --- START: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
+#manage-property-modal .setup-header h2.danger {
+    color: var(--danger-color);
+}
+#manage-property-modal .setup-header h2 small {
+    display: block;
+    font-size: 0.6em;
+    font-weight: 600;
+    color: #6c757d;
+    margin-top: 5px;
+}
+#financial-summary-section {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 12px;
+    padding: 20px !important;
+}
+.financial-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+.summary-item label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+.summary-item span {
+    font-size: 1.5em;
+    font-weight: 700;
+}
+#summary-money.negative {
+    color: var(--danger-color);
+}
+#summary-debt {
+    color: var(--danger-color);
+}
+.property-list-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background-color: white;
+}
+#manage-property-modal .property-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+#manage-property-modal .property-list-item:last-child {
+    border-bottom: none;
+}
+#manage-property-modal .property-list-item span {
+    font-weight: 600;
+}
+#financial-actions button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+    font-weight: 600;
+    background-color: var(--accent-color);
+}
+#financial-actions button:hover {
+    background-color: #1e88e5;
+}
+/* --- END: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
+
+
 #info-sheet-modal .modal-content {
     max-width: 800px;
     display: flex;
@@ -332,28 +404,7 @@
     bottom: 20px;
     right: 30px;
 }
-#manage-property-modal .modal-content {
-    max-width: 700px;
-}
-.management-section {
-    margin-bottom: 20px;
-    text-align: left;
-}
-.management-section h3 {
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-}
-.property-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #eee;
-}
-.property-list-item:last-child {
-    border-bottom: none;
-}
+
 #about-modal .modal-content {
     max-width: 850px;
     text-align: left;
