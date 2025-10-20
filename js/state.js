@@ -10,7 +10,7 @@ export let gameSettings = {
     winByBelt: false,
     winByCorners: false,
     adjacencyBonus: false,
-    careerMode: false, // <-- เพิ่มบรรทัดนี้
+    careerMode: false,
 };
 export let currentDiceRoll = [0, 0];
 export let currentQuestion = null;
@@ -19,9 +19,8 @@ export let onQuestionFail = null;
 export let isForcedToSell = false;
 export let isGameStarted = false;
 export let mathematicians = [];
-// --- START: เพิ่มตัวแปรสำหรับอาชีพ ---
-export let landlordBonusUsed = false; // สำหรับเจ้าสัวที่ดิน
-// --- END: เพิ่มตัวแปรสำหรับอาชีพ ---
+export let landlordBonusUsed = false;
+
 
 // --- Setter Functions ---
 export function setPlayers(newPlayers) { players = newPlayers; }
@@ -35,4 +34,4 @@ export function setOnQuestionFail(callback) { onQuestionFail = callback; }
 export function setForcedToSell(value) { isForcedToSell = value; }
 export function setGameStarted(value) { isGameStarted = value; }
 export function setMathematicians(data) { mathematicians = data; }
-export function setLandlordBonusUsed(value) { landlordBonusUsed = value; } // <-- เพิ่มบรรทัดนี้
+export function setLandlordBonusUsed(value) { landlordBonusUsed = value; }
