@@ -6,7 +6,7 @@ import { rollDice } from './gameLogic.js';
 import { endTurn } from './gameFlow.js';
 import * as actions from './actions.js';
 import * as bot from './bot.js';
-import { applyCareerAbility } from './careerHandler.js'; // <-- Import ศูนย์บัญชาการ
+import { applyCareerAbility } from './careerHandler.js';
 
 // --- Main Initializer ---
 async function main() {
@@ -46,7 +46,6 @@ function addEventListeners() {
         if (!isNaN(answer) && answer === state.currentQuestion.answer) {
             console.log("ตอบถูก!");
             currentPlayer.correctAnswers++;
-            // ความสามารถนักวิชาการ (Scholar) - เรียกใช้ผ่าน careerHandler
             applyCareerAbility('afterQuestionCorrect', null, { player: currentPlayer });
 
             ui.showActionModal("ถูกต้อง!", "คุณตอบคำถามถูกต้อง", [{ text: 'ตกลง', callback: () => {
@@ -61,7 +60,7 @@ function addEventListeners() {
             }}], true);
         }
         ui.updatePlayerInfo();
-        answerInput.value = ''; // เคลียร์ช่องคำตอบ
+        answerInput.value = '';
     });
 
     // Info sheet modal
@@ -95,13 +94,14 @@ function addEventListeners() {
         }
     });
 
-    // Engineer Button Listener (เพิ่มใหม่)
+    // Engineer Button Listener
     const engineerBtn = document.getElementById('engineer-ability-btn');
     if (engineerBtn) {
         engineerBtn.addEventListener('click', () => {
             const player = state.players[state.currentPlayerIndex];
-            if (player.career === 'engineer' && !player.engineerAbilityUsedThisTurn) {
+            if (state.gameSettings.careerMode && player.career === 'engineer' && !player.engineerAbilityUsedThisTurn) {
                 actions.remoteExpandProperty(player);
+                ui.disableEngineerButton();
             }
         });
     }
