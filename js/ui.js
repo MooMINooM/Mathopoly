@@ -90,7 +90,7 @@ export function updateBoardUI() {
                        spaceInfo.style.color = 'white';
                     }
                 }
-                priceEl.textContent = `฿${calculateRent(space).toLocaleString()}`;
+                priceEl.textContent = `฿${calculateRent(space, null).toLocaleString()}`; // Pass null as we don't know the paying player here
 
                 levelBadgeContainer.innerHTML = '';
                 if(space.level > 1) {
@@ -153,18 +153,39 @@ export function enableTurnActions() {
     document.getElementById('roll-dice-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = false;
+    const engineerBtn = document.getElementById('engineer-ability-btn');
+    if (engineerBtn) engineerBtn.style.display = 'none';
 }
 
 export function disableGameActions() {
     document.getElementById('roll-dice-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = true;
     document.getElementById('end-turn-btn').disabled = true;
+    const engineerBtn = document.getElementById('engineer-ability-btn');
+    if (engineerBtn) engineerBtn.style.display = 'none';
 }
 
 export function enableEndTurnButton() {
     document.getElementById('roll-dice-btn').disabled = true;
     document.getElementById('manage-property-btn').disabled = false;
     document.getElementById('end-turn-btn').disabled = false;
+    const engineerBtn = document.getElementById('engineer-ability-btn');
+    if (engineerBtn) engineerBtn.style.display = 'none';
+}
+
+export function enableEngineerButton() {
+    const engineerBtn = document.getElementById('engineer-ability-btn');
+    if (engineerBtn) {
+        engineerBtn.disabled = false;
+        engineerBtn.style.display = 'block';
+    }
+}
+export function disableEngineerButton() {
+    const engineerBtn = document.getElementById('engineer-ability-btn');
+    if (engineerBtn) {
+        engineerBtn.disabled = true;
+        engineerBtn.style.display = 'none';
+    }
 }
 
 
@@ -231,7 +252,7 @@ export function showSummary() {
     const summaryBody = document.getElementById('summary-body');
     summaryBody.innerHTML = '';
 
-    const sortedPlayers = [...state.players].sort((a, b) => (b.money + b.properties.reduce((s,p) => s + state.boardSpaces[p].investment, 0)) - (a.money + a.properties.reduce((s,p) => s + state.boardSpaces[p].investment, 0)));
+    const sortedPlayers = [...state.players].sort((a, b) => (b.money + b.properties.reduce((s,p) => s + (state.boardSpaces.find(sp => sp.id === p)?.investment || 0), 0)) - (a.money + a.properties.reduce((s,p) => s + (state.boardSpaces.find(sp => sp.id === p)?.investment || 0), 0)));
     let winnerDeclared = false;
 
     sortedPlayers.forEach(p => {
@@ -244,7 +265,7 @@ export function showSummary() {
              status = "ผู้ชนะ (คะแนนสูงสุด)";
         }
 
-        const ownedCities = p.properties.map(id => state.boardSpaces[id].name).join(', ') || '-';
+        const ownedCities = p.properties.map(id => state.boardSpaces.find(s => s.id === id)?.name).join(', ') || '-';
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${p.name}</td>
@@ -283,7 +304,6 @@ export function showManagePropertyModal(isForced = false) {
     const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
 
-    // Update financial summary
     const summaryMoneyEl = document.getElementById('summary-money');
     const summaryDebtItemEl = document.getElementById('summary-debt-item');
     const summaryDebtEl = document.getElementById('summary-debt');
@@ -297,7 +317,7 @@ export function showManagePropertyModal(isForced = false) {
     if (isForced) {
         state.setForcedToSell(true);
         const debt = Math.abs(player.money);
-        modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
+        modalTitle.textContent = 'คุณเป็นหนี้! ต้องขายทรัพย์สินเพื่อชำระหนี้';
         modalTitle.classList.add('danger');
         summaryDebtItemEl.style.display = 'flex';
         summaryDebtEl.textContent = `฿${debt.toLocaleString()}`;
@@ -310,12 +330,12 @@ export function showManagePropertyModal(isForced = false) {
         closeBtn.disabled = false;
     }
 
-    // Update property list
     const sellList = document.getElementById('sell-property-list');
     sellList.innerHTML = '';
     if (player.properties.length > 0) {
         player.properties.forEach(pId => {
-            const space = state.boardSpaces[pId];
+            const space = state.boardSpaces.find(s => s.id === pId);
+            if (!space) return;
             const sellPrice = Math.round(space.investment * 0.6);
             const item = document.createElement('div');
             item.className = 'property-list-item';
@@ -329,7 +349,6 @@ export function showManagePropertyModal(isForced = false) {
         sellList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 10px 0;">คุณไม่มีเมืองที่จะขาย</p>';
     }
 
-    // Update financial actions
     const financialActions = document.getElementById('financial-actions');
     financialActions.innerHTML = '';
     if (player.loan) {
