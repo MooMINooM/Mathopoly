@@ -5,10 +5,10 @@ import * as bot from './bot.js';
 import { addLogMessage } from './logger.js';
 import * as ui from './ui.js';
 import { handleSpaceLanding } from './spaceHandlers.js';
-import { applyCareerAbility } from './careerHandler.js'; // <-- Import ศูนย์บัญชาการ
+import { applyCareerAbility } from './careerHandler.js';
 
 export function startTurn() {
-    state.setLandlordBonusUsed(false); // รีเซ็ตโบนัสเจ้าสัวที่ดิน
+    state.setLandlordBonusUsed(false);
     const player = state.players[state.currentPlayerIndex];
     if (player.bankrupt) {
         endTurn();
@@ -18,11 +18,9 @@ export function startTurn() {
     ui.updatePlayerInfo();
     addLogMessage(`--- ตาของ <strong>${player.name}</strong> ---`);
 
-    // ความสามารถนักธุรกิจ (Tycoon) - เรียกใช้ผ่าน careerHandler
     applyCareerAbility('startTurnDividend', null, { player });
 
     if (player.isBot) {
-        // ... (โค้ดส่วนบอทเหมือนเดิม)
         if (player.inJailTurns > 0) {
             if (player.getOutOfJailFree > 0 && Math.random() < 0.8) {
                 player.getOutOfJailFree--;
@@ -42,7 +40,6 @@ export function startTurn() {
         return;
     }
 
-    // ... (โค้ดส่วนผู้เล่นติดเกาะเหมือนเดิม)
     if (player.inJailTurns > 0) {
         if (player.getOutOfJailFree > 0) {
             ui.showActionModal('ติดเกาะร้าง!', `คุณมีการ์ดนางฟ้า ${player.getOutOfJailFree} ใบ ต้องการใช้เพื่อออกจากเกาะหรือไม่?`,
@@ -71,8 +68,7 @@ export function startTurn() {
         return;
     }
     
-    ui.enableTurnActions(); // เปิดปุ่มให้ผู้เล่นปกติ
-    // เปิดปุ่ม Engineer ถ้ามีสิทธิ์
+    ui.enableTurnActions();
     if (state.gameSettings.careerMode && player.career === 'engineer' && !player.engineerAbilityUsedThisTurn) {
         ui.enableEngineerButton();
     }
@@ -80,13 +76,17 @@ export function startTurn() {
 
 export function endTurn() {
     const currentPlayer = state.players[state.currentPlayerIndex];
-    // รีเซ็ตสิทธิ์ Engineer
     if (state.gameSettings.careerMode && currentPlayer.career === 'engineer') {
         currentPlayer.engineerAbilityUsedThisTurn = false;
     }
 
     if (currentPlayer.loan && !currentPlayer.bankrupt) {
-        // ... (โค้ดส่วนหนี้เหมือนเดิม)
+        currentPlayer.loan.roundsLeft--;
+        if (currentPlayer.loan.roundsLeft <= 0) {
+            actions.changePlayerMoney(currentPlayer, -currentPlayer.loan.amount, "ชำระหนี้");
+            if(currentPlayer.bankrupt) return;
+            currentPlayer.loan = null;
+        }
     }
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
@@ -133,7 +133,6 @@ export async function movePlayer(steps) {
     }
 
     if (passedGo) {
-        // ความสามารถนักสำรวจ (Explorer) - เรียกใช้ผ่าน careerHandler
         const finalBonus = applyCareerAbility('passGoBonus', state.gameSettings.passGoBonus, { player });
         actions.changePlayerMoney(player, finalBonus, "โบนัสผ่านจุดเริ่มต้น");
     }
@@ -150,18 +149,16 @@ export function rollDice() {
     addLogMessage(`<strong>${state.players[state.currentPlayerIndex].name}</strong> ทอยได้ ${d1} + ${d2}`);
 
     const player = state.players[state.currentPlayerIndex];
-    // ความสามารถนักเสี่ยงโชค (Gambler)
     if (state.gameSettings.careerMode && player.career === 'gambler') {
         if (player.isBot) {
-            if (d1 + d2 <= 5) { // บอทจะทอยใหม่ถ้าแต้มน้อย
+            if (d1 + d2 <= 5) {
                 const dieToReroll = Math.random() < 0.5 ? 1 : 2;
                 if (dieToReroll === 1) d1 = Math.floor(Math.random() * 6) + 1;
                 else d2 = Math.floor(Math.random() * 6) + 1;
                 addLogMessage(`<strong>${player.name}</strong> (นักเสี่ยงโชค) ใช้สกิลทอยใหม่! ได้ ${d1} + ${d2}`);
             }
-            finalizeRoll(d1, d2); // บอทตัดสินใจแล้ว เล่นต่อเลย
+            finalizeRoll(d1, d2);
         } else {
-            // ถามผู้เล่นคน
             ui.showActionModal('ความสามารถนักเสี่ยงโชค', 'คุณต้องการทอยลูกเต๋า 1 ลูกใหม่หรือไม่?', [
                 { text: `ทอยลูกเต๋า 1 ใหม่ (${d1})`, callback: () => {
                     d1 = Math.floor(Math.random() * 6) + 1;
@@ -180,10 +177,9 @@ export function rollDice() {
                     finalizeRoll(d1, d2);
                 }}
             ]);
-            // ไม่ต้องทำอะไรต่อ รอผู้เล่นเลือก
         }
     } else {
-        finalizeRoll(d1, d2); // ไม่ใช่นักเสี่ยงโชค เล่นต่อเลย
+        finalizeRoll(d1, d2);
     }
 }
 
