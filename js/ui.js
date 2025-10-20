@@ -90,7 +90,7 @@ export function updateBoardUI() {
                        spaceInfo.style.color = 'white';
                     }
                 }
-                priceEl.textContent = `฿${calculateRent(space, null).toLocaleString()}`; // Pass null as we don't know the paying player here
+                priceEl.textContent = `฿${calculateRent(space, null).toLocaleString()}`;
 
                 levelBadgeContainer.innerHTML = '';
                 if(space.level > 1) {
@@ -317,7 +317,7 @@ export function showManagePropertyModal(isForced = false) {
     if (isForced) {
         state.setForcedToSell(true);
         const debt = Math.abs(player.money);
-        modalTitle.textContent = 'คุณเป็นหนี้! ต้องขายทรัพย์สินเพื่อชำระหนี้';
+        modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
         modalTitle.classList.add('danger');
         summaryDebtItemEl.style.display = 'flex';
         summaryDebtEl.textContent = `฿${debt.toLocaleString()}`;
