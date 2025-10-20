@@ -1,17 +1,10 @@
 // js/utils.js
 import * as state from './state.js';
-import { applyCareerAbility } from './careerHandler.js'; // <-- Import ศูนย์บัญชาการ
+import { applyCareerAbility } from './careerHandler.js';
 
-/**
- * คำนวณค่าผ่านทางของเมือง (ส่งต่อให้ careerHandler)
- * @param {object} space - ข้อมูลช่องเมือง
- * @param {object} payingPlayer - ผู้เล่นที่กำลังจะจ่ายเงิน
- * @returns {number} ค่าผ่านทางสุดท้าย
- */
 export function calculateRent(space, payingPlayer) {
     let baseRent = Math.round(space.investment * 0.5);
 
-    // ตรวจสอบโบนัสเมืองติดกัน
     if (state.gameSettings.adjacencyBonus && space.owner !== null) {
         const ownerId = space.owner;
         const p_minus_1 = state.boardSpaces[space.id - 1];
@@ -28,29 +21,17 @@ export function calculateRent(space, payingPlayer) {
         }
     }
 
-    // ส่งต่อให้ careerHandler ตัดสินใจขั้นสุดท้าย
     const owner = state.players.find(p => p.id === space.owner);
-    return applyCareerAbility('calculateRent', baseRent, { space, owner, payingPlayer });
+    // Ensure payingPlayer is passed correctly, even if it might be null initially (e.g., when updating board UI)
+    const validPayingPlayer = payingPlayer || state.players[state.currentPlayerIndex];
+    return applyCareerAbility('calculateRent', baseRent, { space, owner, payingPlayer: validPayingPlayer });
 }
 
-/**
- * คำนวณราคาซื้อต่อเมือง (ส่งต่อให้ careerHandler)
- * @param {object} space - ข้อมูลช่องเมือง
- * @param {object} buyingPlayer - ผู้เล่นที่กำลังจะซื้อ
- * @returns {number} ราคาซื้อต่อสุดท้าย
- */
 export function calculateBuyoutPrice(space, buyingPlayer) {
     const basePrice = Math.round(space.investment * 1.2);
-    // ส่งต่อให้ careerHandler ตัดสินใจขั้นสุดท้าย
     return applyCareerAbility('calculateBuyoutPrice', basePrice, { space, player: buyingPlayer });
 }
 
-/**
- * คำนวณค่าใช้จ่ายในการขยายเมือง (ส่งต่อให้ careerHandler)
- * @param {object} space - ข้อมูลช่องเมือง
- * @param {object} expandingPlayer - ผู้เล่นที่กำลังจะขยาย
- * @returns {number} ค่าขยายเมืองสุดท้าย
- */
 export function calculateExpansionCost(space, expandingPlayer) {
     let baseCost = 0;
     if (space.level === 1) {
@@ -58,6 +39,5 @@ export function calculateExpansionCost(space, expandingPlayer) {
     } else if (space.level === 2) {
         baseCost = Math.round((space.investment) * 0.5);
     }
-    // ส่งต่อให้ careerHandler ตัดสินใจขั้นสุดท้าย
     return applyCareerAbility('calculateExpansionCost', baseCost, { space, player: expandingPlayer });
 }
