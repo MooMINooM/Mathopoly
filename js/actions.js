@@ -3,7 +3,7 @@ import * as state from './state.js';
 import { finishTurn } from './gameFlow.js';
 import * as bot from './bot.js';
 import { addLogMessage } from './logger.js';
-import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary, hideManagePropertyModal } from './ui.js';
+import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary, hideManagePropertyModal, showQuestionModalForPurchase } from './ui.js';
 import { calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
 
 const WIN_CONDITIONS = {
@@ -43,10 +43,9 @@ export function changePlayerMoney(player, amount, reason) {
     
     const action = amount > 0 ? 'ได้รับ' : 'เสีย';
     const color = amount > 0 ? 'green' : 'red';
-    if (reason) { // ไม่แสดง log ถ้าไม่มีเหตุผล (เช่น ปันผลนักธุรกิจ)
+    if (reason) {
         addLogMessage(`<span style="color: ${color};"><strong>${player.name}</strong> ${action}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})</span>`);
     }
-
 
     if (player.money < 0) {
         handleDebt(player);
@@ -56,7 +55,7 @@ export function changePlayerMoney(player, amount, reason) {
 
 function handleDebt(player) {
     const totalAssetValue = player.properties.reduce((sum, pId) => {
-        return sum + (state.boardSpaces[pId].investment * 0.6);
+        return sum + (state.boardSpaces.find(s => s.id === pId)?.investment * 0.6 || 0);
     }, 0);
 
     if (player.money + totalAssetValue < 0) {
@@ -76,10 +75,12 @@ function handleBankruptcy(player) {
     player.bankrupt = true;
     player.money = 0;
     player.properties.forEach(pId => {
-        const space = state.boardSpaces[pId];
-        space.owner = null;
-        space.level = 0;
-        space.investment = 0;
+        const space = state.boardSpaces.find(s => s.id === pId);
+        if (space) {
+            space.owner = null;
+            space.level = 0;
+            space.investment = 0;
+        }
     });
     player.properties = [];
 
@@ -89,7 +90,7 @@ function handleBankruptcy(player) {
     updateAllUI();
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
-    if (activePlayers.length <= 1) {
+    if (activePlayers.length <= 1 && state.isGameStarted) {
         showSummary();
     } else {
         finishTurn();
@@ -152,7 +153,9 @@ export function buyOutProperty(player, owner, space) {
 }
 
 export function sellProperty(player, pId) {
-    const space = state.boardSpaces[pId];
+    const space = state.boardSpaces.find(s => s.id === pId);
+    if (!space) return;
+    
     const sellPrice = Math.round(space.investment * 0.6);
 
     changePlayerMoney(player, sellPrice, `ขาย ${space.name}`);
@@ -184,4 +187,47 @@ export function takeLoan(player) {
     };
     changePlayerMoney(player, amount, "กู้เงิน");
     hideManagePropertyModal();
+}
+
+export function remoteExpandProperty(player) {
+    const upgradable = state.boardSpaces.filter(s => s.type === 'property' && s.owner === player.id && s.level < 3);
+
+    if (upgradable.length === 0) {
+        addLogMessage(`<strong>${player.name}</strong> (วิศวกร) ไม่มีเมืองให้ขยายทางไกล`);
+        return;
+    }
+
+    addLogMessage(`<strong>${player.name}</strong> (วิศวกร) กำลังใช้ความสามารถพัฒนาทางไกล`);
+    
+    const optionsHTML = upgradable.map(s => `<option value="${s.id}">${s.name} (ขยาย: ฿${calculateExpansionCost(s, player).toLocaleString()})</option>`).join('');
+    const customHTML = `
+        <p>เลือกเมืองที่คุณต้องการขยายจากระยะไกล (ใช้ได้ 1 ครั้ง/รอบ)</p>
+        <select id="remote-upgrade-select" style="width: 80%; padding: 10px; font-size: 1em; margin-top: 10px;">
+            ${optionsHTML}
+        </select>
+    `;
+
+    showActionModal(
+        'พัฒนาทางไกล (วิศวกร)',
+        '',
+        [{ text: 'ยืนยันการขยาย', callback: () => {
+            const spaceId = parseInt(document.getElementById('remote-upgrade-select').value);
+            const space = state.boardSpaces.find(s => s.id === spaceId);
+            const cost = calculateExpansionCost(space, player);
+
+            if (player.money >= cost) {
+                hideActionModal();
+                addLogMessage(`<strong>${player.name}</strong> เลือกขยาย <strong>${space.name}</strong> จากระยะไกล!`);
+                player.engineerAbilityUsedThisTurn = true;
+                state.setOnQuestionSuccess(() => expandProperty(player, space));
+                state.setOnQuestionFail(() => { finishTurn(); });
+                showQuestionModalForPurchase(player, `ตอบคำถามเพื่อขยาย "${space.name}" (พัฒนาทางไกล)`);
+            } else {
+                 addLogMessage(`<strong>${player.name}</strong> เงินไม่พอที่จะขยาย ${space.name}`);
+                 hideActionModal();
+            }
+        }},
+        { text: 'ยกเลิก', className: 'danger', callback: hideActionModal }],
+        { customHTML: customHTML }
+    );
 }
