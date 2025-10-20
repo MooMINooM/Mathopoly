@@ -355,7 +355,7 @@ function drawChanceCard(player) {
                 handleSpaceLanding();
                 return true;
             }
-            return;
+            return false; // แก้ไข: ถ้าไม่มีผู้เล่นอื่น ให้คืน false เพื่อจบตา
         }},
         { text: `ตลาดหุ้นผันผวน! ผู้เล่นที่มีเงินเกิน ฿${taxThreshold.toLocaleString()} ต้องจ่ายภาษี 10%`, cost: 0, action: () => {
             state.players.forEach(p => {
@@ -383,19 +383,18 @@ function drawChanceCard(player) {
         
         const finalCost = applyCareerAbility('chanceCardCost', card.cost, { player });
 
-        // ตรวจสอบว่า action เป็นฟังก์ชันหรือไม่ก่อนเรียกใช้
         if (typeof card.action === 'function') {
-            if (finalCost !== 0) { // ถ้าไม่ใช่นักบัญชี หรือเป็นการ์ดที่ไม่เสียเงิน
+            if (finalCost !== 0) {
                 const isMoveAction = await card.action(player);
                 if (!isMoveAction) {
                     finishTurn();
                 }
-            } else { // ถ้านักบัญชีรอดจากการเสียเงิน
+            } else {
                 finishTurn();
             }
         } else {
             console.error("Invalid action for chance card:", card);
-            finishTurn(); // ดำเนินเกมต่อไป แม้ action จะผิดพลาด
+            finishTurn();
         }
     };
 }
