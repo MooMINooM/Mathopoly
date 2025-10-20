@@ -6,6 +6,7 @@ import { finishTurn } from './gameFlow.js';
 import { addLogMessage } from './logger.js';
 import { showActionModal, hideActionModal, showQuestionModalForPurchase, showInsufficientFundsModal, updatePawnPosition } from './ui.js';
 import { calculateRent, calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
+import { applyCareerAbility } from './careerHandler.js';
 
 function handlePropertyLanding(player, space) {
     if (player.isBot) {
@@ -22,7 +23,7 @@ function handlePropertyLanding(player, space) {
                 }
             } else if (owner.id === player.id) {
                 if (space.level < 3) {
-                    const expansionCost = calculateExpansionCost(space);
+                    const expansionCost = calculateExpansionCost(space, player);
                     if (player.money >= expansionCost * 2 && Math.random() < 0.5) {
                         player.totalQuestions++; player.correctAnswers++;
                         actions.expandProperty(player, space);
@@ -33,8 +34,8 @@ function handlePropertyLanding(player, space) {
                     finishTurn();
                 }
             } else {
-                const rent = calculateRent(space);
-                const buyoutPrice = calculateBuyoutPrice(space);
+                const rent = calculateRent(space, player);
+                const buyoutPrice = calculateBuyoutPrice(space, player);
                 
                 if (player.money >= buyoutPrice && Math.random() < 0.3) {
                     actions.buyOutProperty(player, owner, space);
@@ -66,7 +67,7 @@ function handlePropertyLanding(player, space) {
         showQuestionModalForPurchase(player, `ตอบคำถามเพื่อซื้อ "${space.name}"`);
     } else if (space.owner === player.id) {
         if (space.level < 3) {
-            const expansionCost = calculateExpansionCost(space);
+            const expansionCost = calculateExpansionCost(space, player);
             state.setOnQuestionSuccess(() => {
                 showActionModal(
                     `ขยายเมือง ${space.name}?`,
@@ -89,8 +90,8 @@ function handlePropertyLanding(player, space) {
         }
     } else {
         const owner = state.players.find(p => p.id === space.owner);
-        const rent = calculateRent(space);
-        const buyoutPrice = calculateBuyoutPrice(space);
+        const rent = calculateRent(space, player);
+        const buyoutPrice = calculateBuyoutPrice(space, player);
         const showBuyOrPayModal = () => {
             showActionModal(
                 `ที่ดินของ ${owner.name}`,
@@ -273,7 +274,7 @@ function selectPropertyForBonus(player) {
         '',
         [{ text: 'ยืนยัน', callback: () => {
             const spaceId = parseInt(document.getElementById('bonus-select').value);
-            const space = state.boardSpaces[spaceId];
+            const space = state.boardSpaces.find(s => s.id === spaceId);
             hideActionModal();
             
             if (space.owner === null) {
@@ -323,7 +324,7 @@ function selectPropertyToUpgradeForFree(player) {
         '',
         [{ text: 'ยืนยัน', callback: () => {
             const spaceId = parseInt(document.getElementById('upgrade-select').value);
-            const space = state.boardSpaces[spaceId];
+            const space = state.boardSpaces.find(s => s.id === spaceId);
             hideActionModal();
             addLogMessage(`<strong>${player.name}</strong> เลือกขยาย <strong>${space.name}</strong> ฟรี!`);
             actions.expandProperty(player, space);
@@ -339,12 +340,12 @@ function drawChanceCard(player) {
     const tuitionFee = Math.round(1000 * moneyScale);
 
     const cards = [
-        { text: `ถูกลอตเตอรี่! รับเงิน ฿${lotteryWin.toLocaleString()}`, action: (p) => { actions.changePlayerMoney(p, lotteryWin, "ถูกลอตเตอรี่"); }},
-        { text: "ทฤษฎีบทใหม่ถูกค้นพบ! เลือกขยายเมืองของคุณ 1 แห่งฟรี", action: (p) => { selectPropertyToUpgradeForFree(p); return true; }},
-        { text: "ไปที่เกาะร้างทันที!", action: (p) => { p.position = 12; p.inJailTurns = 1; updatePawnPosition(p); }},
-        { text: "รับการ์ด 'ออกจากเกาะร้างฟรี'", action: (p) => { p.getOutOfJailFree++; }},
-        { text: `จ่ายค่าเทอม ฿${tuitionFee.toLocaleString()}`, action: (p) => { actions.changePlayerMoney(p, -tuitionFee, "ค่าเทอม"); }},
-        { text: "เดินทางข้ามมิติ! สลับตำแหน่งกับผู้เล่นที่รวยที่สุด", action: (p) => {
+        { text: `ถูกลอตเตอรี่! รับเงิน ฿${lotteryWin.toLocaleString()}`, cost: -lotteryWin, action: (p) => { actions.changePlayerMoney(p, lotteryWin, "ถูกลอตเตอรี่"); }},
+        { text: "ทฤษฎีบทใหม่ถูกค้นพบ! เลือกขยายเมืองของคุณ 1 แห่งฟรี", cost: 0, action: (p) => { selectPropertyToUpgradeForFree(p); return true; }},
+        { text: "ไปที่เกาะร้างทันที!", cost: 0, action: (p) => { p.position = 12; p.inJailTurns = 1; updatePawnPosition(p); }},
+        { text: "รับการ์ด 'ออกจากเกาะร้างฟรี'", cost: 0, action: (p) => { p.getOutOfJailFree++; }},
+        { text: `จ่ายค่าเทอม ฿${tuitionFee.toLocaleString()}`, cost: tuitionFee, action: (p) => { actions.changePlayerMoney(p, -tuitionFee, "ค่าเทอม"); }},
+        { text: "เดินทางข้ามมิติ! สลับตำแหน่งกับผู้เล่นที่รวยที่สุด", cost: 0, action: (p) => {
             const richestPlayer = state.players.filter(pl => !pl.bankrupt && pl.id !== p.id).sort((a,b) => b.money - a.money)[0];
             if (richestPlayer) {
                 [p.position, richestPlayer.position] = [richestPlayer.position, p.position];
@@ -356,7 +357,7 @@ function drawChanceCard(player) {
             }
             return;
         }},
-        { text: `ตลาดหุ้นผันผวน! ผู้เล่นที่มีเงินเกิน ฿${taxThreshold.toLocaleString()} ต้องจ่ายภาษี 10%`, action: () => {
+        { text: `ตลาดหุ้นผันผวน! ผู้เล่นที่มีเงินเกิน ฿${taxThreshold.toLocaleString()} ต้องจ่ายภาษี 10%`, cost: 0, action: () => {
             state.players.forEach(p => {
                 if (!p.bankrupt && p.money > taxThreshold) {
                     const tax = Math.round(p.money * 0.1);
@@ -364,7 +365,7 @@ function drawChanceCard(player) {
                 }
             });
         }},
-        { text: "เดินไปที่จุดเริ่มต้นและรับเงินโบนัส", action: async (p) => {
+        { text: "เดินไปที่จุดเริ่มต้นและรับเงินโบนัส", cost: 0, action: async (p) => {
             const steps = (state.gameSettings.totalSpaces - p.position) % state.gameSettings.totalSpaces;
             await movePlayer(steps);
             return true;
@@ -379,16 +380,36 @@ function drawChanceCard(player) {
 
     document.getElementById('chance-card-ok-btn').onclick = async () => {
         document.getElementById('chance-card-modal').style.display = 'none';
-        const isMoveAction = await card.action(player);
-        if (!isMoveAction) {
-            finishTurn();
+        
+        const finalCost = applyCareerAbility('chanceCardCost', card.cost, { player });
+
+        // ตรวจสอบว่า action เป็นฟังก์ชันหรือไม่ก่อนเรียกใช้
+        if (typeof card.action === 'function') {
+            if (finalCost !== 0) { // ถ้าไม่ใช่นักบัญชี หรือเป็นการ์ดที่ไม่เสียเงิน
+                const isMoveAction = await card.action(player);
+                if (!isMoveAction) {
+                    finishTurn();
+                }
+            } else { // ถ้านักบัญชีรอดจากการเสียเงิน
+                finishTurn();
+            }
+        } else {
+            console.error("Invalid action for chance card:", card);
+            finishTurn(); // ดำเนินเกมต่อไป แม้ action จะผิดพลาด
         }
     };
 }
 
+
 export function handleSpaceLanding() {
     const player = state.players[state.currentPlayerIndex];
-    const space = state.boardSpaces[player.position];
+    const space = state.boardSpaces.find(s => s.id === player.position);
+    if (!space) {
+        console.error(`Error: Could not find space with id ${player.position}`);
+        finishTurn();
+        return;
+    }
+    
     addLogMessage(`<strong>${player.name}</strong> ตกที่ช่อง <strong>${space.name}</strong>`);
 
     switch (space.type) {
