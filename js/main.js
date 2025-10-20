@@ -2,10 +2,11 @@
 import { initializeGameSetup } from './setup.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
-import { rollDice } from './gameLogic.js';    // <-- แก้ไข Import
-import { endTurn } from './gameFlow.js';      // <-- แก้ไข Import
+import { rollDice } from './gameLogic.js';
+import { endTurn } from './gameFlow.js';
 import * as actions from './actions.js';
 import * as bot from './bot.js';
+import { applyCareerAbility } from './careerHandler.js'; // <-- Import ศูนย์บัญชาการ
 
 // --- Main Initializer ---
 async function main() {
@@ -36,14 +37,18 @@ function addEventListeners() {
 
     // Question modal
     document.getElementById('submit-answer-btn').addEventListener('click', () => {
-        const answer = parseFloat(document.getElementById('question-answer').value);
+        const answerInput = document.getElementById('question-answer');
+        const answer = parseFloat(answerInput.value);
         document.getElementById('question-modal').style.display = 'none';
         
         const currentPlayer = state.players[state.currentPlayerIndex];
         
-        if (answer === state.currentQuestion.answer) {
+        if (!isNaN(answer) && answer === state.currentQuestion.answer) {
             console.log("ตอบถูก!");
             currentPlayer.correctAnswers++;
+            // ความสามารถนักวิชาการ (Scholar) - เรียกใช้ผ่าน careerHandler
+            applyCareerAbility('afterQuestionCorrect', null, { player: currentPlayer });
+
             ui.showActionModal("ถูกต้อง!", "คุณตอบคำถามถูกต้อง", [{ text: 'ตกลง', callback: () => {
                 ui.hideActionModal();
                 if(state.onQuestionSuccess) state.onQuestionSuccess();
@@ -56,6 +61,7 @@ function addEventListeners() {
             }}], true);
         }
         ui.updatePlayerInfo();
+        answerInput.value = ''; // เคลียร์ช่องคำตอบ
     });
 
     // Info sheet modal
@@ -68,7 +74,7 @@ function addEventListeners() {
         window.location.reload();
     });
     
-    // Listener ตัวเดียวสำหรับจัดการทุกอย่างใน Manage Property Modal
+    // Manage Property Modal listener
     const manageModal = document.getElementById('manage-property-modal');
     manageModal.addEventListener('click', (e) => {
         const targetElement = e.target;
@@ -88,6 +94,17 @@ function addEventListeners() {
             actions.takeLoan(currentPlayer);
         }
     });
+
+    // Engineer Button Listener (เพิ่มใหม่)
+    const engineerBtn = document.getElementById('engineer-ability-btn');
+    if (engineerBtn) {
+        engineerBtn.addEventListener('click', () => {
+            const player = state.players[state.currentPlayerIndex];
+            if (player.career === 'engineer' && !player.engineerAbilityUsedThisTurn) {
+                actions.remoteExpandProperty(player);
+            }
+        });
+    }
 }
 
 // Start the entire process
