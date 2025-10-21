@@ -7,13 +7,12 @@ import { CAREERS } from './careers.js';
 function createBoard() {
     const boardElement = document.getElementById('game-board');
     const controlPanel = document.getElementById('control-panel');
-    
+
     // ป้องกันการสร้างซ้ำซ้อน
     if (document.querySelectorAll('.space').length > 0) {
-        // เคลียร์แค่ space เก่า ไม่ใช่ทั้งหมด
         document.querySelectorAll('.space').forEach(el => el.remove());
     } else {
-        boardElement.innerHTML = ''; // เคลียร์ทั้งหมดถ้าเป็นการสร้างครั้งแรก
+        boardElement.innerHTML = '';
     }
     boardElement.appendChild(controlPanel);
 
@@ -137,7 +136,8 @@ function startGame() {
                 getOutOfJailFree: 0,
                 bankrupt: false,
                 isBot: typeSelect.value === 'bot',
-                color: `var(--player${newPlayers.length + 1}-color)`
+                color: `var(--player${newPlayers.length + 1}-color)`,
+                engineerAbilityUsedThisTurn: false // เพิ่ม state สำหรับ Engineer
             });
         }
     });
