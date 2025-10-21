@@ -35,46 +35,61 @@
     gap: 15px;
 }
 
-#splash-screen {
-    background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
-    background-size: cover;
-    background-position: center;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding-bottom: 8vh;
+/* --- START: ดีไซน์ใหม่สำหรับ Splash Screen --- */
+#splash-screen.vertical-split {
+    padding: 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    background-color: #333;
 }
-.splash-content {
-    text-align: center;
-    animation: fade-in 1.5s ease-in-out;
-}
-.splash-buttons {
+.splash-menu-column {
+    width: 25%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    gap: 20px;
+    align-items: stretch;
+    gap: 25px;
+    animation: slide-in-left 0.8s ease-out;
 }
-.splash-buttons button {
-    padding: 10px 20px;
-    font-size: 1.5em;
-    border-radius: 12px;
+@keyframes slide-in-left {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.splash-menu-column button {
+    padding: 15px 10px;
+    font-size: 1.4em;
+    border-radius: 10px;
     border: 2px solid white;
     color: white;
     text-shadow: 1px 1px 3px black;
     transition: all 0.3s;
+    font-weight: 600;
 }
-#start-game-btn {
+.splash-image-column {
+    flex-grow: 1;
+    background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
+    background-size: cover;
+    background-position: center;
+    animation: fade-in 1.5s ease-in-out;
+}
+#start-game-btn { /* ปุ่มเริ่มเกม บน Splash Screen */
     background-color: var(--primary-color);
 }
 #start-game-btn:hover {
     background-color: #45a049;
     transform: translateY(-3px);
 }
-#show-about-btn {
+#show-about-btn { /* ปุ่มเกี่ยวกับเกม บน Splash Screen */
     background-color: var(--accent-color);
 }
 #show-about-btn:hover {
     background-color: #1e88e5;
     transform: translateY(-3px);
 }
+/* --- END: ดีไซน์ใหม่สำหรับ Splash Screen --- */
 
 
 /* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า และหน้าที่ใช้ร่วมกัน --- */
@@ -130,6 +145,7 @@
     margin-bottom: 20px;
     padding-bottom: 0;
     border-bottom: none;
+    color: var(--text-color); /* Ensure heading color is consistent */
 }
 .step-number {
     background-color: var(--primary-color);
@@ -164,11 +180,27 @@
 .checkbox-wrapper label {
     font-size: 0.95em;
     font-weight: 600;
+    color: var(--text-color); /* Ensure label color is consistent */
+    margin-bottom: 0; /* Override default label margin */
+}
+#setup-screen .setting-row { /* Style for starting money row */
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#setup-screen .setting-row label {
+     font-weight: 600;
+     margin-bottom: 0;
 }
 #setup-screen .setting-row input {
-    max-width: none;
-    padding: 12px;
+    max-width: 150px;
+    padding: 10px;
     font-size: 1em;
+    margin-bottom: 0;
 }
 #setup-screen .player-setup-container {
     display: grid;
@@ -177,7 +209,14 @@
     max-height: 500px;
     overflow-y: auto;
     padding-right: 10px;
+    /* Custom scrollbar for player setup */
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f0f0f0;
 }
+#setup-screen .player-setup-container::-webkit-scrollbar { width: 6px; }
+#setup-screen .player-setup-container::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 3px;}
+#setup-screen .player-setup-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px;}
+
 #setup-screen .player-setup {
     border: 1px solid #ddd;
     border-left: 5px solid var(--border-color);
@@ -213,7 +252,9 @@
     padding: 8px;
     border-radius: 6px;
     margin-top: 5px;
-    min-height: 38px;
+    min-height: 38px; /* Ensure consistent height */
+    display: flex; /* Allow vertical alignment if needed */
+    align-items: center; /* Center text vertically */
 }
 .setup-footer {
     display: flex;
@@ -245,12 +286,15 @@
     border: 1px solid #dee2e6;
     padding: 0;
     overflow: hidden;
+    border-radius: 16px; /* Match setup screen */
 }
 #question-modal h2 {
     font-size: 1.4em;
     margin: 0;
     padding: 20px;
     border-bottom: 1px solid #e9ecef;
+    background-color: white; /* Header background */
+    text-align: center;
 }
 .question-body {
     padding: 30px;
@@ -267,6 +311,7 @@
     padding: 15px 30px;
     border-radius: 10px;
     margin: 0;
+    border: 1px solid #ced4da;
 }
 .answer-group {
     display: flex;
@@ -344,7 +389,14 @@
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background-color: white;
+     /* Custom scrollbar for property list */
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f0f0f0;
 }
+.property-list-container::-webkit-scrollbar { width: 6px; }
+.property-list-container::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 3px;}
+.property-list-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px;}
+
 #manage-property-modal .property-list-item {
     display: flex;
     justify-content: space-between;
@@ -367,6 +419,11 @@
 }
 #financial-actions button:hover {
     background-color: #1e88e5;
+}
+#financial-actions button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
 }
 /* --- END: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
 
