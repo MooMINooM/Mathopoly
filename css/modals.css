@@ -44,7 +44,8 @@
     background-color: #333;
 }
 .splash-menu-column {
-    width: 25%;
+    width: 15%; /* ความกว้างของเมนู */
+    min-width: 180px; /* กำหนดความกว้างขั้นต่ำ เผื่อหน้าจอเล็ก */
     background-color: rgba(0, 0, 0, 0.7);
     padding: 40px 20px;
     display: flex;
@@ -60,7 +61,7 @@
 }
 .splash-menu-column button {
     padding: 15px 10px;
-    font-size: 1.4em;
+    font-size: 1.2em; /* ลดขนาด font ลงเล็กน้อย */
     border-radius: 10px;
     border: 2px solid white;
     color: white;
@@ -145,7 +146,7 @@
     margin-bottom: 20px;
     padding-bottom: 0;
     border-bottom: none;
-    color: var(--text-color); /* Ensure heading color is consistent */
+    color: var(--text-color);
 }
 .step-number {
     background-color: var(--primary-color);
@@ -180,10 +181,10 @@
 .checkbox-wrapper label {
     font-size: 0.95em;
     font-weight: 600;
-    color: var(--text-color); /* Ensure label color is consistent */
-    margin-bottom: 0; /* Override default label margin */
+    color: var(--text-color);
+    margin-bottom: 0;
 }
-#setup-screen .setting-row { /* Style for starting money row */
+#setup-screen .setting-row {
     padding: 10px;
     background-color: #f8f9fa;
     border-radius: 8px;
@@ -209,7 +210,6 @@
     max-height: 500px;
     overflow-y: auto;
     padding-right: 10px;
-    /* Custom scrollbar for player setup */
     scrollbar-width: thin;
     scrollbar-color: #ccc #f0f0f0;
 }
@@ -252,9 +252,9 @@
     padding: 8px;
     border-radius: 6px;
     margin-top: 5px;
-    min-height: 38px; /* Ensure consistent height */
-    display: flex; /* Allow vertical alignment if needed */
-    align-items: center; /* Center text vertically */
+    min-height: 38px;
+    display: flex;
+    align-items: center;
 }
 .setup-footer {
     display: flex;
@@ -286,14 +286,14 @@
     border: 1px solid #dee2e6;
     padding: 0;
     overflow: hidden;
-    border-radius: 16px; /* Match setup screen */
+    border-radius: 16px;
 }
 #question-modal h2 {
     font-size: 1.4em;
     margin: 0;
     padding: 20px;
     border-bottom: 1px solid #e9ecef;
-    background-color: white; /* Header background */
+    background-color: white;
     text-align: center;
 }
 .question-body {
@@ -389,7 +389,6 @@
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background-color: white;
-     /* Custom scrollbar for property list */
     scrollbar-width: thin;
     scrollbar-color: #ccc #f0f0f0;
 }
