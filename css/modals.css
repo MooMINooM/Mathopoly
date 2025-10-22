@@ -42,11 +42,17 @@
     justify-content: flex-start;
     align-items: stretch;
     position: relative;
-    /* ย้าย background-image มาไว้ที่นี่ */
+    /* --- ย้าย background-image มาไว้ที่นี่ --- */
     background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
     background-size: cover;
     background-position: center;
     animation: fade-in 1.5s ease-in-out;
+    /* --- เพิ่มกฎสำหรับเต็มจอ --- */
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    max-width: none; /* ล้างค่า max-width */
 }
 .splash-menu-column {
     width: 15%;
@@ -55,17 +61,17 @@
     padding: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* จัดบน-ล่าง */
+    justify-content: space-between;
     align-items: stretch;
     box-shadow: 3px 0px 15px rgba(0,0,0,0.1);
     z-index: 1;
     animation: slide-in-left 0.8s ease-out;
 }
-.menu-buttons { /* Div ครอบปุ่มเมนู */
+.menu-buttons {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin-top: auto; /* ดันปุ่มลงมากลางๆ */
+    margin-top: auto;
     margin-bottom: auto;
 }
 .splash-menu-column button {
@@ -77,7 +83,7 @@
     text-shadow: none;
     transition: all 0.2s;
     font-weight: 600;
-    text-align: center; /* จัดข้อความกึ่งกลาง */
+    text-align: center;
     cursor: pointer;
 }
 .splash-menu-column button:hover {
@@ -104,7 +110,9 @@
 }
 .splash-image-column {
     flex-grow: 1;
-    /* ไม่มี background-image ที่นี่แล้ว */
+    /* --- ลบ background-image ออกจากที่นี่ --- */
+    /* ทำให้โปร่งใสเพื่อให้พื้นหลังของ #splash-screen แสดงผล */
+    background-color: transparent; 
 }
 #splash-footer {
     color: #6c757d;
@@ -113,7 +121,7 @@
     text-align: center;
     padding-top: 20px;
     border-top: 1px solid #dee2e6;
-    margin-top: auto; /* ดันลงล่างสุด */
+    margin-top: auto;
 }
 /* --- END: ดีไซน์ใหม่สำหรับ Splash Screen --- */
 
