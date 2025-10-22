@@ -41,7 +41,6 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: stretch;
-    background-color: #e9ecef; /* สีพื้นหลังอ่อนๆ */
     position: relative; /* Needed for absolute positioning of footer */
 }
 .splash-menu-column {
@@ -551,4 +550,5 @@
     padding: 10px 20px;
     font-size: 1em;
 }
+
 
