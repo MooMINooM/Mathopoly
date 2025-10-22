@@ -42,17 +42,18 @@
     justify-content: flex-start;
     align-items: stretch;
     background-color: #e9ecef;
+    position: relative; /* Needed for absolute positioning of footer */
 }
 .splash-menu-column {
-    width: 15%;
-    min-width: 200px;
-    background-color: #ffffff;
+    width: 15%; /* ความกว้างเมนู */
+    min-width: 200px; /* ความกว้างขั้นต่ำ */
+    background-color: #ffffff; /* พื้นหลังสีขาว */
     padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: 15px;
+    gap: 15px; /* ลดระยะห่าง */
     box-shadow: 3px 0px 15px rgba(0,0,0,0.1);
     z-index: 1;
     animation: slide-in-left 0.8s ease-out;
@@ -70,8 +71,8 @@
     text-shadow: none;
     transition: all 0.2s;
     font-weight: 600;
-    text-align: left;
-    cursor: pointer; /* Ensure cursor changes */
+    text-align: center; /* จัดข้อความกึ่งกลาง */
+    cursor: pointer;
 }
 .splash-menu-column button:hover {
     transform: translateX(5px);
@@ -102,6 +103,16 @@
     background-position: center;
     animation: fade-in 1.5s ease-in-out;
 }
+#splash-footer {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85em;
+    text-shadow: 1px 1px 2px black;
+    z-index: 2;
+}
 /* --- END: ดีไซน์ใหม่สำหรับ Splash Screen --- */
 
 
@@ -127,7 +138,7 @@
 .setup-header h2 {
     margin: 0;
     font-size: 1.8em;
-    color: var(--text-color); /* Ensure consistent heading color */
+    color: var(--text-color);
 }
 .setup-main-container {
     display: grid;
@@ -190,7 +201,7 @@
     width: 18px;
     height: 18px;
     margin-right: 10px;
-    margin-bottom: 0; /* Override default */
+    margin-bottom: 0;
 }
 .checkbox-wrapper label {
     font-size: 0.95em;
@@ -340,7 +351,7 @@
     border: 1px solid #ced4da;
     border-radius: 8px;
     text-align: center;
-    margin-bottom: 0; /* Override default */
+    margin-bottom: 0;
 }
 #submit-answer-btn {
     padding: 12px 25px;
@@ -492,7 +503,7 @@
     position: absolute;
     bottom: 20px;
     right: 30px;
-    padding: 10px 20px; /* Make close button consistent */
+    padding: 10px 20px;
     font-size: 1em;
 }
 /* --- END: Style สำหรับ About และ Creator Modals --- */
