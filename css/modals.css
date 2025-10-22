@@ -41,11 +41,16 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: stretch;
-    position: relative; /* Needed for absolute positioning of footer */
+    position: relative;
+    /* ย้าย background-image มาไว้ที่นี่ */
+    background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
+    background-size: cover;
+    background-position: center;
+    animation: fade-in 1.5s ease-in-out;
 }
 .splash-menu-column {
-    width: 15%; /* ความกว้างเมนู */
-    min-width: 200px; /* ความกว้างขั้นต่ำ */
+    width: 15%;
+    min-width: 200px;
     background-color: rgba(255, 255, 255, 0.85); /* พื้นหลังสีขาวโปร่งแสง */
     padding: 30px;
     display: flex;
@@ -55,10 +60,6 @@
     box-shadow: 3px 0px 15px rgba(0,0,0,0.1);
     z-index: 1;
     animation: slide-in-left 0.8s ease-out;
-}
-@keyframes slide-in-left {
-    from { transform: translateX(-100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
 }
 .menu-buttons { /* Div ครอบปุ่มเมนู */
     display: flex;
@@ -103,10 +104,7 @@
 }
 .splash-image-column {
     flex-grow: 1;
-    background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
-    background-size: cover;
-    background-position: center;
-    animation: fade-in 1.5s ease-in-out;
+    /* ไม่มี background-image ที่นี่แล้ว */
 }
 #splash-footer {
     color: #6c757d;
