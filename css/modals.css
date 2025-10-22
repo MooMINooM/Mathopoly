@@ -38,34 +38,39 @@
 /* --- START: ดีไซน์ใหม่สำหรับ Splash Screen --- */
 #splash-screen.vertical-split {
     padding: 0;
-    flex-direction: row;
+    flex-direction: row; /* จัดเรียงแนวนอน */
     justify-content: flex-start;
     align-items: stretch;
     position: relative;
-    /* --- ย้าย background-image มาไว้ที่นี่ --- */
+    /* --- รูปพื้นหลังเต็มจอ 100% --- */
     background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
     background-size: cover;
     background-position: center;
     animation: fade-in 1.5s ease-in-out;
-    /* --- เพิ่มกฎสำหรับเต็มจอ --- */
+    /* --- ขนาดเต็มหน้าจอ --- */
     width: 100vw;
     height: 100vh;
     top: 0;
     left: 0;
-    max-width: none; /* ล้างค่า max-width */
+    max-width: none;
 }
 .splash-menu-column {
-    width: 15%;
-    min-width: 200px;
-    background-color: rgba(255, 255, 255, 0.85); /* พื้นหลังสีขาวโปร่งแสง */
+    width: 15%; /* ความกว้างเมนู */
+    min-width: 200px; /* ความกว้างขั้นต่ำ */
+    background-color: #ffffff; /* พื้นหลังสีขาวทึบ */
     padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
-    box-shadow: 3px 0px 15px rgba(0,0,0,0.1);
+    box-shadow: -3px 0 15px rgba(0,0,0,0.1); /* เงาด้านซ้าย */
     z-index: 1;
-    animation: slide-in-left 0.8s ease-out;
+    animation: slide-in-right 0.8s ease-out; /* เลื่อนมาจากทางขวา */
+    order: 2; /* ให้อยู่ด้านขวา */
+}
+@keyframes slide-in-right {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 .menu-buttons {
     display: flex;
@@ -87,7 +92,7 @@
     cursor: pointer;
 }
 .splash-menu-column button:hover {
-    transform: translateX(5px);
+    transform: translateX(-5px); /* เลื่อนไปทางซ้าย */
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 #start-game-btn {
@@ -109,10 +114,9 @@
     border-color: #ced4da;
 }
 .splash-image-column {
-    flex-grow: 1;
-    /* --- ลบ background-image ออกจากที่นี่ --- */
-    /* ทำให้โปร่งใสเพื่อให้พื้นหลังของ #splash-screen แสดงผล */
-    background-color: transparent; 
+    flex-grow: 1; /* ใช้พื้นที่ที่เหลือ (85%) */
+    background-color: transparent; /* โปร่งใสเพื่อให้พื้นหลังหลักแสดง */
+    order: 1; /* ให้อยู่ด้านซ้าย */
 }
 #splash-footer {
     color: #6c757d;
