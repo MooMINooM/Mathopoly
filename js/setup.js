@@ -8,6 +8,7 @@ function createBoard() {
     const boardElement = document.getElementById('game-board');
     const controlPanel = document.getElementById('control-panel');
 
+    // ป้องกันการสร้างซ้ำซ้อน
     if (document.querySelectorAll('.space').length > 0) {
         document.querySelectorAll('.space').forEach(el => el.remove());
     } else {
@@ -136,7 +137,7 @@ function startGame() {
                 bankrupt: false,
                 isBot: typeSelect.value === 'bot',
                 color: `var(--player${newPlayers.length + 1}-color)`,
-                engineerAbilityUsedThisTurn: false
+                engineerAbilityUsedThisTurn: false // เพิ่ม state สำหรับ Engineer
             });
         }
     });
@@ -227,7 +228,6 @@ export function initializeGameSetup() {
     generatePlayerSetupCards();
     document.querySelector('.game-container').style.display = 'none';
 
-    // Main menu buttons
     document.getElementById('start-game-btn').addEventListener('click', () => {
         document.getElementById('setup-title').textContent = 'ตั้งค่าเกม';
         document.getElementById('special-rules-section').style.display = 'block';
@@ -244,20 +244,15 @@ export function initializeGameSetup() {
         document.getElementById('about-modal').style.display = 'flex';
     });
 
-    // --- START: เพิ่ม Event Listener ใหม่ ---
     document.getElementById('show-creator-btn').addEventListener('click', () => {
         document.getElementById('creator-modal').style.display = 'flex';
     });
 
     document.getElementById('show-guide-btn').addEventListener('click', () => {
-        // --- ใส่ลิงก์ YouTube ของคุณที่นี่ ---
         const youtubeLink = 'https://www.youtube.com/'; // Placeholder Link
-        window.open(youtubeLink, '_blank'); // เปิดใน tab ใหม่
+        window.open(youtubeLink, '_blank');
     });
-    // --- END: เพิ่ม Event Listener ใหม่ ---
 
-
-    // Event listener for career mode checkbox
     document.getElementById('career-mode-check').addEventListener('change', (e) => {
         const display = e.target.checked ? 'block' : 'none';
         document.querySelectorAll('.career-selection-wrapper').forEach(el => el.style.display = display);
@@ -270,20 +265,17 @@ export function initializeGameSetup() {
         }
     });
     
-    // Setup screen buttons
     document.getElementById('start-game-btn-confirm').addEventListener('click', startGame);
     document.getElementById('close-setup-btn').addEventListener('click', () => {
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('splash-screen').style.display = 'flex';
     });
 
-    // Close Modal Buttons & Click outside
     document.getElementById('about-modal').addEventListener('click', (e) => {
         if (e.target.id === 'close-about-btn' || e.target.id === 'about-modal') {
             document.getElementById('about-modal').style.display = 'none';
         }
     });
-
     document.getElementById('creator-modal').addEventListener('click', (e) => {
         if (e.target.id === 'close-creator-btn' || e.target.id === 'creator-modal') {
             document.getElementById('creator-modal').style.display = 'none';
