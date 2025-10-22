@@ -33,7 +33,7 @@ body {
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
-    padding: 10px;
+    /* ลบ padding: 10px; ออก */
 }
 
 input, button, select, textarea {
