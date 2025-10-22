@@ -9,6 +9,11 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
+    /* --- เพิ่มพื้นหลังสำหรับตอนเล่นเกม --- */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
+    background-size: cover;
+    background-position: center;
+    /* --- --------------------------- --- */
 }
 
 #game-board {
@@ -27,13 +32,12 @@
     flex-shrink: 0;
 }
 
-/* --- START: แก้ไข Control Panel ทั้งหมด --- */
 #control-panel {
     grid-area: 2 / 2 / 9 / 13;
     border-radius: 12px;
     padding: 15px;
-    display: grid; /* ใช้ Grid เป็น Layout หลัก */
-    grid-template-rows: 60% 40%; /* แถวบน 60%, แถวล่าง 40% */
+    display: grid;
+    grid-template-rows: 60% 40%;
     gap: 15px;
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
@@ -47,16 +51,15 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 10px;
-    min-height: 0; /* สำคัญมากสำหรับ Grid ซ้อน Grid */
+    min-height: 0;
 }
 
 #bottom-panel {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 15px;
-    min-height: 0; /* สำคัญมากสำหรับ Grid ซ้อน Grid */
+    min-height: 0;
 }
-/* --- END: แก้ไข Control Panel ทั้งหมด --- */
 
 #game-log-container {
     grid-column: 1 / 2;
