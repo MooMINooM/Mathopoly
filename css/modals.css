@@ -35,74 +35,77 @@
     gap: 15px;
 }
 
-/* --- START: ดีไซน์ใหม่สำหรับ Splash Screen (Centered) --- */
-#splash-screen.centered-splash {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
-    background-size: cover;
-    background-position: center;
-    flex-direction: column; /* จัดเรียงเนื้อหาแนวตั้ง */
-    justify-content: center; /* จัดกลางจอ */
-    padding: 20px;
+/* --- START: ดีไซน์ใหม่สำหรับ Splash Screen --- */
+#splash-screen.vertical-split {
+    padding: 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    background-color: #e9ecef;
 }
-.splash-content {
-    text-align: center;
-    animation: fade-in 1.5s ease-in-out;
-}
-.splash-title {
-    font-size: 5em; /* ขนาดใหญ่ขึ้น */
-    color: white;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-    margin: 0 0 40px 0; /* เว้นระยะห่างด้านล่าง */
-}
-.splash-buttons {
+.splash-menu-column {
+    width: 15%;
+    min-width: 200px;
+    background-color: #ffffff;
+    padding: 30px;
     display: flex;
-    flex-direction: column; /* เรียงปุ่มแนวตั้ง */
-    align-items: center; /* จัดปุ่มกลางแนวนอน */
-    gap: 15px; /* ระยะห่างระหว่างปุ่ม */
-    margin-bottom: 50px; /* เว้นระยะห่างจาก Footer */
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    box-shadow: 3px 0px 15px rgba(0,0,0,0.1);
+    z-index: 1;
+    animation: slide-in-left 0.8s ease-out;
 }
-.splash-buttons button {
-    padding: 12px 25px;
-    font-size: 1.6em;
+@keyframes slide-in-left {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.splash-menu-column button {
+    padding: 12px 15px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    color: var(--text-color);
+    text-shadow: none;
+    transition: all 0.2s;
     font-weight: 600;
-    border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    transition: all 0.3s;
-    width: 100%; /* ทำให้ปุ่มกว้างเท่ากัน */
-    max-width: 350px; /* กำหนดความกว้างสูงสุด */
+    text-align: left;
+    cursor: pointer; /* Ensure cursor changes */
+}
+.splash-menu-column button:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 #start-game-btn {
-    background-color: rgba(76, 175, 80, 0.8); /* สีเขียวโปร่งแสง */
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
 }
 #start-game-btn:hover {
-    background-color: rgba(69, 160, 73, 1);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    background-color: #45a049;
+    border-color: #45a049;
 }
 #show-about-btn, #show-creator-btn, #show-guide-btn {
-    background-color: rgba(33, 150, 243, 0.8); /* สีฟ้าโปร่งแสง */
-    border-color: rgba(33, 150, 243, 0.8);
+    background-color: #e9ecef;
+    color: #495057;
+    border-color: #dee2e6;
 }
 #show-about-btn:hover, #show-creator-btn:hover, #show-guide-btn:hover {
-    background-color: rgba(30, 136, 229, 1);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+    background-color: #dee2e6;
+    border-color: #ced4da;
 }
-#splash-footer {
-    position: absolute; /* จัดตำแหน่งไว้ล่างสุด */
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9em;
-    text-shadow: 1px 1px 2px black;
+.splash-image-column {
+    flex-grow: 1;
+    background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
+    background-size: cover;
+    background-position: center;
+    animation: fade-in 1.5s ease-in-out;
 }
-/* --- END: ดีไซน์ใหม่สำหรับ Splash Screen (Centered) --- */
+/* --- END: ดีไซน์ใหม่สำหรับ Splash Screen --- */
 
 
-/* --- ดีไซน์สำหรับหน้าตั้งค่า และหน้าที่ใช้ร่วมกัน --- */
+/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า และหน้าที่ใช้ร่วมกัน --- */
 #setup-screen, #manage-property-modal {
     align-items: flex-start;
     background-color: #f4f7f6;
@@ -124,6 +127,7 @@
 .setup-header h2 {
     margin: 0;
     font-size: 1.8em;
+    color: var(--text-color); /* Ensure consistent heading color */
 }
 .setup-main-container {
     display: grid;
@@ -186,6 +190,7 @@
     width: 18px;
     height: 18px;
     margin-right: 10px;
+    margin-bottom: 0; /* Override default */
 }
 .checkbox-wrapper label {
     font-size: 0.95em;
@@ -285,9 +290,10 @@
 #setup-screen .player-setup:nth-child(4) { border-left-color: var(--player4-color); }
 #setup-screen .player-setup:nth-child(5) { border-left-color: var(--player5-color); }
 #setup-screen .player-setup:nth-child(6) { border-left-color: var(--player6-color); }
+/* --- END: ดีไซน์ใหม่สำหรับหน้าตั้งค่า --- */
 
 
-/* --- หน้าต่างคำถาม --- */
+/* --- START: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
 #question-modal .modal-content {
     max-width: 550px;
     background-color: #f8f9fa;
@@ -334,15 +340,17 @@
     border: 1px solid #ced4da;
     border-radius: 8px;
     text-align: center;
+    margin-bottom: 0; /* Override default */
 }
 #submit-answer-btn {
     padding: 12px 25px;
     font-size: 1.1em;
     font-weight: 600;
 }
+/* --- END: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
 
 
-/* --- หน้าต่างจัดการทรัพย์สิน --- */
+/* --- START: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
 #manage-property-modal .setup-header h2.danger {
     color: var(--danger-color);
 }
@@ -431,6 +439,7 @@
     cursor: not-allowed;
     transform: none;
 }
+/* --- END: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
 
 
 /* --- START: Style สำหรับ About และ Creator Modals --- */
@@ -438,7 +447,7 @@
     max-width: 850px;
     text-align: left;
     position: relative;
-    padding-bottom: 80px; /* Space for close button */
+    padding-bottom: 80px;
 }
 #about-modal .about-section, #creator-modal .about-section {
     margin-bottom: 20px;
@@ -455,7 +464,7 @@
 }
 .creators-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 20px;
     text-align: center;
     margin-top: 20px;
@@ -483,6 +492,8 @@
     position: absolute;
     bottom: 20px;
     right: 30px;
+    padding: 10px 20px; /* Make close button consistent */
+    font-size: 1em;
 }
 /* --- END: Style สำหรับ About และ Creator Modals --- */
 
@@ -519,4 +530,6 @@
     position: absolute;
     bottom: 20px;
     right: 30px;
+    padding: 10px 20px;
+    font-size: 1em;
 }
