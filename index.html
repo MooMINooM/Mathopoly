@@ -21,7 +21,7 @@
 <body>
     <div id="splash-screen" class="modal vertical-split" style="display: flex;">
         <div class="splash-menu-column">
-            <div class="menu-buttons"> <button id="start-game-btn">เริ่มเกม</button>
+             <div class="menu-buttons"> <button id="start-game-btn">เริ่มเกม</button>
                  <button id="show-about-btn" class="secondary">เกี่ยวกับเกม</button>
                  <button id="show-creator-btn" class="secondary">ข้อมูลผู้จัดทำ</button>
                  <button id="show-guide-btn" class="secondary">คู่มือเกม (YouTube)</button>
@@ -39,38 +39,39 @@
                 <h2 id="setup-title">ตั้งค่าเกม</h2>
             </div>
             <div class="setup-main-container">
-                 <div class="setup-column-left">
-                     <div id="special-rules-section" class="setup-section">
-                         <h4><span class="step-number">1</span>กฎพิเศษ</h4>
-                         <div class="special-rules-container">
-                             <div class="checkbox-wrapper"><input type="checkbox" id="win-by-belt-check"><label for="win-by-belt-check">ชนะด้วย Monopoly Belt</label></div>
-                             <div class="checkbox-wrapper"><input type="checkbox" id="win-by-corners-check"><label for="win-by-corners-check">ชนะด้วย Corner Dominance</label></div>
-                             <div class="checkbox-wrapper"><input type="checkbox" id="adjacency-bonus-check"><label for="adjacency-bonus-check">โบนัสเมืองติดกัน (x1.5)</label></div>
-                             <div class="checkbox-wrapper"><input type="checkbox" id="career-mode-check"><label for="career-mode-check">เปิดใช้งานโหมดอาชีพ</label></div>
-                         </div>
-                     </div>
-                     <div class="setup-section">
-                         <h4><span class="step-number">2</span>ตั้งค่าหลัก</h4>
-                         <div class="setting-row">
-                             <label for="starting-money">เงินเริ่มต้น:</label>
-                             <input type="number" id="starting-money" value="15000" step="1000">
-                         </div>
-                     </div>
-                 </div>
-                 <div class="setup-column-right">
-                     <div class="setup-section">
-                         <h4><span class="step-number">3</span>ตั้งค่าผู้เล่น (อย่างน้อย 2 คน)</h4>
-                         <div id="player-details-container" class="player-setup-container">
-                             </div>
-                     </div>
-                 </div>
-             </div>
-             <div class="setup-footer">
-                 <button id="close-setup-btn" class="danger">ย้อนกลับ</button>
-                 <button id="start-game-btn-confirm">เริ่มเล่น</button>
-             </div>
+                <div class="setup-column-left">
+                    <div id="special-rules-section" class="setup-section">
+                        <h4><span class="step-number">1</span>กฎพิเศษ</h4>
+                        <div class="special-rules-container">
+                            <div class="checkbox-wrapper"><input type="checkbox" id="win-by-belt-check"><label for="win-by-belt-check">ชนะด้วย Monopoly Belt</label></div>
+                            <div class="checkbox-wrapper"><input type="checkbox" id="win-by-corners-check"><label for="win-by-corners-check">ชนะด้วย Corner Dominance</label></div>
+                            <div class="checkbox-wrapper"><input type="checkbox" id="adjacency-bonus-check"><label for="adjacency-bonus-check">โบนัสเมืองติดกัน (x1.5)</label></div>
+                            <div class="checkbox-wrapper"><input type="checkbox" id="career-mode-check"><label for="career-mode-check">เปิดใช้งานโหมดอาชีพ</label></div>
+                        </div>
+                    </div>
+                    <div class="setup-section">
+                        <h4><span class="step-number">2</span>ตั้งค่าหลัก</h4>
+                        <div class="setting-row">
+                            <label for="starting-money">เงินเริ่มต้น:</label>
+                            <input type="number" id="starting-money" value="15000" step="1000">
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-column-right">
+                    <div class="setup-section">
+                        <h4><span class="step-number">3</span>ตั้งค่าผู้เล่น (อย่างน้อย 2 คน)</h4>
+                        <div id="player-details-container" class="player-setup-container">
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="setup-footer">
+                <button id="close-setup-btn" class="danger">ย้อนกลับ</button>
+                <button id="start-game-btn-confirm">เริ่มเล่น</button>
+            </div>
         </div>
     </div>
+
     <div class="game-container" style="display: none;">
         <div id="game-board">
             <div id="control-panel">
