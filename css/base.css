@@ -26,9 +26,7 @@
 
 body {
     font-family: 'Noto Sans Thai', sans-serif;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
-    background-size: cover;
-    background-position: center;
+    background-color: #f4f7f6; /* เปลี่ยนเป็นสีพื้นหลังเรียบๆ */
     color: var(--text-color);
     display: flex;
     justify-content: center;
