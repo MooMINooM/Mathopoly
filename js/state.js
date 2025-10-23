@@ -4,7 +4,7 @@ export let players = [];
 export let boardSpaces = [];
 export let currentPlayerIndex = 0;
 export let gameSettings = {
-    startingMoney: 15000,
+    startingMoney: 8000,
     passGoBonus: 2000,
     totalSpaces: 40,
     winByBelt: false,
@@ -35,3 +35,4 @@ export function setForcedToSell(value) { isForcedToSell = value; }
 export function setGameStarted(value) { isGameStarted = value; }
 export function setMathematicians(data) { mathematicians = data; }
 export function setLandlordBonusUsed(value) { landlordBonusUsed = value; }
+
