@@ -32,7 +32,7 @@ function addEventListeners() {
     // Game flow buttons
     document.getElementById('roll-dice-btn').addEventListener('click', rollDice);
     document.getElementById('end-turn-btn').addEventListener('click', endTurn);
-    document.getElementById('end-game-btn').addEventListener('click', ui.showSummary);
+    document.getElementById('end-game-btn').addEventListener('click', () => ui.showSummary('manual', null, 'กดปุ่มสรุปผล (นับตามทรัพย์สินรวม)'));
     document.getElementById('manage-property-btn').addEventListener('click', () => ui.showManagePropertyModal(false));
 
     // Question modal
