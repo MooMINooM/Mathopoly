@@ -90,6 +90,7 @@ export function updateBoardUI() {
                        spaceInfo.style.color = 'white';
                     }
                 }
+                // ส่ง null เพราะเราไม่รู้ว่าใครจะมาตก แค่ต้องการอัปเดตค่าเช่าพื้นฐาน
                 priceEl.textContent = `฿${calculateRent(space, null).toLocaleString()}`;
 
                 levelBadgeContainer.innerHTML = '';
@@ -248,35 +249,64 @@ export function showInfoSheet(spaceData) {
     document.getElementById('info-sheet-modal').style.display = 'flex';
 }
 
-export function showSummary() {
+export function showSummary(winType = 'manual', winner = null, reason = 'นับคะแนนรวม') {
+    const summaryModal = document.getElementById('summary-modal');
+    const winnerSection = document.getElementById('winner-spotlight-section');
+    const scoreboardTitle = document.getElementById('scoreboard-title');
     const summaryBody = document.getElementById('summary-body');
     summaryBody.innerHTML = '';
 
-    const sortedPlayers = [...state.players].sort((a, b) => (b.money + b.properties.reduce((s,p) => s + (state.boardSpaces.find(sp => sp.id === p)?.investment || 0), 0)) - (a.money + a.properties.reduce((s,p) => s + (state.boardSpaces.find(sp => sp.id === p)?.investment || 0), 0)));
-    let winnerDeclared = false;
+    // คำนวณทรัพย์สินรวมสำหรับผู้เล่นทุกคน
+    const playersWithAssets = state.players.map(p => {
+        const propertiesValue = p.properties.reduce((sum, pId) => {
+            const space = state.boardSpaces.find(s => s.id === pId);
+            return sum + (space ? space.investment : 0);
+        }, 0);
+        return { ...p, totalAssets: p.money + propertiesValue };
+    });
 
-    sortedPlayers.forEach(p => {
+    const sortedPlayers = playersWithAssets.sort((a, b) => b.totalAssets - a.totalAssets);
+
+    let finalWinner = winner;
+
+    if (winType === 'manual') {
+        finalWinner = sortedPlayers[0]; // ผู้ชนะคือคนที่มีทรัพย์สินเยอะสุด
+        reason = 'มีทรัพย์สินรวมสูงสุด';
+    }
+
+    // แสดงส่วนของผู้ชนะ
+    if (finalWinner) {
+        document.getElementById('winner-name').textContent = finalWinner.name;
+        document.getElementById('winner-reason').textContent = reason;
+        document.getElementById('winner-total-assets').textContent = `฿${finalWinner.totalAssets.toLocaleString()}`;
+        winnerSection.style.display = 'block';
+        scoreboardTitle.textContent = '📊 อันดับผู้เล่นที่เหลือ';
+    } else {
+        winnerSection.style.display = 'none';
+        scoreboardTitle.textContent = '📊 อันดับคะแนนรวม';
+    }
+    
+    // แสดงตารางอันดับ
+    sortedPlayers.forEach((p, index) => {
+        // ถ้ามีผู้ชนะที่ชัดเจน (ไม่ใช่ manual) และผู้เล่นคนนี้คือผู้ชนะ ก็ไม่ต้องแสดงซ้ำในตาราง
+        if (finalWinner && p.id === finalWinner.id && winType !== 'manual') return;
+
         let status = p.bankrupt ? "ล้มละลาย" : "เล่นอยู่";
-        const activePlayers = state.players.filter(pl => !pl.bankrupt);
-        if (!p.bankrupt && activePlayers.length === 1 && !winnerDeclared) {
+        if (finalWinner && p.id === finalWinner.id) {
             status = "ผู้ชนะ";
-            winnerDeclared = true;
-        } else if (!p.bankrupt && activePlayers.length > 1 && p.id === sortedPlayers[0].id && !winnerDeclared) {
-             status = "ผู้ชนะ (คะแนนสูงสุด)";
         }
-
-        const ownedCities = p.properties.map(id => state.boardSpaces.find(s => s.id === id)?.name).join(', ') || '-';
+        
         const row = document.createElement('tr');
         row.innerHTML = `
+            <td>#${index + 1}</td>
             <td>${p.name}</td>
+            <td>฿${p.totalAssets.toLocaleString()}</td>
             <td>${status}</td>
-            <td>฿${p.money.toLocaleString()}</td>
-            <td>${p.correctAnswers} / ${p.totalQuestions}</td>
-            <td>${ownedCities}</td>
         `;
         summaryBody.appendChild(row);
     });
-    document.getElementById('summary-modal').style.display = 'flex';
+    
+    summaryModal.style.display = 'flex';
 }
 
 export function showInsufficientFundsModal(onCloseCallback) {
@@ -304,6 +334,7 @@ export function showManagePropertyModal(isForced = false) {
     const managePropertyModal = document.getElementById('manage-property-modal');
     const player = state.players[state.currentPlayerIndex];
 
+    // Update financial summary
     const summaryMoneyEl = document.getElementById('summary-money');
     const summaryDebtItemEl = document.getElementById('summary-debt-item');
     const summaryDebtEl = document.getElementById('summary-debt');
@@ -330,6 +361,7 @@ export function showManagePropertyModal(isForced = false) {
         closeBtn.disabled = false;
     }
 
+    // Update property list
     const sellList = document.getElementById('sell-property-list');
     sellList.innerHTML = '';
     if (player.properties.length > 0) {
@@ -349,6 +381,7 @@ export function showManagePropertyModal(isForced = false) {
         sellList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 10px 0;">คุณไม่มีเมืองที่จะขาย</p>';
     }
 
+    // Update financial actions
     const financialActions = document.getElementById('financial-actions');
     financialActions.innerHTML = '';
     if (player.loan) {
