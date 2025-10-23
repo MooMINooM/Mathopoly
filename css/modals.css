@@ -21,7 +21,7 @@
     max-width: 600px;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     animation: slide-down 0.5s ease-out;
 }
 @keyframes slide-down {
@@ -29,25 +29,47 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+.modal-content h2.danger {
+    color: var(--danger-color);
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+}
+
+/* --- START: แก้ไขความโค้งมน Input/Select --- */
+.modal-content input, .modal-content select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
+    border: 1px solid #ccc;
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+/* --- END: แก้ไขความโค้งมน Input/Select --- */
+
+
 #action-modal-buttons {
     display: flex;
     justify-content: center;
     gap: 15px;
 }
 
-/* --- START: ดีไซน์ใหม่สำหรับ Splash Screen --- */
+/* --- Splash Screen --- */
 #splash-screen.vertical-split {
     padding: 0;
-    flex-direction: row; /* จัดเรียงแนวนอน */
+    flex-direction: row;
     justify-content: flex-start;
     align-items: stretch;
     position: relative;
-    /* --- รูปพื้นหลังเต็มจอ 100% --- */
     background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOQ69r2swWbpZyDV-97J1X9rXszA09NRSBNKiubUf4-02ND-jIgH0MZkZCWcP7-dNtQSc6vJt9ThoiPjMdKSnhqemsMK21pUjlmrZmoFWDy-vysHZowG7LgcvneIo9s2WEqP03o3D5xFsXfpdy8DYjQ=w1691-h923-s-no-gm?authuser=0');
     background-size: cover;
     background-position: center;
     animation: fade-in 1.5s ease-in-out;
-    /* --- ขนาดเต็มหน้าจอ --- */
     width: 100vw;
     height: 100vh;
     top: 0;
@@ -55,22 +77,17 @@
     max-width: none;
 }
 .splash-menu-column {
-    width: 15%; /* ความกว้างเมนู */
-    min-width: 200px; /* ความกว้างขั้นต่ำ */
-    background-color: #ffffff; /* พื้นหลังสีขาวทึบ */
+    width: 15%;
+    min-width: 200px;
+    background-color: rgba(255, 255, 255, 0.85);
     padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
-    box-shadow: -3px 0 15px rgba(0,0,0,0.1); /* เงาด้านซ้าย */
+    box-shadow: 3px 0px 15px rgba(0,0,0,0.1);
     z-index: 1;
-    animation: slide-in-right 0.8s ease-out; /* เลื่อนมาจากทางขวา */
-    order: 2; /* ให้อยู่ด้านขวา */
-}
-@keyframes slide-in-right {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    animation: slide-in-left 0.8s ease-out;
 }
 .menu-buttons {
     display: flex;
@@ -92,7 +109,7 @@
     cursor: pointer;
 }
 .splash-menu-column button:hover {
-    transform: translateX(-5px); /* เลื่อนไปทางซ้าย */
+    transform: translateX(5px);
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 #start-game-btn {
@@ -114,9 +131,8 @@
     border-color: #ced4da;
 }
 .splash-image-column {
-    flex-grow: 1; /* ใช้พื้นที่ที่เหลือ (85%) */
-    background-color: transparent; /* โปร่งใสเพื่อให้พื้นหลังหลักแสดง */
-    order: 1; /* ให้อยู่ด้านซ้าย */
+    flex-grow: 1;
+    background-color: transparent;
 }
 #splash-footer {
     color: #6c757d;
@@ -127,10 +143,10 @@
     border-top: 1px solid #dee2e6;
     margin-top: auto;
 }
-/* --- END: ดีไซน์ใหม่สำหรับ Splash Screen --- */
+/* --- END: Splash Screen --- */
 
 
-/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า และหน้าที่ใช้ร่วมกัน --- */
+/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า --- */
 #setup-screen, #manage-property-modal {
     align-items: flex-start;
     background-color: #f4f7f6;
@@ -241,6 +257,7 @@
     padding: 10px;
     font-size: 1em;
     margin-bottom: 0;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 #setup-screen .player-setup-container {
     display: grid;
@@ -258,7 +275,7 @@
 
 #setup-screen .player-setup {
     border: 1px solid #ddd;
-    border-left: 8px solid var(--border-color);
+    border-left: 5px solid var(--border-color);
     padding: 15px;
     border-radius: 8px;
     background-color: #f8f9fa;
@@ -282,6 +299,7 @@
     padding: 10px;
     margin-bottom: 0;
     width: 100%;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 .career-description {
     grid-column: 1 / -1;
@@ -290,7 +308,7 @@
     background-color: #e9ecef;
     padding: 8px;
     border-radius: 6px;
-    margin-top: 8px;
+    margin-top: 5px;
     min-height: 38px;
     display: flex;
     align-items: center;
@@ -308,7 +326,26 @@
     padding: 12px 25px;
     font-size: 1.1em;
     font-weight: 600;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
+    /* สีจะถูกกำหนดโดยคลาส .danger หรือ ID */
 }
+/* --- เพิ่ม Style ปุ่มใน Setup Footer --- */
+.setup-footer button#start-game-btn-confirm {
+    background-color: var(--primary-color);
+    color: white;
+}
+.setup-footer button#start-game-btn-confirm:hover {
+    background-color: #45a049;
+}
+.setup-footer button.danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+.setup-footer button.danger:hover {
+    background-color: #e53935;
+}
+/* ---------------------------------- */
+
 #setup-screen .player-setup:nth-child(1) { border-left-color: var(--player1-color); }
 #setup-screen .player-setup:nth-child(2) { border-left-color: var(--player2-color); }
 #setup-screen .player-setup:nth-child(3) { border-left-color: var(--player3-color); }
@@ -371,6 +408,7 @@
     padding: 12px 25px;
     font-size: 1.1em;
     font-weight: 600;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 /* --- END: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
 
@@ -384,7 +422,7 @@
     font-size: 0.6em;
     font-weight: 600;
     color: #6c757d;
-    margin-top: 8px;
+    margin-top: 5px;
 }
 #financial-summary-section {
     background-color: #f8f9fa !important;
@@ -410,7 +448,7 @@
     font-size: 0.9em;
     font-weight: 600;
     color: #6c757d;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 .summary-item span {
     font-size: 1.5em;
@@ -425,7 +463,7 @@
 .property-list-container {
     max-height: 200px;
     overflow-y: auto;
-    padding-right: 8px;
+    padding-right: 5px;
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background-color: white;
@@ -449,12 +487,29 @@
 #manage-property-modal .property-list-item span {
     font-weight: 600;
 }
+/* --- เพิ่ม Style ปุ่ม "ขาย" --- */
+#manage-property-modal .property-list-item button {
+    background-color: var(--accent-color); /* สีฟ้า */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#manage-property-modal .property-list-item button:hover {
+    background-color: #1e88e5;
+}
+
 #financial-actions button {
     width: 100%;
     padding: 12px;
     font-size: 1.1em;
     font-weight: 600;
     background-color: var(--accent-color);
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 #financial-actions button:hover {
     background-color: #1e88e5;
@@ -463,6 +518,14 @@
     background-color: #ccc;
     cursor: not-allowed;
     transform: none;
+}
+/* --- เพิ่ม Style ปุ่ม "ปิด" --- */
+#manage-property-modal .setup-footer button {
+    background-color: var(--danger-color);
+    color: white;
+}
+#manage-property-modal .setup-footer button:hover {
+    background-color: #e53935;
 }
 /* --- END: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
 
@@ -483,7 +546,7 @@
 #about-modal .about-section h3, #creator-modal .about-section h3 {
     color: var(--primary-color);
     border-bottom: 2px solid #e9ecef;
-    padding-bottom: 8px;
+    padding-bottom: 5px;
     margin-bottom: 10px;
 }
 #about-modal .about-section p, #creator-modal .about-section p {
@@ -505,7 +568,7 @@
     object-fit: cover;
     border: 4px solid #dee2e6;
     margin-bottom: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .creator-profile p {
     font-weight: 600;
@@ -524,6 +587,7 @@
     right: 30px;
     padding: 10px 20px;
     font-size: 1em;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 /* --- END: Style สำหรับ About และ Creator Modals --- */
 
@@ -562,5 +626,5 @@
     right: 30px;
     padding: 10px 20px;
     font-size: 1em;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
-
