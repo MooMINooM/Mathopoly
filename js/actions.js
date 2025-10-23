@@ -3,7 +3,7 @@ import * as state from './state.js';
 import { finishTurn } from './gameFlow.js';
 import * as bot from './bot.js';
 import { addLogMessage } from './logger.js';
-import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary, hideManagePropertyModal, showQuestionModalForPurchase } from './ui.js';
+import { updatePlayerInfo, hideActionModal, updateAllUI, showManagePropertyModal, showSummary, hideManagePropertyModal, showQuestionModalForPurchase, showActionModal } from './ui.js';
 import { calculateBuyoutPrice, calculateExpansionCost } from './utils.js';
 
 const WIN_CONDITIONS = {
@@ -21,7 +21,7 @@ function checkWinConditions(player) {
                 const belt = WIN_CONDITIONS[beltKey];
                 if (belt.every(spaceId => player.properties.includes(spaceId))) {
                     addLogMessage(`<strong>${player.name}</strong> ชนะเกมด้วย <strong>Monopoly ${beltKey}</strong>!`);
-                    setTimeout(() => showSummary(), 500);
+                    setTimeout(() => showSummary('condition', player, `ชนะด้วย Monopoly ${beltKey}`), 500);
                     return true;
                 }
             }
@@ -30,7 +30,7 @@ function checkWinConditions(player) {
     if (state.gameSettings.winByCorners) {
         if (WIN_CONDITIONS.CORNERS.every(spaceId => player.properties.includes(spaceId))) {
             addLogMessage(`<strong>${player.name}</strong> ชนะเกมด้วย <strong>Corner Dominance</strong>!`);
-            setTimeout(() => showSummary(), 500);
+            setTimeout(() => showSummary('condition', player, 'ชนะด้วย Corner Dominance'), 500);
             return true;
         }
     }
@@ -43,7 +43,7 @@ export function changePlayerMoney(player, amount, reason) {
     
     const action = amount > 0 ? 'ได้รับ' : 'เสีย';
     const color = amount > 0 ? 'green' : 'red';
-    if (reason) {
+    if (reason) { // ไม่แสดง log ถ้าไม่มีเหตุผล (เช่น ปันผลนักธุรกิจ)
         addLogMessage(`<span style="color: ${color};"><strong>${player.name}</strong> ${action}เงิน ฿${Math.abs(amount).toLocaleString()} (${reason})</span>`);
     }
 
@@ -91,7 +91,7 @@ function handleBankruptcy(player) {
 
     const activePlayers = state.players.filter(p => !p.bankrupt);
     if (activePlayers.length <= 1 && state.isGameStarted) {
-        showSummary();
+        showSummary('lastManStanding', activePlayers[0], 'ผู้รอดชีวิตคนสุดท้าย');
     } else {
         finishTurn();
     }
@@ -173,9 +173,9 @@ export function sellProperty(player, pId) {
         hideManagePropertyModal();
         finishTurn();
     } else if (state.isForcedToSell) {
-        showManagePropertyModal(true);
+        showManagePropertyModal(true); // ยังบังคับขายอยู่ ให้รีเฟรช modal
     } else {
-        hideManagePropertyModal();
+        hideManagePropertyModal(); // ถ้าขายปกติ ให้ปิด modal
     }
 }
 
@@ -219,12 +219,13 @@ export function remoteExpandProperty(player) {
                 hideActionModal();
                 addLogMessage(`<strong>${player.name}</strong> เลือกขยาย <strong>${space.name}</strong> จากระยะไกล!`);
                 player.engineerAbilityUsedThisTurn = true;
-                state.setOnQuestionSuccess(() => expandProperty(player, space));
+                state.setOnQuestionSuccess(() => expandProperty(player, space)); // เรียกใช้ expandProperty ปกติ
                 state.setOnQuestionFail(() => { finishTurn(); });
                 showQuestionModalForPurchase(player, `ตอบคำถามเพื่อขยาย "${space.name}" (พัฒนาทางไกล)`);
             } else {
                  addLogMessage(`<strong>${player.name}</strong> เงินไม่พอที่จะขยาย ${space.name}`);
                  hideActionModal();
+                 // ไม่ต้อง finishTurn เพราะยังอยู่ในตา
             }
         }},
         { text: 'ยกเลิก', className: 'danger', callback: hideActionModal }],
