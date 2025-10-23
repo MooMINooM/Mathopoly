@@ -21,7 +21,7 @@
     max-width: 600px;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
     animation: slide-down 0.5s ease-out;
 }
 @keyframes slide-down {
@@ -258,7 +258,7 @@
 
 #setup-screen .player-setup {
     border: 1px solid #ddd;
-    border-left: 5px solid var(--border-color);
+    border-left: 8px solid var(--border-color);
     padding: 15px;
     border-radius: 8px;
     background-color: #f8f9fa;
@@ -290,7 +290,7 @@
     background-color: #e9ecef;
     padding: 8px;
     border-radius: 6px;
-    margin-top: 5px;
+    margin-top: 8px;
     min-height: 38px;
     display: flex;
     align-items: center;
@@ -384,7 +384,7 @@
     font-size: 0.6em;
     font-weight: 600;
     color: #6c757d;
-    margin-top: 5px;
+    margin-top: 8px;
 }
 #financial-summary-section {
     background-color: #f8f9fa !important;
@@ -410,7 +410,7 @@
     font-size: 0.9em;
     font-weight: 600;
     color: #6c757d;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 .summary-item span {
     font-size: 1.5em;
@@ -425,7 +425,7 @@
 .property-list-container {
     max-height: 200px;
     overflow-y: auto;
-    padding-right: 5px;
+    padding-right: 8px;
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background-color: white;
@@ -483,7 +483,7 @@
 #about-modal .about-section h3, #creator-modal .about-section h3 {
     color: var(--primary-color);
     border-bottom: 2px solid #e9ecef;
-    padding-bottom: 5px;
+    padding-bottom: 8px;
     margin-bottom: 10px;
 }
 #about-modal .about-section p, #creator-modal .about-section p {
@@ -505,7 +505,7 @@
     object-fit: cover;
     border: 4px solid #dee2e6;
     margin-bottom: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .creator-profile p {
     font-weight: 600;
@@ -563,3 +563,4 @@
     padding: 10px 20px;
     font-size: 1em;
 }
+
