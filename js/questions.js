@@ -2,6 +2,8 @@
 
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+// Helper function to handle floating point precision
+const pFloat = (num, decimals = 2) => parseFloat(num.toFixed(decimals));
 
 export function generateQuestion(difficulty) {
     let q = {};
@@ -29,33 +31,97 @@ export function generateQuestion(difficulty) {
         } else if (type === 3) { let n2 = randInt(2, 12); let ans = randInt(2, 12); let n1 = n2 * ans; q = { text: `${n1} ÷ ${n2} = ?`, answer: ans };
         } else { let n1 = randInt(5, 12); let n2 = randInt(2, 10); let n3 = randInt(2, 5); q = { text: `(${n1} × ${n2}) + ${n3} = ?`, answer: (n1 * n2) + n3 }; }
     }
-    // p4: Grade 4
+    // p4: Grade 4 (เพิ่มโจทย์ปัญหา)
     else if (difficulty === 'p4') {
         if (Math.random() > 0.6) {
-            const type = randChoice(['money', 'items']);
+            const type = randChoice(['money', 'items', 'time', 'average']); // เพิ่ม 'time' และ 'average'
             if (type === 'money') {
                 let total = randInt(500, 1000);
                 let i1_q = randInt(3, 5); let i1_p = randInt(20, 50);
                 let i2_q = randInt(2, 6); let i2_p = randInt(5, 15);
                 q = { text: `สมชายมีเงิน ${total} บาท ซื้อสมุด ${i1_q} เล่ม เล่มละ ${i1_p} บาท และดินสอ ${i2_q} แท่ง แท่งละ ${i2_p} บาท สมชายจะเหลือเงินกี่บาท?`, answer: total - (i1_q * i1_p) - (i2_q * i2_p) };
-            } else {
+            } else if (type === 'items') {
                 let n2 = randInt(5, 15); let cost = n2 * 12; let n1 = randInt(cost + 10, 500); q = { text: `แม่ค้ามีมะม่วง ${n1} ผล ขายไป ${n2} เข่ง เข่งละ 12 ผล จะเหลือมะม่วงกี่ผล?`, answer: n1 - cost };
+            } else if (type === 'time') {
+                let startHour = randInt(9, 14);
+                let startMin = randInt(0, 45);
+                let duration = randInt(30, 120); // 30 นาที ถึง 2 ชั่วโมง
+                let endMinRaw = startMin + duration;
+                let endHour = startHour + Math.floor(endMinRaw / 60);
+                let endMin = endMinRaw % 60;
+                
+                const formatTime = (h, m) => `${h}:${m.toString().padStart(2, '0')}`;
+                q = { text: `สมศรีเริ่มทำการบ้านเวลา ${formatTime(startHour, startMin)} น. และทำเสร็จเวลา ${formatTime(endHour, endMin)} น. สมศรีใช้เวลาทำการบ้านไปกี่นาที?`, answer: duration };
+            } else if (type === 'average') {
+                let n1 = randInt(20, 50);
+                let n2 = randInt(20, 50);
+                let n3 = randInt(20, 50);
+                let sum = n1 + n2 + n3;
+                while (sum % 3 !== 0) { // สุ่มใหม่จนกว่าจะหาร 3 ลงตัว
+                    n3 = randInt(20, 50);
+                    sum = n1 + n2 + n3;
+                }
+                q = { text: `นักเรียน 3 คน มีน้ำหนัก ${n1}, ${n2}, และ ${n3} กิโลกรัม น้ำหนักเฉลี่ยของนักเรียนกลุ่มนี้คือเท่าไร?`, answer: sum / 3 };
             }
         } else { const type = randInt(1, 3); if (type === 1) { let n1 = randInt(10, 99); let n2 = randInt(10, 99); q = { text: `${n1} × ${n2} = ?`, answer: n1 * n2 }; } else if (type === 2) { let n1 = randInt(100, 500); let n2 = randInt(3, 15); q = { text: `${n1} ÷ ${n2} เหลือเศษเท่าไร?`, answer: n1 % n2 }; } else { let n1 = randInt(100, 200); let n2 = randInt(5, 10); let n3 = randInt(20, 50); q = { text: `(${n1} ÷ ${n2}) + ${n3} = ? (ตอบเป็นจำนวนเต็ม)`, answer: Math.floor(n1 / n2) + n3 }; } }
     }
-    // p5: Grade 5
+    // p5: Grade 5 (เพิ่มโจทย์คำนวณและเรขาคณิต)
     else if (difficulty === 'p5') {
          if (Math.random() > 0.6) {
-              const type = randChoice(['area', 'average']);
+              const type = randChoice(['area', 'average', 'square_perimeter', 'trapezoid_area', 'kite_area']); // เพิ่มโจทย์รูปทรง
               if (type === 'area') {
                   let w = randInt(5, 20); let h = randInt(10, 30); q = { text: `ห้องสี่เหลี่ยมผืนผ้ากว้าง ${w} เมตร ยาว ${h} เมตร มีพื้นที่เท่าไร (ตารางเมตร)?`, answer: w * h };
-              } else {
+              } else if (type === 'average') {
                   let s1 = randInt(30, 50); let s2 = randInt(30, 50); let s3 = randInt(30, 50);
                   q = { text: `นักเรียน 3 คน มีน้ำหนัก ${s1}, ${s2}, ${s3} กิโลกรัม น้ำหนักเฉลี่ยของนักเรียนกลุ่มนี้คือเท่าไร? (ตอบเป็นจำนวนเต็ม)`, answer: Math.round((s1+s2+s3)/3) };
+              } else if (type === 'square_perimeter') {
+                  let s = randInt(5, 30);
+                  q = { text: `สี่เหลี่ยมจัตุรัสมีด้านยาว ${s} ซม. จะมีเส้นรอบรูปยาวเท่าไร (ซม.)?`, answer: s * 4 };
+              } else if (type === 'trapezoid_area') {
+                  let a = randInt(5, 10);
+                  let b = randInt(11, 20);
+                  let h = randInt(4, 10) * 2; // ทำให้สูงเป็นเลขคู่เพื่อให้ 0.5 คูณง่าย
+                  q = { text: `สี่เหลี่ยมคางหมูมีด้านคู่ขนานยาว ${a} และ ${b} หน่วย และสูง ${h} หน่วย จะมีพื้นที่เท่าไร?`, answer: 0.5 * (a + b) * h };
+              } else if (type === 'kite_area') {
+                  let d1 = randInt(6, 10) * 2;
+                  let d2 = randInt(11, 20) * 2;
+                  q = { text: `สี่เหลี่ยมรูปว่าว (หรือ ขนมเปียกปูน) มีเส้นทแยงมุมยาว ${d1} และ ${d2} หน่วย จะมีพื้นที่เท่าไร?`, answer: 0.5 * d1 * d2 };
               }
-         } else { const type = randInt(1, 3); if (type === 1) { let d = randInt(5, 10); let n1 = randInt(1, d-1); let n2 = randInt(1, d-1); q = { text: `${n1}/${d} + ${n2}/${d} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat(((n1 + n2) / d).toFixed(2)) }; } else if (type === 2) { let n1 = (randInt(1, 99) / 10); let n2 = randInt(2, 9); q = { text: `${n1} × ${n2} = ?`, answer: parseFloat((n1 * n2).toFixed(2)) }; } else { let b = randInt(10, 20) * 2; let h = randInt(5, 15); q = { text: `สามเหลี่ยมมีฐาน ${b} ซม. สูง ${h} ซม. มีพื้นที่เท่าไร (ตร.ซม.)?`, answer: 0.5 * b * h }; } }
+         } else { 
+            const type = randInt(1, 7); // ขยายประเภทโจทย์
+            if (type === 1) { // บวกเศษส่วน
+                let d = randInt(5, 10); let n1 = randInt(1, d-1); let n2 = randInt(1, d-1);
+                q = { text: `${n1}/${d} + ${n2}/${d} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: pFloat((n1 + n2) / d) };
+            } else if (type === 2) { // คูณทศนิยม
+                let n1 = pFloat(randInt(1, 99) / 10, 1); let n2 = randInt(2, 9);
+                q = { text: `${n1} × ${n2} = ?`, answer: pFloat(n1 * n2) };
+            } else if (type === 3) { // พื้นที่สามเหลี่ยม
+                let b = randInt(10, 20) * 2; let h = randInt(5, 15);
+                q = { text: `สามเหลี่ยมมีฐาน ${b} ซม. สูง ${h} ซม. มีพื้นที่เท่าไร (ตร.ซม.)?`, answer: 0.5 * b * h };
+            } else if (type === 4) { // ลบเศษส่วน
+                let d = randInt(5, 10); let n1 = randInt(2, d); let n2 = randInt(1, n1 - 1);
+                q = { text: `${n1}/${d} - ${n2}/${d} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: pFloat((n1 - n2) / d) };
+            } else if (type === 5) { // บวก/ลบทศนิยม
+                let n1 = pFloat(randInt(100, 5000) / 100);
+                let n2 = pFloat(randInt(100, 3000) / 100);
+                if (Math.random() > 0.5) {
+                    q = { text: `${n1} + ${n2} = ?`, answer: pFloat(n1 + n2) };
+                } else {
+                    q = { text: `${n1} - ${n2} = ?`, answer: pFloat(n1 - n2) };
+                }
+            } else if (type === 6) { // คูณเศษส่วน
+                let n1 = randInt(1, 5); let d1 = randInt(2, 6);
+                let n2 = randInt(1, 5); let d2 = randInt(2, 6);
+                q = { text: `(${n1}/${d1}) × (${n2}/${d2}) = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: pFloat((n1/d1) * (n2/d2)) };
+            } else if (type === 7) { // หารทศนิยมด้วยจำนวนเต็ม
+                let n2 = randInt(2, 10);
+                let ans = pFloat(randInt(10, 50) / 10, 1);
+                let n1 = pFloat(ans * n2);
+                q = { text: `${n1} ÷ ${n2} = ?`, answer: ans };
+            }
+         }
     }
-    // p6: Grade 6 (เวอร์ชันแก้ไขแล้ว)
+    // p6: Grade 6
     else if (difficulty === 'p6') {
         if (Math.random() > 0.6) {
             const type = randChoice(['discount', 'speed']);
@@ -69,13 +135,13 @@ export function generateQuestion(difficulty) {
             const type = randInt(1, 3);
             if (type === 1) {
                 let n1 = randInt(2, 10); let d1 = randInt(2, 10); let n2 = randInt(2, 10); let d2 = randInt(2, 10);
-                q = { text: `(${n1}/${d1}) ÷ (${n2}/${d2}) = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat(((n1/d1) / (n2/d2)).toFixed(2)) };
-            } else if (type === 2) { // <-- บรรทัดนี้ที่ถูกแก้ไข
+                q = { text: `(${n1}/${d1}) ÷ (${n2}/${d2}) = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: pFloat((n1/d1) / (n2/d2)) };
+            } else if (type === 2) {
                 let n1 = randInt(20, 100); let n2 = randInt(2, 10);
-                q = { text: `${n1} ÷ ${n2} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: parseFloat((n1 / n2).toFixed(2)) };
+                q = { text: `${n1} ÷ ${n2} = ? (ตอบเป็นทศนิยม 2 ตำแหน่ง)`, answer: pFloat(n1 / n2) };
             } else {
                 let r = randInt(5, 10);
-                q = { text: `วงกลมมีรัศมี ${r} หน่วย มีพื้นที่เท่าไร? (ใช้ π ≈ 3.14)`, answer: parseFloat((3.14 * r * r).toFixed(2)) };
+                q = { text: `วงกลมมีรัศมี ${r} หน่วย มีพื้นที่เท่าไร? (ใช้ π ≈ 3.14)`, answer: pFloat(3.14 * r * r) };
             }
         }
     }
