@@ -29,13 +29,37 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+.modal-content h2.danger {
+    color: var(--danger-color);
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+}
+
+/* --- START: แก้ไขความโค้งมน Input/Select --- */
+.modal-content input, .modal-content select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
+    border: 1px solid #ccc;
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+/* --- END: แก้ไขความโค้งมน Input/Select --- */
+
+
 #action-modal-buttons {
     display: flex;
     justify-content: center;
     gap: 15px;
 }
 
-/* --- START: ดีไซน์ใหม่สำหรับ Splash Screen --- */
+/* --- Splash Screen --- */
 #splash-screen.vertical-split {
     padding: 0;
     flex-direction: row;
@@ -119,10 +143,10 @@
     border-top: 1px solid #dee2e6;
     margin-top: auto;
 }
-/* --- END: ดีไซน์ใหม่สำหรับ Splash Screen --- */
+/* --- END: Splash Screen --- */
 
 
-/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า และหน้าที่ใช้ร่วมกัน --- */
+/* --- START: ดีไซน์ใหม่สำหรับหน้าตั้งค่า --- */
 #setup-screen, #manage-property-modal {
     align-items: flex-start;
     background-color: #f4f7f6;
@@ -233,7 +257,7 @@
     padding: 10px;
     font-size: 1em;
     margin-bottom: 0;
-    border-radius: 8px;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 #setup-screen .player-setup-container {
     display: grid;
@@ -275,7 +299,7 @@
     padding: 10px;
     margin-bottom: 0;
     width: 100%;
-    border-radius: 8px;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 .career-description {
     grid-column: 1 / -1;
@@ -303,9 +327,26 @@
     font-size: 1.1em;
     font-weight: 600;
     border-radius: 8px;
-    border: none; /* <-- แก้ไข: ลบกรอบดำ */
-    cursor: pointer; /* <-- แก้ไข: เพิ่มรูปมือ */
+    cursor: pointer;
+    border: none;
 }
+/* --- เพิ่ม Style ปุ่มใน Setup Footer --- */
+.setup-footer button#start-game-btn-confirm {
+    background-color: var(--primary-color);
+    color: white;
+}
+.setup-footer button#start-game-btn-confirm:hover {
+    background-color: #45a049;
+}
+.setup-footer button.danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+.setup-footer button.danger:hover {
+    background-color: #e53935;
+}
+/* ---------------------------------- */
+
 #setup-screen .player-setup:nth-child(1) { border-left-color: var(--player1-color); }
 #setup-screen .player-setup:nth-child(2) { border-left-color: var(--player2-color); }
 #setup-screen .player-setup:nth-child(3) { border-left-color: var(--player3-color); }
@@ -368,9 +409,7 @@
     padding: 12px 25px;
     font-size: 1.1em;
     font-weight: 600;
-    border-radius: 8px;
-    border: none; /* <-- แก้ไข: ลบกรอบดำ */
-    cursor: pointer; /* <-- แก้ไข: เพิ่มรูปมือ */
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 /* --- END: ดีไซน์ใหม่สำหรับหน้าต่างคำถาม --- */
 
@@ -449,29 +488,32 @@
 #manage-property-modal .property-list-item span {
     font-weight: 600;
 }
+/* --- เพิ่ม Style ปุ่ม "ขาย" --- */
 #manage-property-modal .property-list-item button {
-    background-color: var(--accent-color);
+    background-color: var(--accent-color); /* สีฟ้า */
     color: white;
     border: none;
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 0.9em;
     font-weight: 600;
-    cursor: pointer; /* <-- แก้ไข: เพิ่มรูปมือ */
+    cursor: pointer;
     transition: background-color 0.2s;
 }
 #manage-property-modal .property-list-item button:hover {
     background-color: #1e88e5;
+    
 }
+
 #financial-actions button {
     width: 100%;
     padding: 12px;
     font-size: 1.1em;
     font-weight: 600;
     background-color: var(--accent-color);
-    border-radius: 8px;
-    border: none; /* <-- แก้ไข: ลบกรอบดำ */
-    cursor: pointer; /* <-- แก้ไข: เพิ่มรูปมือ */
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
+    cursor: pointer;
+    border: none;
 }
 #financial-actions button:hover {
     background-color: #1e88e5;
@@ -480,6 +522,14 @@
     background-color: #ccc;
     cursor: not-allowed;
     transform: none;
+}
+/* --- เพิ่ม Style ปุ่ม "ปิด" --- */
+#manage-property-modal .setup-footer button {
+    background-color: var(--danger-color);
+    color: white;
+}
+#manage-property-modal .setup-footer button:hover {
+    background-color: #e53935;
 }
 /* --- END: ดีไซน์ใหม่สำหรับหน้าต่างจัดการทรัพย์สิน --- */
 
@@ -541,9 +591,7 @@
     right: 30px;
     padding: 10px 20px;
     font-size: 1em;
-    border-radius: 8px;
-    border: none; /* <-- แก้ไข: ลบกรอบดำ */
-    cursor: pointer; /* <-- แก้ไข: เพิ่มรูปมือ */
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
 }
 /* --- END: Style สำหรับ About และ Creator Modals --- */
 
@@ -582,7 +630,7 @@
     right: 30px;
     padding: 10px 20px;
     font-size: 1em;
-    border-radius: 8px;
-    border: none; /* <-- แก้ไข: ลบกรอบดำ */
-    cursor: pointer; /* <-- แก้ไข: เพิ่มรูปมือ */
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
+    cursor: pointer;
+    border: none;
 }
