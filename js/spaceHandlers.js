@@ -355,7 +355,7 @@ function drawChanceCard(player) {
                 handleSpaceLanding();
                 return true;
             }
-            return false; // แก้ไข: ถ้าไม่มีผู้เล่นอื่น ให้คืน false เพื่อจบตา
+            return false;
         }},
         { text: `ตลาดหุ้นผันผวน! ผู้เล่นที่มีเงินเกิน ฿${taxThreshold.toLocaleString()} ต้องจ่ายภาษี 10%`, cost: 0, action: () => {
             state.players.forEach(p => {
@@ -381,21 +381,32 @@ function drawChanceCard(player) {
     document.getElementById('chance-card-ok-btn').onclick = async () => {
         document.getElementById('chance-card-modal').style.display = 'none';
         
-        const finalCost = applyCareerAbility('chanceCardCost', card.cost, { player });
+        // --- START: ตรรกะใหม่ที่แก้ไขแล้ว ---
+        let runAction = true;
 
-        if (typeof card.action === 'function') {
-            if (finalCost !== 0) {
-                const isMoveAction = await card.action(player);
-                if (!isMoveAction) {
-                    finishTurn();
-                }
-            } else {
-                finishTurn();
+        // 1. ตรวจสอบว่าเป็นการ์ดเสียเงินหรือไม่
+        if (card.cost > 0) {
+            // 2. ถ้าใช่, ตรวจสอบความสามารถนักบัญชี
+            const finalCost = applyCareerAbility('chanceCardCost', card.cost, { player });
+            if (finalCost === 0) {
+                // นักบัญชีรอด ไม่ต้องทำ action
+                runAction = false;
             }
+        }
+
+        // 3. ถ้า runAction เป็น true (เป็นการ์ดได้เงิน, การ์ดกระทำ, หรือไม่ใช่นักบัญชี)
+        if (runAction && typeof card.action === 'function') {
+            const isMoveAction = await card.action(player);
+            if (!isMoveAction) {
+                finishTurn(); // จบตา ถ้าไม่ใช่การ์ดที่ทำให้เดิน
+            }
+        } else if (!runAction) {
+            finishTurn(); // จบตา (กรณีนักบัญชีรอด)
         } else {
             console.error("Invalid action for chance card:", card);
-            finishTurn();
+            finishTurn(); // Failsafe
         }
+        // --- END: ตรรกะใหม่ที่แก้ไขแล้ว ---
     };
 }
 
