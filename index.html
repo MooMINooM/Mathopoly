@@ -28,12 +28,12 @@
                  <button id="show-guide-btn" class="secondary">คู่มือเกม (YouTube)</button>
             </div>
             <div id="splash-footer">
-                © 2025 KruMIN MathDev | Version 1.7
+                © 2025 Mathopoly Team | Version 1.1
             </div>
         </div>
-        <div class="splash-image-column">
-            </div>
+        <div class="splash-image-column"></div>
     </div>
+
     <div id="setup-screen" class="modal" style="display: none;">
         <div class="setup-screen-container">
             <div class="setup-header">
@@ -54,15 +54,14 @@
                         <h4><span class="step-number">2</span>ตั้งค่าหลัก</h4>
                         <div class="setting-row">
                             <label for="starting-money">เงินเริ่มต้น:</label>
-                            <input type="number" id="starting-money" value="8000" step="1000">
+                            <input type="number" id="starting-money" value="15000" step="1000">
                         </div>
                     </div>
                 </div>
                 <div class="setup-column-right">
                     <div class="setup-section">
                         <h4><span class="step-number">3</span>ตั้งค่าผู้เล่น (อย่างน้อย 2 คน)</h4>
-                        <div id="player-details-container" class="player-setup-container">
-                            </div>
+                        <div id="player-details-container" class="player-setup-container"></div>
                     </div>
                 </div>
             </div>
@@ -132,16 +131,41 @@
             <button id="close-info-sheet-btn" class="danger">ปิด</button>
         </div>
     </div>
+
     <div id="summary-modal" class="modal">
-        <div class="modal-content">
-            <h2>สรุปผลการเล่น</h2>
-            <table id="summary-table">
-                <thead>
-                    <tr><th>ผู้เล่น</th><th>สถานะ</th><th>เงินคงเหลือ</th><th>คะแนน (ถูก/ทั้งหมด)</th><th>เมืองที่ครอบครอง</th></tr>
-                </thead>
-                <tbody id="summary-body"></tbody>
-            </table>
-            <button id="restart-game-btn">กลับหน้าหลัก</button>
+        <div class="setup-screen-container" style="max-width: 900px;">
+            <div class="setup-header">
+                <h2>สรุปผลการแข่งขัน</h2>
+            </div>
+            <div class="setup-main-container" style="grid-template-columns: 1fr; padding: 20px;">
+                <div class="setup-column-left" style="border-right: none; padding-right: 0;">
+                    <div class="setup-section" id="winner-spotlight-section" style="display: none;">
+                        <h4 id="winner-title">🏆 ผู้ชนะ 🏆</h4>
+                        <div id="winner-card">
+                            <span id="winner-name"></span>
+                            <small id="winner-reason"></small>
+                            <div class="winner-assets">
+                                <label>ทรัพย์สินรวม</label>
+                                <span id="winner-total-assets"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setup-section">
+                        <h4 id="scoreboard-title">📊 อันดับคะแนน</h4>
+                        <div class="scoreboard-container">
+                            <table id="summary-table">
+                                <thead>
+                                    <tr><th>อันดับ</th><th>ผู้เล่น</th><th>ทรัพย์สินรวม</th><th>สถานะ</th></tr>
+                                </thead>
+                                <tbody id="summary-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="setup-footer" style="justify-content: flex-end;">
+                <button id="restart-game-btn">กลับหน้าหลัก</button>
+            </div>
         </div>
     </div>
     <div id="chance-card-modal" class="modal">
@@ -162,14 +186,8 @@
                     <div class="setup-section" id="financial-summary-section">
                         <h4>📊 สถานะการเงิน</h4>
                         <div class="financial-summary-grid">
-                            <div class="summary-item">
-                                <label>เงินสดปัจจุบัน</label>
-                                <span id="summary-money">฿0</span>
-                            </div>
-                            <div class="summary-item" id="summary-debt-item" style="display: none;">
-                                <label>หนี้ที่ต้องชำระ</label>
-                                <span id="summary-debt">฿0</span>
-                            </div>
+                            <div class="summary-item"><label>เงินสดปัจจุบัน</label><span id="summary-money">฿0</span></div>
+                            <div class="summary-item" id="summary-debt-item" style="display: none;"><label>หนี้ที่ต้องชำระ</label><span id="summary-debt">฿0</span></div>
                         </div>
                     </div>
                     <div class="setup-section">
@@ -193,13 +211,12 @@
             <h2>เกี่ยวกับเกม</h2>
             <div class="about-section">
                 <h3>ที่มาของเกม</h3>
-                <p>เกมนี้จัดทำขึ้นเพื่อเป็นส่วนหนึ่งของโครงงานคณิตศาสตร์ ประเภทบูรณาการความรู้คณิตศาสตร์ไปประยุกต์ใช้ โดยมีวัตถุประสงค์เพื่อสร้างสื่อการเรียนรู้ที่สนุกสนานในวิชาคณิตศาสตร์ ผสมผสานการเล่นเกมเศรษฐีเข้ากับการแก้โจทย์ปัญหาตามระดับชั้น เพื่อให้ผู้เล่นได้ทั้งความสนุกและทบทวนความรู้ไปพร้อมกัน</p>
+                <p>เกมนี้จัดทำขึ้นเพื่อเป็นส่วนหนึ่งของโครงงานคณิตศาสตร์...</p>
             </div>
             <button id="close-about-btn" class="danger">ปิด</button>
         </div>
     </div>
-
-    <div id="creator-modal" class="modal" style="display: none;">
+     <div id="creator-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>ข้อมูลผู้จัดทำ</h2>
              <div class="about-section">
@@ -214,8 +231,7 @@
             <button id="close-creator-btn" class="danger">ปิด</button>
         </div>
     </div>
+
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
-
