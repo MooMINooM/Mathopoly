@@ -1,4 +1,11 @@
 /* css/_components.css */
+#player-info-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    min-height: 0;
+}
 .player-info {
     padding: 10px;
     border-radius: 12px;
@@ -85,10 +92,9 @@
     color: #495057;
 }
 
-/* --- START: แก้ไข Game Log --- */
 #game-log-container {
     width: 100%;
-    height: 180px; /* กำหนดความสูงคงที่ */
+    height: 180px;
     border-radius: 12px;
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.8);
@@ -97,8 +103,6 @@
     flex-direction: column;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-/* --- END: แก้ไข Game Log --- */
-
 #game-log-container h4 {
     margin: 0 0 8px 0;
     padding-bottom: 8px;
@@ -164,11 +168,12 @@
     width: 100%;
 }
 
+/* --- START: แก้ไขปุ่ม Modal มาตรฐาน --- */
 #action-buttons button, .modal-content button {
     padding: 12px 20px;
     font-size: 1em;
     font-family: 'Noto Sans Thai', sans-serif;
-    border-radius: 8px;
+    border-radius: 8px; /* <-- แก้ไขตรงนี้ */
     border: none;
     cursor: pointer;
     background-color: var(--primary-color);
@@ -180,6 +185,7 @@
 #action-buttons button {
     padding: 14px 10px;
 }
+/* --- END: แก้ไขปุ่ม Modal มาตรฐาน --- */
 
 #action-buttons button:hover, .modal-content button:hover {
     background-color: #45a049;
