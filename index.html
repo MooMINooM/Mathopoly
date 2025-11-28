@@ -133,41 +133,34 @@
     </div>
 
     <div id="summary-modal" class="modal">
-        <div class="setup-screen-container" style="max-width: 900px;">
-            <div class="setup-header">
-                <h2>สรุปผลการแข่งขัน</h2>
-            </div>
-            <div class="setup-main-container" style="grid-template-columns: 1fr; padding: 20px;">
-                <div class="setup-column-left" style="border-right: none; padding-right: 0;">
-                    <div class="setup-section" id="winner-spotlight-section" style="display: none;">
-                        <h4 id="winner-title">🏆 ผู้ชนะ 🏆</h4>
-                        <div id="winner-card">
-                            <span id="winner-name"></span>
-                            <small id="winner-reason"></small>
-                            <div class="winner-assets">
-                                <label>ทรัพย์สินรวม</label>
-                                <span id="winner-total-assets"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="setup-section">
-                        <h4 id="scoreboard-title">📊 อันดับคะแนน</h4>
-                        <div class="scoreboard-container">
-                            <table id="summary-table">
-                                <thead>
-                                    <tr><th>อันดับ</th><th>ผู้เล่น</th><th>ทรัพย์สินรวม</th><th>สถานะ</th></tr>
-                                </thead>
-                                <tbody id="summary-body"></tbody>
-                            </table>
-                        </div>
+    <div class="setup-screen-container" style="max-width: 1000px; width: 95%;">
+        <div class="setup-header">
+            <h2>สรุปผลการแข่งขัน</h2>
+        </div>
+        <div class="summary-content-wrapper" style="padding: 20px; background-color: #f8f9fa; max-height: 70vh; overflow-y: auto;">
+            
+            <div id="winner-spotlight-section" style="display: none; margin-bottom: 30px;">
+                <div class="winner-card-large">
+                    <div class="winner-trophy">🏆</div>
+                    <h2 id="winner-name">Player Name</h2>
+                    <p id="winner-reason" class="winner-reason">ชนะด้วยเงื่อนไขพิเศษ</p>
+                    <div class="winner-total-badge">
+                        <label>ทรัพย์สินรวม</label>
+                        <span id="winner-total-assets">฿0</span>
                     </div>
                 </div>
             </div>
-            <div class="setup-footer" style="justify-content: flex-end;">
-                <button id="restart-game-btn">กลับหน้าหลัก</button>
-            </div>
+
+            <h4 style="margin-left: 10px; margin-bottom: 15px; color: #555; border-bottom: 2px solid #ddd; padding-bottom: 5px;">อันดับผู้เล่นและสถิติ</h4>
+            <div id="summary-grid" class="summary-player-grid">
+                </div>
+
+        </div>
+        <div class="setup-footer" style="justify-content: center;">
+            <button id="restart-game-btn">กลับหน้าหลัก</button>
         </div>
     </div>
+</div>
     <div id="chance-card-modal" class="modal">
         <div class="modal-content">
             <h2>การ์ดดวง</h2>
@@ -235,5 +228,6 @@
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
 
 
