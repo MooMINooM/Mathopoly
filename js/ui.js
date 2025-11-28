@@ -249,6 +249,7 @@ export function showInfoSheet(spaceData) {
     document.getElementById('info-sheet-modal').style.display = 'flex';
 }
 
+// ฟังก์ชันสรุปผลฉบับปรับปรุง (v1.1)
 export function showSummary(winType = 'manual', winner = null, reason = 'นับคะแนนรวม') {
     const summaryModal = document.getElementById('summary-modal');
     const winnerSection = document.getElementById('winner-spotlight-section');
@@ -385,4 +386,93 @@ export function showSummary(winType = 'manual', winner = null, reason = 'นั�
     });
 
     summaryModal.style.display = 'flex';
+}
+
+export function showInsufficientFundsModal(onCloseCallback) {
+    showActionModal(
+        "เงินไม่พอ!",
+        "คุณมีเงินไม่พอที่จะซื้อเมืองนี้ ต้องการจัดการทรัพย์สินหรือไม่?",
+        [
+            { text: 'กู้เงิน/ขายเมือง', callback: () => {
+                hideActionModal();
+                showManagePropertyModal(false);
+            }},
+            { text: 'ปิด', className: 'danger', callback: () => {
+                hideActionModal();
+                if (onCloseCallback) onCloseCallback();
+            }}
+        ]
+    );
+}
+
+export function hideManagePropertyModal() {
+    document.getElementById('manage-property-modal').style.display = 'none';
+}
+
+export function showManagePropertyModal(isForced = false) {
+    const managePropertyModal = document.getElementById('manage-property-modal');
+    const player = state.players[state.currentPlayerIndex];
+
+    // Update financial summary
+    const summaryMoneyEl = document.getElementById('summary-money');
+    const summaryDebtItemEl = document.getElementById('summary-debt-item');
+    const summaryDebtEl = document.getElementById('summary-debt');
+    
+    summaryMoneyEl.textContent = `฿${player.money.toLocaleString()}`;
+    summaryMoneyEl.classList.toggle('negative', player.money < 0);
+
+    const modalTitle = document.getElementById('manage-title');
+    const closeBtn = document.getElementById('close-manage-modal-btn');
+
+    if (isForced) {
+        state.setForcedToSell(true);
+        const debt = Math.abs(player.money);
+        modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
+        modalTitle.classList.add('danger');
+        summaryDebtItemEl.style.display = 'flex';
+        summaryDebtEl.textContent = `฿${debt.toLocaleString()}`;
+        closeBtn.disabled = true;
+    } else {
+        state.setForcedToSell(false);
+        modalTitle.textContent = 'จัดการทรัพย์สิน';
+        modalTitle.classList.remove('danger');
+        summaryDebtItemEl.style.display = 'none';
+        closeBtn.disabled = false;
+    }
+
+    // Update property list
+    const sellList = document.getElementById('sell-property-list');
+    sellList.innerHTML = '';
+    if (player.properties.length > 0) {
+        player.properties.forEach(pId => {
+            const space = state.boardSpaces.find(s => s.id === pId);
+            if (!space) return;
+            const sellPrice = Math.round(space.investment * 0.6);
+            const item = document.createElement('div');
+            item.className = 'property-list-item';
+            item.innerHTML = `
+                <span>${space.name} (ลงทุน ฿${space.investment.toLocaleString()})</span>
+                <button class="danger" data-action="sell" data-pid="${pId}">ขาย ฿${sellPrice.toLocaleString()}</button>
+            `;
+            sellList.appendChild(item);
+        });
+    } else {
+        sellList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 10px 0;">คุณไม่มีเมืองที่จะขาย</p>';
+    }
+
+    // Update financial actions
+    const financialActions = document.getElementById('financial-actions');
+    financialActions.innerHTML = '';
+    if (player.loan) {
+        financialActions.innerHTML = `<p style="text-align: center;">คุณมีเงินกู้ ฿${player.loan.amount.toLocaleString()} แล้ว (เหลือ ${player.loan.roundsLeft} ตา)</p>`;
+    } else {
+        const loanAmount = Math.round(state.gameSettings.startingMoney / 3);
+        const loanButton = document.createElement('button');
+        loanButton.textContent = `กู้เงินฉุกเฉิน ฿${loanAmount.toLocaleString()}`;
+        loanButton.dataset.action = "loan";
+        if(isForced) loanButton.disabled = true;
+        financialActions.appendChild(loanButton);
+    }
+    
+    managePropertyModal.style.display = 'flex';
 }
