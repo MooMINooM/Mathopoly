@@ -249,24 +249,29 @@ export function showInfoSheet(spaceData) {
     document.getElementById('info-sheet-modal').style.display = 'flex';
 }
 
-// ฟังก์ชันสรุปผลฉบับปรับปรุง (v1.1)
+// ฟังก์ชันสรุปผลฉบับปรับปรุง (v1.2 - Full Features)
 export function showSummary(winType = 'manual', winner = null, reason = 'นับคะแนนรวม') {
     const summaryModal = document.getElementById('summary-modal');
     const winnerSection = document.getElementById('winner-spotlight-section');
     const summaryGrid = document.getElementById('summary-grid');
     
-    // เคลียร์ข้อมูลเก่า
     summaryGrid.innerHTML = '';
 
     // 1. เตรียมข้อมูลและคำนวณสถิติ
     const playersStats = state.players.map(p => {
-        // คำนวณมูลค่าทรัพย์สิน (Investment ในเมืองทั้งหมด)
+        // มูลค่าทรัพย์สิน (Investment ในเมือง)
         const propertyVal = p.properties.reduce((sum, pId) => {
             const space = state.boardSpaces.find(s => s.id === pId);
             return sum + (space ? space.investment : 0);
         }, 0);
         
-        // คำนวณสถิติการตอบคำถาม
+        // เลเวลรวม (สำหรับ Master Builder)
+        const totalLevels = p.properties.reduce((sum, pId) => {
+            const space = state.boardSpaces.find(s => s.id === pId);
+            return sum + (space ? space.level : 0);
+        }, 0);
+
+        // สถิติการตอบคำถาม
         const totalQ = p.totalQuestions || 0;
         const correctQ = p.correctAnswers || 0;
         const accuracy = totalQ > 0 ? (correctQ / totalQ) * 100 : 0;
@@ -282,16 +287,25 @@ export function showSummary(winType = 'manual', winner = null, reason = 'นั�
             ...p,
             propertyValue: propertyVal,
             totalAssets: p.money + propertyVal,
+            totalLevels: totalLevels,
             accuracy: accuracy,
             grade: grade,
             awards: []
         };
     });
 
-    // 2. เรียงลำดับตามทรัพย์สินรวม (มากไปน้อย)
-    const sortedPlayers = playersStats.sort((a, b) => b.totalAssets - a.totalAssets);
+    // 2. เรียงลำดับ (Tie-Breaker Logic)
+    const sortedPlayers = playersStats.sort((a, b) => {
+        // เงื่อนไข 1: ทรัพย์สินรวม
+        if (b.totalAssets !== a.totalAssets) {
+            return b.totalAssets - a.totalAssets;
+        }
+        // เงื่อนไข 2: เงินสด (ถ้าทรัพย์สินเท่ากัน ใครรวยเงินสดกว่าชนะ)
+        return b.money - a.money;
+    });
     
     // 3. หาผู้ได้รับรางวัลพิเศษ (Awards)
+    
     // 🧠 Math Genius: แม่นยำสูงสุด (ต้องตอบอย่างน้อย 3 ข้อ)
     const mathGenius = [...sortedPlayers].filter(p => p.totalQuestions >= 3).sort((a,b) => b.accuracy - a.accuracy)[0];
     if (mathGenius && mathGenius.accuracy > 0) {
@@ -310,6 +324,12 @@ export function showSummary(winType = 'manual', winner = null, reason = 'นั�
         cashKing.awards.push({icon: '💸', title: 'Cash King: ราชาเงินสด'});
     }
 
+    // 🏗️ Master Builder: อัปเกรดบ้านรวมเยอะสุด
+    const masterBuilder = [...sortedPlayers].sort((a,b) => b.totalLevels - a.totalLevels)[0];
+    if (masterBuilder && masterBuilder.totalLevels > 0) {
+        masterBuilder.awards.push({icon: '🏗️', title: 'Master Builder: สถาปนิกมือทอง'});
+    }
+
     // 4. แสดงผลผู้ชนะเลิศ (Spotlight)
     let finalWinner = winner;
     if (winType === 'manual') {
@@ -318,7 +338,6 @@ export function showSummary(winType = 'manual', winner = null, reason = 'นั�
     }
 
     if (finalWinner) {
-        // หาข้อมูลที่ update แล้วของ winner เพื่อดึงยอดทรัพย์สินรวมที่คำนวณใหม่
         const winnerStats = sortedPlayers.find(p => p.id === finalWinner.id) || finalWinner; 
         document.getElementById('winner-name').textContent = winnerStats.name;
         document.getElementById('winner-reason').textContent = reason;
@@ -328,14 +347,14 @@ export function showSummary(winType = 'manual', winner = null, reason = 'นั�
         winnerSection.style.display = 'none';
     }
 
-    // 5. สร้าง Card สำหรับผู้เล่นแต่ละคนใน Grid
+    // 5. สร้าง Card สำหรับผู้เล่นแต่ละคน
     sortedPlayers.forEach((p, index) => {
         const card = document.createElement('div');
         const isWinner = finalWinner && p.id === finalWinner.id;
         card.className = `summary-card ${isWinner ? 'is-winner' : ''}`;
         
-        // คำนวณความกว้างของกราฟแท่ง (Bar Chart)
-        const totalBar = Math.max(p.totalAssets, 1); // ป้องกันการหารด้วย 0
+        // คำนวณ % สำหรับกราฟแท่ง
+        const totalBar = Math.max(p.totalAssets, 1);
         const cashPercent = p.money > 0 ? (p.money / totalBar) * 100 : 0; 
         const propPercent = p.propertyValue > 0 ? (p.propertyValue / totalBar) * 100 : 0;
 
@@ -344,7 +363,6 @@ export function showSummary(winType = 'manual', winner = null, reason = 'นั�
             `<div class="award-badge" title="${a.title}">${a.icon}</div>`
         ).join('');
 
-        // ข้อความสถานะ (ล้มละลาย)
         const statusText = p.bankrupt ? '<span style="color:red; font-weight:bold; font-size:0.8em;"> (ล้มละลาย)</span>' : '';
         const careerName = CAREERS[p.career] ? CAREERS[p.career].name : '-';
 
