@@ -266,6 +266,15 @@
 .summary-card.is-winner {
     border: 2px solid #ffd700;
     background: linear-gradient(to bottom right, #fff, #fffbf0);
+    /* เพิ่ม Animation วิ้งๆ */
+    animation: glowBorder 2s infinite;
+}
+
+/* เอฟเฟกต์วิ้งๆ ให้การ์ดผู้ชนะ */
+@keyframes glowBorder {
+    0% { border-color: #ffd700; box-shadow: 0 0 5px #ffd700; }
+    50% { border-color: #ffaa00; box-shadow: 0 0 20px #ffaa00; }
+    100% { border-color: #ffd700; box-shadow: 0 0 5px #ffd700; }
 }
 
 .rank-badge {
@@ -311,14 +320,23 @@
     display: flex;
     margin-bottom: 5px;
 }
+
+/* Animation สำหรับกราฟแท่ง */
+@keyframes slideInBar {
+    from { width: 0%; }
+}
+
 .bar-cash {
     background-color: #4CAF50; /* Green for Cash */
     height: 100%;
+    animation: slideInBar 1.5s ease-out forwards;
 }
 .bar-property {
     background-color: #FF9800; /* Orange for Property */
     height: 100%;
+    animation: slideInBar 1.5s ease-out forwards;
 }
+
 .asset-legend {
     display: flex;
     justify-content: space-between;
