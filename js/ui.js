@@ -252,148 +252,137 @@ export function showInfoSheet(spaceData) {
 export function showSummary(winType = 'manual', winner = null, reason = 'นับคะแนนรวม') {
     const summaryModal = document.getElementById('summary-modal');
     const winnerSection = document.getElementById('winner-spotlight-section');
-    const scoreboardTitle = document.getElementById('scoreboard-title');
-    const summaryBody = document.getElementById('summary-body');
-    summaryBody.innerHTML = '';
+    const summaryGrid = document.getElementById('summary-grid');
+    
+    // เคลียร์ข้อมูลเก่า
+    summaryGrid.innerHTML = '';
 
-    // คำนวณทรัพย์สินรวมสำหรับผู้เล่นทุกคน
-    const playersWithAssets = state.players.map(p => {
-        const propertiesValue = p.properties.reduce((sum, pId) => {
+    // 1. เตรียมข้อมูลและคำนวณสถิติ
+    const playersStats = state.players.map(p => {
+        // คำนวณมูลค่าทรัพย์สิน (Investment ในเมืองทั้งหมด)
+        const propertyVal = p.properties.reduce((sum, pId) => {
             const space = state.boardSpaces.find(s => s.id === pId);
             return sum + (space ? space.investment : 0);
         }, 0);
-        return { ...p, totalAssets: p.money + propertiesValue };
+        
+        // คำนวณสถิติการตอบคำถาม
+        const totalQ = p.totalQuestions || 0;
+        const correctQ = p.correctAnswers || 0;
+        const accuracy = totalQ > 0 ? (correctQ / totalQ) * 100 : 0;
+        
+        // ตัดเกรด
+        let grade = 'F';
+        if (accuracy >= 90) grade = 'A';
+        else if (accuracy >= 75) grade = 'B';
+        else if (accuracy >= 60) grade = 'C';
+        else if (accuracy >= 50) grade = 'D';
+
+        return {
+            ...p,
+            propertyValue: propertyVal,
+            totalAssets: p.money + propertyVal,
+            accuracy: accuracy,
+            grade: grade,
+            awards: []
+        };
     });
 
-    const sortedPlayers = playersWithAssets.sort((a, b) => b.totalAssets - a.totalAssets);
+    // 2. เรียงลำดับตามทรัพย์สินรวม (มากไปน้อย)
+    const sortedPlayers = playersStats.sort((a, b) => b.totalAssets - a.totalAssets);
+    
+    // 3. หาผู้ได้รับรางวัลพิเศษ (Awards)
+    // 🧠 Math Genius: แม่นยำสูงสุด (ต้องตอบอย่างน้อย 3 ข้อ)
+    const mathGenius = [...sortedPlayers].filter(p => p.totalQuestions >= 3).sort((a,b) => b.accuracy - a.accuracy)[0];
+    if (mathGenius && mathGenius.accuracy > 0) {
+        mathGenius.awards.push({icon: '🧠', title: 'Math Genius: แม่นยำที่สุด'});
+    }
+    
+    // 🏰 Landlord: เมืองเยอะสุด
+    const landlord = [...sortedPlayers].sort((a,b) => b.properties.length - a.properties.length)[0];
+    if (landlord && landlord.properties.length > 0) {
+        landlord.awards.push({icon: '🏰', title: 'Landlord: เจ้าที่ดิน'});
+    }
 
+    // 💸 Cash King: เงินสดเยอะสุด
+    const cashKing = [...sortedPlayers].sort((a,b) => b.money - a.money)[0];
+    if (cashKing && cashKing.money > 0) {
+        cashKing.awards.push({icon: '💸', title: 'Cash King: ราชาเงินสด'});
+    }
+
+    // 4. แสดงผลผู้ชนะเลิศ (Spotlight)
     let finalWinner = winner;
-
     if (winType === 'manual') {
-        finalWinner = sortedPlayers[0]; // ผู้ชนะคือคนที่มีทรัพย์สินเยอะสุด
+        finalWinner = sortedPlayers[0]; 
         reason = 'มีทรัพย์สินรวมสูงสุด';
     }
 
-    // แสดงส่วนของผู้ชนะ
     if (finalWinner) {
-        document.getElementById('winner-name').textContent = finalWinner.name;
+        // หาข้อมูลที่ update แล้วของ winner เพื่อดึงยอดทรัพย์สินรวมที่คำนวณใหม่
+        const winnerStats = sortedPlayers.find(p => p.id === finalWinner.id) || finalWinner; 
+        document.getElementById('winner-name').textContent = winnerStats.name;
         document.getElementById('winner-reason').textContent = reason;
-        document.getElementById('winner-total-assets').textContent = `฿${finalWinner.totalAssets.toLocaleString()}`;
+        document.getElementById('winner-total-assets').textContent = `฿${(winnerStats.totalAssets || 0).toLocaleString()}`;
         winnerSection.style.display = 'block';
-        scoreboardTitle.textContent = '📊 อันดับผู้เล่นที่เหลือ';
     } else {
         winnerSection.style.display = 'none';
-        scoreboardTitle.textContent = '📊 อันดับคะแนนรวม';
     }
-    
-    // แสดงตารางอันดับ
+
+    // 5. สร้าง Card สำหรับผู้เล่นแต่ละคนใน Grid
     sortedPlayers.forEach((p, index) => {
-        // ถ้ามีผู้ชนะที่ชัดเจน (ไม่ใช่ manual) และผู้เล่นคนนี้คือผู้ชนะ ก็ไม่ต้องแสดงซ้ำในตาราง
-        if (finalWinner && p.id === finalWinner.id && winType !== 'manual') return;
-
-        let status = p.bankrupt ? "ล้มละลาย" : "เล่นอยู่";
-        if (finalWinner && p.id === finalWinner.id) {
-            status = "ผู้ชนะ";
-        }
+        const card = document.createElement('div');
+        const isWinner = finalWinner && p.id === finalWinner.id;
+        card.className = `summary-card ${isWinner ? 'is-winner' : ''}`;
         
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>#${index + 1}</td>
-            <td>${p.name}</td>
-            <td>฿${p.totalAssets.toLocaleString()}</td>
-            <td>${status}</td>
+        // คำนวณความกว้างของกราฟแท่ง (Bar Chart)
+        const totalBar = Math.max(p.totalAssets, 1); // ป้องกันการหารด้วย 0
+        const cashPercent = p.money > 0 ? (p.money / totalBar) * 100 : 0; 
+        const propPercent = p.propertyValue > 0 ? (p.propertyValue / totalBar) * 100 : 0;
+
+        // สร้าง HTML สำหรับ Awards
+        const awardsHTML = p.awards.map(a => 
+            `<div class="award-badge" title="${a.title}">${a.icon}</div>`
+        ).join('');
+
+        // ข้อความสถานะ (ล้มละลาย)
+        const statusText = p.bankrupt ? '<span style="color:red; font-weight:bold; font-size:0.8em;"> (ล้มละลาย)</span>' : '';
+        const careerName = CAREERS[p.career] ? CAREERS[p.career].name : '-';
+
+        card.innerHTML = `
+            <div class="rank-badge">${index + 1}</div>
+            
+            <div class="card-header">
+                <h3>${p.name}${statusText}</h3>
+                <div style="font-size:0.9em; color:#666;">อาชีพ: ${careerName}</div>
+            </div>
+
+            <div class="asset-breakdown">
+                <div class="asset-bar-container">
+                    <div class="bar-cash" style="width: ${cashPercent}%" title="เงินสด: ฿${p.money.toLocaleString()}"></div>
+                    <div class="bar-property" style="width: ${propPercent}%" title="มูลค่าเมือง: ฿${p.propertyValue.toLocaleString()}"></div>
+                </div>
+                <div class="asset-legend">
+                    <div class="legend-item"><span class="dot" style="background:#4CAF50"></span> เงินสด ฿${p.money.toLocaleString()}</div>
+                    <div class="legend-item"><span class="dot" style="background:#FF9800"></span> เมือง ฿${p.propertyValue.toLocaleString()}</div>
+                </div>
+                <div style="text-align:right; font-weight:bold; margin-top:5px; font-size:1.1em; color: var(--primary-color);">
+                    รวม: ฿${p.totalAssets.toLocaleString()}
+                </div>
+            </div>
+
+            <div class="math-stats-row">
+                <div class="grade-circle grade-${p.grade}" title="ความแม่นยำ ${p.accuracy.toFixed(0)}%">${p.grade}</div>
+                <div class="stats-text">
+                    <div>ตอบถูก: ${p.correctAnswers}/${p.totalQuestions}</div>
+                    <div style="font-size:0.8em; color:#888;">ความแม่นยำ ${p.accuracy.toFixed(0)}%</div>
+                </div>
+            </div>
+
+            <div class="awards-container">
+                ${awardsHTML}
+            </div>
         `;
-        summaryBody.appendChild(row);
+        summaryGrid.appendChild(card);
     });
-    
+
     summaryModal.style.display = 'flex';
-}
-
-export function showInsufficientFundsModal(onCloseCallback) {
-    showActionModal(
-        "เงินไม่พอ!",
-        "คุณมีเงินไม่พอที่จะซื้อเมืองนี้ ต้องการจัดการทรัพย์สินหรือไม่?",
-        [
-            { text: 'กู้เงิน/ขายเมือง', callback: () => {
-                hideActionModal();
-                showManagePropertyModal(false);
-            }},
-            { text: 'ปิด', className: 'danger', callback: () => {
-                hideActionModal();
-                if (onCloseCallback) onCloseCallback();
-            }}
-        ]
-    );
-}
-
-export function hideManagePropertyModal() {
-    document.getElementById('manage-property-modal').style.display = 'none';
-}
-
-export function showManagePropertyModal(isForced = false) {
-    const managePropertyModal = document.getElementById('manage-property-modal');
-    const player = state.players[state.currentPlayerIndex];
-
-    // Update financial summary
-    const summaryMoneyEl = document.getElementById('summary-money');
-    const summaryDebtItemEl = document.getElementById('summary-debt-item');
-    const summaryDebtEl = document.getElementById('summary-debt');
-    
-    summaryMoneyEl.textContent = `฿${player.money.toLocaleString()}`;
-    summaryMoneyEl.classList.toggle('negative', player.money < 0);
-
-    const modalTitle = document.getElementById('manage-title');
-    const closeBtn = document.getElementById('close-manage-modal-btn');
-
-    if (isForced) {
-        state.setForcedToSell(true);
-        const debt = Math.abs(player.money);
-        modalTitle.innerHTML = `คุณเป็นหนี้! ต้องชำระ ฿${debt.toLocaleString()}<br><small>เงินปัจจุบัน: ฿${player.money.toLocaleString()}</small>`;
-        modalTitle.classList.add('danger');
-        summaryDebtItemEl.style.display = 'flex';
-        summaryDebtEl.textContent = `฿${debt.toLocaleString()}`;
-        closeBtn.disabled = true;
-    } else {
-        state.setForcedToSell(false);
-        modalTitle.textContent = 'จัดการทรัพย์สิน';
-        modalTitle.classList.remove('danger');
-        summaryDebtItemEl.style.display = 'none';
-        closeBtn.disabled = false;
-    }
-
-    // Update property list
-    const sellList = document.getElementById('sell-property-list');
-    sellList.innerHTML = '';
-    if (player.properties.length > 0) {
-        player.properties.forEach(pId => {
-            const space = state.boardSpaces.find(s => s.id === pId);
-            if (!space) return;
-            const sellPrice = Math.round(space.investment * 0.6);
-            const item = document.createElement('div');
-            item.className = 'property-list-item';
-            item.innerHTML = `
-                <span>${space.name} (ลงทุน ฿${space.investment.toLocaleString()})</span>
-                <button class="danger" data-action="sell" data-pid="${pId}">ขาย ฿${sellPrice.toLocaleString()}</button>
-            `;
-            sellList.appendChild(item);
-        });
-    } else {
-        sellList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 10px 0;">คุณไม่มีเมืองที่จะขาย</p>';
-    }
-
-    // Update financial actions
-    const financialActions = document.getElementById('financial-actions');
-    financialActions.innerHTML = '';
-    if (player.loan) {
-        financialActions.innerHTML = `<p style="text-align: center;">คุณมีเงินกู้ ฿${player.loan.amount.toLocaleString()} แล้ว (เหลือ ${player.loan.roundsLeft} ตา)</p>`;
-    } else {
-        const loanAmount = Math.round(state.gameSettings.startingMoney / 3);
-        const loanButton = document.createElement('button');
-        loanButton.textContent = `กู้เงินฉุกเฉิน ฿${loanAmount.toLocaleString()}`;
-        loanButton.dataset.action = "loan";
-        if(isForced) loanButton.disabled = true;
-        financialActions.appendChild(loanButton);
-    }
-    
-    managePropertyModal.style.display = 'flex';
 }
